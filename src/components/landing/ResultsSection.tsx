@@ -5,6 +5,7 @@ import alunoB from "@/assets/aluno-b.jpg";
 import alunoC from "@/assets/aluno-c.jpg";
 import alunoD from "@/assets/aluno-d.jpg";
 import alunoE from "@/assets/aluno-e.jpg";
+import alunoF from "@/assets/aluno-f.jpg";
 
 const results = [
   { image: alunoA, label: "Transformação 1" },
@@ -12,7 +13,7 @@ const results = [
   { image: alunoC, label: "Transformação 3" },
   { image: alunoD, label: "Transformação 4" },
   { image: alunoE, label: "Transformação 5" },
-  { image: null, label: "Foto do aluno #6" },
+  { image: alunoF, label: "Transformação 6" },
 ];
 
 const ResultsSection = () => {
