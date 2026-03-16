@@ -29,7 +29,7 @@ const plans = [
       "Suporte para dúvidas",
     ],
     cta: "Quero Minha Transformação",
-    badge: "Mais escolhido pelos alunos",
+    badge: "Mais escolhido pelos clientes",
     featured: true,
     icon: Star,
   },
