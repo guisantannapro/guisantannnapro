@@ -20,7 +20,7 @@ const plans = [
   {
     name: "Transformação",
     subtitle: "Para quem quer resultados mais rápidos e acompanhamento estratégico.",
-    price: "350",
+    price: "349",
     features: [
       "Treino personalizado completo",
       "Estratégia nutricional individualizada",
