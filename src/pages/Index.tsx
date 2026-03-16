@@ -14,7 +14,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* Sant'Anna Fit sections */}
       <HeroSection />
-      <TransformationSection />
+      
       <BenefitsSection />
       
 
