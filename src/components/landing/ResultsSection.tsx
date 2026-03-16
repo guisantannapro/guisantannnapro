@@ -1,8 +1,17 @@
 import { motion } from "framer-motion";
 import { ImageIcon } from "lucide-react";
+import alunoA from "@/assets/aluno-a.jpg";
+
+const results = [
+  { image: alunoA, label: "Transformação 1" },
+  { image: null, label: "Foto do aluno #2" },
+  { image: null, label: "Foto do aluno #3" },
+  { image: null, label: "Foto do aluno #4" },
+  { image: null, label: "Foto do aluno #5" },
+  { image: null, label: "Foto do aluno #6" },
+];
 
 const ResultsSection = () => {
-  const placeholders = Array.from({ length: 6 });
 
   return (
     <section className="py-20 md:py-32 bg-secondary/20" id="resultados">
