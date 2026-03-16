@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Award, Shield, Flame } from "lucide-react";
-import heroImg from "@/assets/hero-coach.jpg";
+import heroImg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
   return (
