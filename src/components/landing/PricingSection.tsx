@@ -5,7 +5,7 @@ const plans = [
   {
     name: "Base",
     subtitle: "Ideal para quem quer começar com estrutura profissional.",
-    price: "150",
+    price: "149",
     features: [
       "Treino personalizado",
       "Estratégia nutricional inicial",
