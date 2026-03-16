@@ -1,0 +1,51 @@
+import { motion } from "framer-motion";
+import { ImageIcon } from "lucide-react";
+
+const ResultsSection = () => {
+  const placeholders = Array.from({ length: 6 });
+
+  return (
+    <section className="py-20 md:py-32 bg-secondary/20" id="resultados">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
+            Transformações <span className="text-gradient-gold">Reais</span>
+          </h2>
+          <p className="text-muted-foreground font-body normal-case max-w-xl mx-auto">
+            Resultados de alunos que aplicaram o método com disciplina e consistência.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {placeholders.map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="aspect-[4/5] rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-4 overflow-hidden"
+            >
+              <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
+              <div className="text-center px-4">
+                <p className="text-muted-foreground/50 font-body normal-case text-sm">
+                  Antes & Depois
+                </p>
+                <p className="text-muted-foreground/30 font-body normal-case text-xs mt-1">
+                  Foto do aluno #{i + 1}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ResultsSection;
