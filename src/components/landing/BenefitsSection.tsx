@@ -3,7 +3,7 @@ import { Dumbbell, Utensils, MessageCircle, TrendingUp, Shield, Clock } from "lu
 
 const benefits = [
   { icon: Dumbbell, title: "Treino Personalizado", desc: "Plano de treino individualizado baseado nos seus objetivos e experiência." },
-  { icon: Utensils, title: "Plano Alimentar", desc: "Dieta personalizada com macros e opções flexíveis para o seu dia a dia." },
+  { icon: Utensils, title: "Plano Nutricional", desc: "Dieta personalizada com macros e opções flexíveis para o seu dia a dia." },
   { icon: MessageCircle, title: "Suporte Direto", desc: "Acesso via WhatsApp para dúvidas, ajustes e acompanhamento." },
   { icon: TrendingUp, title: "Acompanhamento", desc: "Check-ins regulares e ajustes no plano para progresso contínuo." },
   { icon: Shield, title: "Saúde em Primeiro", desc: "Abordagem baseada em evidências respeitando sua saúde e limitações." },
