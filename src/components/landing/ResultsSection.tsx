@@ -4,13 +4,14 @@ import alunoA from "@/assets/aluno-a.jpg";
 import alunoB from "@/assets/aluno-b.jpg";
 import alunoC from "@/assets/aluno-c.jpg";
 import alunoD from "@/assets/aluno-d.jpg";
+import alunoE from "@/assets/aluno-e.jpg";
 
 const results = [
   { image: alunoA, label: "Transformação 1" },
   { image: alunoB, label: "Transformação 2" },
   { image: alunoC, label: "Transformação 3" },
   { image: alunoD, label: "Transformação 4" },
-  { image: null, label: "Foto do aluno #5" },
+  { image: alunoE, label: "Transformação 5" },
   { image: null, label: "Foto do aluno #6" },
 ];
 
