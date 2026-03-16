@@ -56,7 +56,7 @@ const AboutSection = () => {
               <p>
                 A partir daí, segui vencendo importantes eventos do cenário
                 nacional, como Eduardo Corrêa Classic, Iron Games e Masters Brasil,
-                conquistando títulos e consolidando minha carreira até alcançar o
+                consolidando minha carreira até alcançar o
                 status de atleta profissional.
               </p>
               <p>
