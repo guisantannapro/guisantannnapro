@@ -1,5 +1,5 @@
 import HeroSection from "@/components/landing/HeroSection";
-import TransformationSection from "@/components/landing/TransformationSection";
+
 import BenefitsSection from "@/components/landing/BenefitsSection";
 
 import AuthoritySection from "@/components/landing/AuthoritySection";
@@ -14,7 +14,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* Sant'Anna Fit sections */}
       <HeroSection />
-      <TransformationSection />
+      
       <BenefitsSection />
       
 
