@@ -31,7 +31,8 @@ const AboutSection = () => {
             transition={{ duration: 0.7 }}
           >
             <h2 className="text-3xl md:text-5xl font-bold font-display mb-8">
-              Conheça <span className="text-gradient-gold">Guilherme Sant'Anna</span>
+              Conheça <span className="text-gradient-gold">Guilherme Sant'Anna</span>{" "}
+              <span className="text-gradient-gold">IFBB PRO</span>
             </h2>
 
             <div className="space-y-4 text-foreground/80 font-body normal-case text-sm md:text-base leading-relaxed">
