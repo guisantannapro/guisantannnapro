@@ -1,18 +1,37 @@
 import { motion } from "framer-motion";
-import { Dumbbell, Utensils, MessageCircle, TrendingUp, Shield, Clock } from "lucide-react";
+import { Dumbbell, Apple, ClipboardCheck, RefreshCw, MessageCircle } from "lucide-react";
 
 const benefits = [
-  { icon: Dumbbell, title: "Treino Personalizado", desc: "Plano de treino individualizado baseado nos seus objetivos e experiência." },
-  { icon: Utensils, title: "Plano Nutricional", desc: "Dieta personalizada com macros e opções flexíveis para o seu dia a dia." },
-  { icon: MessageCircle, title: "Suporte Direto", desc: "Acesso via WhatsApp para dúvidas, ajustes e acompanhamento." },
-  { icon: TrendingUp, title: "Acompanhamento", desc: "Check-ins regulares e ajustes no plano para progresso contínuo." },
-  { icon: Shield, title: "Saúde em Primeiro", desc: "Abordagem baseada em evidências respeitando sua saúde e limitações." },
-  { icon: Clock, title: "Flexibilidade", desc: "Programas adaptados à sua rotina e equipamentos disponíveis." },
+  {
+    icon: Dumbbell,
+    title: "Treinamento Personalizado",
+    desc: "Treino estruturado de acordo com seu objetivo e nível.",
+  },
+  {
+    icon: Apple,
+    title: "Estratégia Nutricional",
+    desc: "Plano alimentar direcionado para evolução constante.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Acompanhamento Profissional",
+    desc: "Avaliações e ajustes estratégicos.",
+  },
+  {
+    icon: RefreshCw,
+    title: "Atualizações no Plano",
+    desc: "Seu planejamento evolui junto com seus resultados.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Suporte Direto",
+    desc: "Canal para dúvidas e orientações.",
+  },
 ];
 
 const BenefitsSection = () => {
   return (
-    <section className="py-24 bg-secondary">
+    <section className="py-20 md:py-32" id="beneficios">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -20,27 +39,28 @@ const BenefitsSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-display text-3xl md:text-5xl font-bold uppercase mb-4">
-            Por Que Escolher <span className="text-gradient-gold">Minha Assessoria</span>
+          <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
+            O Que Você Recebe <span className="text-gradient-gold">Na Consultoria</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto normal-case">
-            Mais do que um plano — uma parceria completa para a sua transformação.
-          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {benefits.map((b, i) => (
             <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
+              key={b.title}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-card p-8 rounded-lg border border-border hover:border-primary/30 transition-colors shadow-lg"
+              className="group p-8 rounded-lg bg-card border border-border hover:border-primary/50 transition-all hover:glow-gold"
             >
-              <b.icon className="w-10 h-10 text-primary mb-4" />
-              <h3 className="font-display text-xl uppercase mb-2">{b.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed normal-case">{b.desc}</p>
+              <div className="w-14 h-14 rounded-lg bg-gradient-gold flex items-center justify-center mb-6">
+                <b.icon className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <h3 className="text-xl font-bold font-display mb-3">{b.title}</h3>
+              <p className="text-muted-foreground font-body normal-case text-sm">
+                {b.desc}
+              </p>
             </motion.div>
           ))}
         </div>

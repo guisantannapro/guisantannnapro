@@ -1,58 +1,86 @@
 import { motion } from "framer-motion";
+import { Award, Shield, Flame } from "lucide-react";
 import heroImg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
-  const scrollToForm = () => {
-    document.getElementById("application-form")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-cover bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImg})`, backgroundPosition: 'center top', backgroundSize: 'cover' }}
-      />
-      <div className="absolute inset-0 bg-background/40" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImg}
+          alt="Coach Guilherme Sant'Anna - Atleta Profissional de Fisiculturismo"
+          className="w-full h-full object-cover object-top opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
+      </div>
 
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="font-display text-primary uppercase tracking-[0.3em] text-sm md:text-base mb-4"
-        >
-          Guilherme Sant'Anna
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase leading-tight mb-6"
-        >
-          Assessoria Fitness Online
-          <br />
-          <span className="text-gradient-gold">Treino & Nutrição</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 normal-case"
-        >
-          Atleta profissional de fisiculturismo. Programas personalizados para resultados reais.
-        </motion.p>
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={scrollToForm}
-          className="bg-gradient-gold font-display uppercase tracking-widest text-primary-foreground px-10 py-4 text-lg font-semibold glow-gold rounded-md"
-        >
-          Comece Sua Transformação
-        </motion.button>
+      <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
+        <div className="max-w-3xl">
+          {/* Trigger badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-wrap gap-3 mb-8"
+          >
+            {[
+              { icon: Award, text: "Experiência" },
+              { icon: Flame, text: "Transformação" },
+              { icon: Shield, text: "Exclusividade" },
+            ].map((badge) => (
+              <span
+                key={badge.text}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-primary text-xs font-semibold tracking-widest uppercase"
+              >
+                <badge.icon className="w-3.5 h-3.5" />
+                {badge.text}
+              </span>
+            ))}
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-6 font-display"
+          >
+            Transforme Seu Corpo com{" "}
+            <span className="text-gradient-gold">Estratégia, Disciplina</span> e
+            Acompanhamento Profissional
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-lg md:text-xl text-foreground/80 mb-4 font-body max-w-2xl normal-case"
+          >
+            Consultoria online personalizada para quem quer ganhar massa muscular,
+            perder gordura e alcançar resultados reais.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className="text-sm md:text-base text-muted-foreground mb-10 font-body max-w-xl normal-case"
+          >
+            Mais de 20 anos de experiência no fisiculturismo aplicados para ajudar
+            cada pessoa a construir sua melhor versão física.
+          </motion.p>
+
+          <motion.a
+            href="#planos"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="inline-block bg-gradient-gold text-primary-foreground px-8 py-4 rounded-lg font-display text-lg font-bold tracking-wider uppercase hover:opacity-90 transition-opacity glow-gold"
+          >
+            Quero Começar Minha Transformação
+          </motion.a>
+        </div>
       </div>
     </section>
   );
