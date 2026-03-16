@@ -1,5 +1,5 @@
 import HeroSection from "@/components/landing/HeroSection";
-import TransformationSection from "@/components/landing/TransformationSection";
+
 import BenefitsSection from "@/components/landing/BenefitsSection";
 
 import AuthoritySection from "@/components/landing/AuthoritySection";
