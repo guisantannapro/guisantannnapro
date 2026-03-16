@@ -36,7 +36,7 @@ const plans = [
   {
     name: "Elite",
     subtitle: "Acompanhamento completo para máxima evolução física.",
-    price: "500",
+    price: "499",
     features: [
       "Treino personalizado avançado",
       "Estratégia nutricional completa",
