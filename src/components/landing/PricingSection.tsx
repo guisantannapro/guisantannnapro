@@ -10,7 +10,7 @@ const plans = [
       "Treino personalizado",
       "Estratégia nutricional inicial",
       "Avaliação física inicial",
-      "Atualização mensal do treino",
+      "Atualização mensal",
     ],
     cta: "Começar Agora",
     badge: null,
