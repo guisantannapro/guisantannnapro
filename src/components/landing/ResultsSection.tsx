@@ -38,10 +38,10 @@ const ResultsSection = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="aspect-[4/5] rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-4 overflow-hidden"
+              className={`${item.image ? 'aspect-[4/3]' : 'aspect-[4/5]'} rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-4 overflow-hidden`}
             >
               {item.image ? (
-                <img src={item.image} alt={item.label} className="w-full h-full object-cover" />
+                <img src={item.image} alt={item.label} className="w-full h-full object-contain bg-card" />
               ) : (
                 <>
                   <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
