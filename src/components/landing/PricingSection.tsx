@@ -5,7 +5,7 @@ const plans = [
   {
     name: "Base",
     subtitle: "Ideal para quem quer começar com estrutura profissional.",
-    price: "150",
+    price: "149",
     features: [
       "Treino personalizado",
       "Estratégia nutricional inicial",
@@ -20,7 +20,7 @@ const plans = [
   {
     name: "Transformação",
     subtitle: "Para quem quer resultados mais rápidos e acompanhamento estratégico.",
-    price: "350",
+    price: "349",
     features: [
       "Treino personalizado completo",
       "Estratégia nutricional individualizada",
