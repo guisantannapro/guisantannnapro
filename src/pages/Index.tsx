@@ -1,7 +1,7 @@
 import HeroSection from "@/components/landing/HeroSection";
 import TransformationSection from "@/components/landing/TransformationSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
-import ApplicationForm from "@/components/landing/ApplicationForm";
+
 import AuthoritySection from "@/components/landing/AuthoritySection";
 import AboutSection from "@/components/landing/AboutSection";
 import AudienceSection from "@/components/landing/AudienceSection";
@@ -16,7 +16,7 @@ const Index = () => {
       <HeroSection />
       <TransformationSection />
       <BenefitsSection />
-      <ApplicationForm />
+      
 
       {/* Original project sections */}
       <AuthoritySection />
