@@ -26,7 +26,7 @@ const HeroSection = () => {
             className="flex flex-wrap gap-3 mb-8"
           >
             {[
-              { icon: Award, text: "Autoridade" },
+              { icon: Award, text: "Experiência" },
               { icon: Flame, text: "Transformação" },
               { icon: Shield, text: "Exclusividade" },
             ].map((badge) => (
