@@ -31,7 +31,7 @@ const ResultsSection = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {placeholders.map((_, i) => (
+          {results.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -40,15 +40,21 @@ const ResultsSection = () => {
               transition={{ delay: i * 0.08 }}
               className="aspect-[4/5] rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-4 overflow-hidden"
             >
-              <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
-              <div className="text-center px-4">
-                <p className="text-muted-foreground/50 font-body normal-case text-sm">
-                  Antes & Depois
-                </p>
-                <p className="text-muted-foreground/30 font-body normal-case text-xs mt-1">
-                  Foto do aluno #{i + 1}
-                </p>
-              </div>
+              {item.image ? (
+                <img src={item.image} alt={item.label} className="w-full h-full object-cover" />
+              ) : (
+                <>
+                  <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
+                  <div className="text-center px-4">
+                    <p className="text-muted-foreground/50 font-body normal-case text-sm">
+                      Antes & Depois
+                    </p>
+                    <p className="text-muted-foreground/30 font-body normal-case text-xs mt-1">
+                      {item.label}
+                    </p>
+                  </div>
+                </>
+              )}
             </motion.div>
           ))}
         </div>
