@@ -54,18 +54,21 @@ const AboutSection = () => {
                 definitivamente minha trajetória no esporte.
               </p>
               <p>
-                A partir daí segui competindo em importantes eventos do cenário
-                nacional como Eduardo Corrêa Classic, Iron Games e Masters Brasil,
-                consolidando minha carreira até alcançar o status de atleta
-                profissional.
+                A partir daí, segui vencendo importantes eventos do cenário
+                nacional, como Eduardo Corrêa Classic, Iron Games e Masters Brasil,
+                conquistando títulos e consolidando minha carreira até alcançar o
+                status de atleta profissional.
+              </p>
+              <p>
+                Ao longo dessa jornada tive a oportunidade de trabalhar com
+                diversos coaches, médicos e fisioterapeutas, adquirindo uma
+                bagagem prática extremamente valiosa dentro do esporte.
               </p>
               <p>
                 Hoje utilizo toda essa experiência para ajudar pessoas a
-                transformarem seus corpos com estratégia, disciplina e método.
-              </p>
-              <p className="text-primary font-semibold italic">
-                Minha missão é guiar cada pessoa a atingir seu máximo potencial
-                físico com resultados reais e consistentes.
+                alcançarem seus objetivos físicos, de saúde e performance,
+                através de um acompanhamento estratégico, individualizado e
+                baseado na prática real do que funciona.
               </p>
             </div>
           </motion.div>
