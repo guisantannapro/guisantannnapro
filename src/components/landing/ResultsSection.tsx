@@ -31,7 +31,7 @@ const ResultsSection = () => {
             Transformações <span className="text-gradient-gold">Reais</span>
           </h2>
           <p className="text-muted-foreground font-body normal-case max-w-xl mx-auto">
-            Resultados de alunos que aplicaram o método com disciplina e consistência.
+            Resultados de clientes que aplicaram o método com disciplina e consistência.
           </p>
         </motion.div>
 
