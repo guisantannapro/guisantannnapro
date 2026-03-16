@@ -2,11 +2,12 @@ import { motion } from "framer-motion";
 import { ImageIcon } from "lucide-react";
 import alunoA from "@/assets/aluno-a.jpg";
 import alunoB from "@/assets/aluno-b.jpg";
+import alunoC from "@/assets/aluno-c.jpg";
 
 const results = [
   { image: alunoA, label: "Transformação 1" },
   { image: alunoB, label: "Transformação 2" },
-  { image: null, label: "Foto do aluno #3" },
+  { image: alunoC, label: "Transformação 3" },
   { image: null, label: "Foto do aluno #4" },
   { image: null, label: "Foto do aluno #5" },
   { image: null, label: "Foto do aluno #6" },
