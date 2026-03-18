@@ -9,7 +9,7 @@ const HeroSection = () => {
         <img
           src={heroImg}
           alt="Coach Guilherme Sant'Anna - Atleta Profissional de Fisiculturismo"
-          className="w-full h-full object-cover object-top opacity-40"
+          className="w-full h-full object-cover object-top opacity-50"
         />
         <div className="absolute inset-0 bg-background/40" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
