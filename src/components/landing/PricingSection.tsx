@@ -73,8 +73,8 @@ const plans: Plan[] = [
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
       mensal: { value: "449,90", period: "/mês" },
-      trimestral: { value: "1.169,90", period: "/trimestre", savingsText: "Você economiza R$ 179,80 comparado ao mensal" },
-      semestral: { value: "2.249,90", period: "/semestre", savingsText: "Você economiza R$ 449,50 comparado ao mensal" },
+      trimestral: { value: "1.169,90", period: "/trimestre", savingsText: "Economia total de R$ 179,80" },
+      semestral: { value: "2.249,90", period: "/semestre", savingsText: "Economia total de R$ 449,50" },
     },
     features: [
       "Dieta individualizada completa",
