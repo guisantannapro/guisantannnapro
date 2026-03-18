@@ -203,10 +203,15 @@ const PricingSection = () => {
                           {currentPricing.period}
                         </span>
                       </div>
-                      {currentPricing.savings && (
-                        <p className="text-xs text-primary/70 font-body normal-case mt-1.5">
-                          {currentPricing.savings}
-                        </p>
+                      {currentPricing.savingsText && (
+                        <motion.p
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1, duration: 0.25 }}
+                          className="text-xs text-primary/80 font-body normal-case mt-2 text-center"
+                        >
+                          💰 {currentPricing.savingsText}
+                        </motion.p>
                       )}
                     </motion.div>
                   </AnimatePresence>
