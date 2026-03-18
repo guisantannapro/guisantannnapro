@@ -40,7 +40,6 @@ const plans: Plan[] = [
       "Escolha entre dieta OU treino individualizado",
       "Estrutura personalizada inicial",
       "Direcionamento profissional",
-      "Atualização mensal",
     ],
     cta: "Começar Agora",
     badge: null,
