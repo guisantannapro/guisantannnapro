@@ -8,12 +8,6 @@ const stats = [
     icon: Trophy,
     value: "15x",
     label: "Campeão",
-    subItems: [
-      "Brasileiro IFBB",
-      "Musclecontest Correia Classic",
-      "Musclecontest Iron Games",
-      "Musclecontest Masters Brasil 2x",
-    ],
   },
   { icon: Users, value: "100+", label: "Atletas e clientes atendidos" },
   { icon: Target, value: "100%", label: "Método baseado em prática real" },
