@@ -144,7 +144,9 @@ const PriceSelector = ({
               <span className="text-sm text-muted-foreground font-body normal-case">R$</span>
               <span className="text-5xl font-bold font-display text-gradient-gold">{intPart}</span>
               <span className="text-lg font-bold font-display text-gradient-gold">,{centPart}</span>
-              <span className="text-muted-foreground font-body normal-case text-sm">{current.period}</span>
+              {!plan.hasSelector && (
+                <span className="text-muted-foreground font-body normal-case text-sm">{current.period}</span>
+              )}
               {plan.hasSelector && (
                 <ChevronDown
                   className={`w-4 h-4 text-muted-foreground ml-1 transition-transform duration-200 ${open ? "rotate-180" : ""} group-hover:text-primary`}
