@@ -62,6 +62,7 @@ const plans: Plan[] = [
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames",
       "Ajustes conforme evolução",
+      "Atualização mensal",
     ],
     cta: "Quero Minha Transformação",
     badge: "Mais escolhido pelos clientes",
