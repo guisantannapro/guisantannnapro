@@ -40,6 +40,16 @@ const AuthoritySection = () => {
               <span className="text-xs md:text-sm text-muted-foreground mt-1 font-body normal-case">
                 {stat.label}
               </span>
+              {"subItems" in stat && stat.subItems && (
+                <div className="mt-2 space-y-0.5">
+                  <p className="text-[10px] md:text-xs text-muted-foreground/70 font-body normal-case uppercase tracking-wider">Principais títulos</p>
+                  {stat.subItems.map((item: string) => (
+                    <p key={item} className="text-[10px] md:text-xs text-muted-foreground font-body normal-case">
+                      {item}
+                    </p>
+                  ))}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
