@@ -32,9 +32,9 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-display text-4xl md:text-6xl lg:text-7xl font-bold uppercase leading-tight mb-6 max-w-4xl mx-auto"
         >
-          Transforme Seu Corpo com{" "}
-          <span className="text-gradient-gold">Estratégia, Disciplina</span> e
-          Acompanhamento Profissional
+          Assessoria Fitness Online
+          <br />
+          <span className="text-gradient-gold">Treino & Nutrição</span>
         </motion.h1>
 
         <motion.p
@@ -43,8 +43,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="font-body text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-4 normal-case"
         >
-          Consultoria online personalizada para quem quer ganhar massa muscular,
-          perder gordura e alcançar resultados reais.
+          Transforme seu corpo com estratégia, disciplina e acompanhamento profissional.
         </motion.p>
 
         <motion.p
