@@ -194,17 +194,17 @@ const PriceSelector = ({
                     onSelect(key);
                     setOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors ${
+                  className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors ${
                     isActive
                       ? "bg-primary/10 text-primary"
                       : "text-foreground/80 hover:bg-muted"
                   }`}
                 >
-                  <span className="font-display text-sm font-bold uppercase tracking-wider">
+                  <span className="font-display text-sm font-bold uppercase tracking-wider shrink-0">
                     {p.label}
                   </span>
-                  <span className="font-body text-sm normal-case">
-                    R$ {p.value}{p.period}
+                  <span className="font-body text-xs normal-case text-right whitespace-nowrap">
+                    R$ {p.value}
                   </span>
                 </button>
               );
