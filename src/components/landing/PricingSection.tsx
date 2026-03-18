@@ -51,8 +51,8 @@ const plans: Plan[] = [
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
       mensal: { value: "329,90", period: "/mês" },
-      trimestral: { value: "867,90", period: "/trimestre", savingsText: "Você economiza R$ 121,80 comparado ao mensal" },
-      semestral: { value: "1.679,90", period: "/semestre", savingsText: "Você economiza R$ 299,50 comparado ao mensal" },
+      trimestral: { value: "867,90", period: "/trimestre", savingsText: "Economia total de R$ 121,80" },
+      semestral: { value: "1.679,90", period: "/semestre", savingsText: "Economia total de R$ 299,50" },
     },
     features: [
       "Dieta individualizada completa",
