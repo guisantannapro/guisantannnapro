@@ -8,12 +8,6 @@ const stats = [
     icon: Trophy,
     value: "15x",
     label: "Campeão",
-    subItems: [
-      "Brasileiro IFBB",
-      "Musclecontest Correia Classic",
-      "Musclecontest Iron Games",
-      "Musclecontest Masters Brasil 2x",
-    ],
   },
   { icon: Users, value: "100+", label: "Atletas e clientes atendidos" },
   { icon: Target, value: "100%", label: "Método baseado em prática real" },
@@ -40,15 +34,6 @@ const AuthoritySection = () => {
               <span className="text-xs md:text-sm text-muted-foreground mt-1 font-body normal-case">
                 {stat.label}
               </span>
-              {"subItems" in stat && stat.subItems && (
-                <div className="mt-2 space-y-0.5">
-                  {stat.subItems.map((item: string) => (
-                    <p key={item} className="text-[10px] md:text-xs text-muted-foreground font-body normal-case">
-                      {item}
-                    </p>
-                  ))}
-                </div>
-              )}
             </motion.div>
           ))}
         </div>
