@@ -82,7 +82,7 @@ const plans: Plan[] = [
       "Periodização de treino avançada",
       "Feedback semanal via WhatsApp",
       "Correção de exercícios por vídeo",
-      "Atualização de fotos quinzenal",
+      "Atualização quinzenal",
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames com ajustes",
       "Resposta prioritária",
