@@ -42,7 +42,6 @@ const AuthoritySection = () => {
               </span>
               {"subItems" in stat && stat.subItems && (
                 <div className="mt-2 space-y-0.5">
-                  <p className="text-[10px] md:text-xs text-muted-foreground/70 font-body normal-case uppercase tracking-wider">Principais títulos</p>
                   {stat.subItems.map((item: string) => (
                     <p key={item} className="text-[10px] md:text-xs text-muted-foreground font-body normal-case">
                       {item}
