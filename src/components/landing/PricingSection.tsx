@@ -120,15 +120,25 @@ const PricingSection = () => {
             profissional para evolução real.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center rounded-lg border border-border bg-card p-1 gap-1">
+          {/* Billing Toggle — Sliding Pill */}
+          <div className="relative inline-flex items-center rounded-full border border-border bg-secondary p-1">
+            {/* Animated gold pill background */}
+            <motion.div
+              className="absolute top-1 bottom-1 rounded-full bg-gradient-gold"
+              layout
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              style={{
+                width: `calc(${100 / billingOptions.length}% - 4px)`,
+                left: `calc(${billingOptions.findIndex((o) => o.key === billing) * (100 / billingOptions.length)}% + 2px)`,
+              }}
+            />
             {billingOptions.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => setBilling(opt.key)}
-                className={`px-5 py-2 rounded-md text-sm font-display font-bold uppercase tracking-wider transition-all ${
+                className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-display font-bold uppercase tracking-widest transition-colors duration-200 ${
                   billing === opt.key
-                    ? "bg-gradient-gold text-primary-foreground"
+                    ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
