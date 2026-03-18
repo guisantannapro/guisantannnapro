@@ -4,12 +4,15 @@ import { Check, Crown, Star, Zap } from "lucide-react";
 const plans = [
   {
     name: "Base",
-    subtitle: "Ideal para quem quer começar com estrutura profissional.",
-    price: "149",
+    subtitle: "Ideal para quem quer começar com estratégia e direcionamento profissional.",
+    price: "129",
+    priceCents: "90",
+    extraPrices: null,
+    savingsNote: null,
     features: [
-      "Treino personalizado",
-      "Estratégia nutricional inicial",
-      "Avaliação física inicial",
+      "Escolha entre dieta OU treino individualizado",
+      "Estrutura personalizada inicial",
+      "Direcionamento profissional",
       "Atualização mensal",
     ],
     cta: "Começar Agora",
@@ -19,14 +22,21 @@ const plans = [
   },
   {
     name: "Transformação",
-    subtitle: "Para quem quer resultados mais rápidos e acompanhamento estratégico.",
-    price: "349",
+    subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
+    price: "329",
+    priceCents: "90",
+    extraPrices: [
+      { value: "R$ 867,90", period: "/trimestre" },
+      { value: "R$ 1.679,90", period: "/semestre" },
+    ],
+    savingsNote: "Economize até R$ 299 no plano semestral",
     features: [
-      "Treino personalizado completo",
-      "Estratégia nutricional individualizada",
-      "Acompanhamento mensal",
-      "Ajustes no plano conforme evolução",
-      "Suporte para dúvidas",
+      "Dieta individualizada completa",
+      "Periodização de treino personalizada",
+      "Feedbacks mensais",
+      "Sugestão de suplementos e manipulados",
+      "Avaliação de exames",
+      "Ajustes conforme evolução",
     ],
     cta: "Quero Minha Transformação",
     badge: "Mais escolhido pelos clientes",
@@ -35,15 +45,23 @@ const plans = [
   },
   {
     name: "Elite",
-    subtitle: "Acompanhamento completo para máxima evolução física.",
-    price: "499",
+    subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
+    price: "449",
+    priceCents: "90",
+    extraPrices: [
+      { value: "R$ 1.169,90", period: "/trimestre" },
+      { value: "R$ 2.249,90", period: "/semestre" },
+    ],
+    savingsNote: "Maior economia nos planos longos",
     features: [
-      "Treino personalizado avançado",
-      "Estratégia nutricional completa",
-      "Acompanhamento próximo",
-      "Ajustes frequentes no plano",
-      "Análise de evolução detalhada",
-      "Suporte prioritário",
+      "Dieta individualizada completa",
+      "Periodização de treino avançada",
+      "Feedback semanal via WhatsApp",
+      "Correção de exercícios por vídeo",
+      "Atualização de fotos quinzenal",
+      "Sugestão de suplementos e manipulados",
+      "Avaliação de exames com ajustes",
+      "Resposta prioritária",
     ],
     cta: "Quero Acompanhamento Elite",
     badge: "Plano Premium",
@@ -73,8 +91,8 @@ const PricingSection = () => {
             <span className="text-gradient-gold">Transformação</span>
           </h2>
           <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
-            Todos os planos incluem acompanhamento profissional e estratégia
-            personalizada para evolução real.
+            Todos os planos incluem estratégia personalizada e acompanhamento
+            profissional para evolução real.
           </p>
         </motion.div>
 
@@ -117,15 +135,33 @@ const PricingSection = () => {
               </div>
 
               <div className="mb-8">
-                <span className="text-sm text-muted-foreground font-body normal-case">
-                  R$
-                </span>
-                <span className="text-5xl font-bold font-display text-gradient-gold ml-1">
-                  {plan.price}
-                </span>
-                <span className="text-muted-foreground font-body normal-case text-sm">
-                  /mês
-                </span>
+                <div>
+                  <span className="text-sm text-muted-foreground font-body normal-case">
+                    R$
+                  </span>
+                  <span className="text-5xl font-bold font-display text-gradient-gold ml-1">
+                    {plan.price}
+                  </span>
+                  <span className="text-lg font-bold font-display text-gradient-gold">,{plan.priceCents}</span>
+                  <span className="text-muted-foreground font-body normal-case text-sm">
+                    /mês
+                  </span>
+                </div>
+                {plan.extraPrices && (
+                  <div className="mt-3 space-y-1">
+                    {plan.extraPrices.map((ep) => (
+                      <div key={ep.period} className="text-sm text-muted-foreground font-body normal-case">
+                        <span className="font-semibold text-foreground/70">{ep.value}</span>
+                        <span>{ep.period}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {plan.savingsNote && (
+                  <p className="text-xs text-primary/70 font-body normal-case mt-2">
+                    {plan.savingsNote}
+                  </p>
+                )}
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
