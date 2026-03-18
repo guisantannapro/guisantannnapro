@@ -126,35 +126,49 @@ const PriceSelector = ({
 
   return (
     <div className="mb-8 relative" ref={ref}>
-      {/* Clickable price */}
-      <button
-        type="button"
-        onClick={() => plan.hasSelector && setOpen((o) => !o)}
-        className={`w-full text-left group ${plan.hasSelector ? "cursor-pointer" : "cursor-default"}`}
-      >
+      {/* Price row: clickable button + period label outside */}
+      <div className="flex items-baseline flex-wrap gap-x-1">
+        <span className="text-sm text-muted-foreground font-body normal-case">R$</span>
         <AnimatePresence mode="wait">
-          <motion.div
+          <motion.span
             key={billing}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2 }}
+            className="inline-flex items-baseline gap-x-0.5"
           >
-            <div className="flex items-baseline flex-wrap gap-x-1">
-              <span className="text-sm text-muted-foreground font-body normal-case">R$</span>
-              <span className="text-5xl font-bold font-display text-gradient-gold">{intPart}</span>
-              <span className="text-lg font-bold font-display text-gradient-gold">,{centPart}</span>
-              {!plan.hasSelector && (
-                <span className="text-muted-foreground font-body normal-case text-sm">{current.period}</span>
-              )}
-              {plan.hasSelector && (
-                <ChevronDown
-                  className={`w-4 h-4 text-muted-foreground ml-1 transition-transform duration-200 ${open ? "rotate-180" : ""} group-hover:text-primary`}
-                />
-              )}
-            </div>
-          </motion.div>
+            <span className="text-5xl font-bold font-display text-gradient-gold">{intPart}</span>
+            <span className="text-lg font-bold font-display text-gradient-gold">,{centPart}</span>
+          </motion.span>
         </AnimatePresence>
+        {plan.hasSelector && (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="inline-flex items-center gap-1 cursor-pointer group ml-1"
+          >
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={billing}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="text-muted-foreground font-body normal-case text-sm group-hover:text-primary transition-colors"
+              >
+                {current.period}
+              </motion.span>
+            </AnimatePresence>
+            <ChevronDown
+              className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""} group-hover:text-primary`}
+            />
+          </button>
+        )}
+        {!plan.hasSelector && (
+          <span className="text-muted-foreground font-body normal-case text-sm">{current.period}</span>
+        )}
+      </div>
 
         {/* Savings text */}
         <AnimatePresence>
