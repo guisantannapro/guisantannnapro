@@ -10,7 +10,7 @@ const stats = [
     label: "Campeão",
     subItems: [
       "Brasileiro IFBB",
-      "Correa Classic NPC",
+      "Musclecontest Correia Classic",
       "Musclecontest Iron Games",
       "Musclecontest Masters Brasil 2x",
     ],
