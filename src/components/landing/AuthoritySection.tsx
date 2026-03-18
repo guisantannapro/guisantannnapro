@@ -4,7 +4,17 @@ import { Trophy, Dumbbell, Users, Target, Medal } from "lucide-react";
 const stats = [
   { icon: Dumbbell, value: "20+", label: "Anos de experiência" },
   { icon: Medal, value: "IFBB PRO", label: "Atleta profissional" },
-  { icon: Trophy, value: "15x", label: "Campeão — Brasileiro IFBB, NPC Eduardo Corrêa Classic, Musclecontest Iron Games, Musclecontest Masters Brasil 2x" },
+  {
+    icon: Trophy,
+    value: "15x",
+    label: "Campeão",
+    subItems: [
+      "Brasileiro IFBB",
+      "Correa Classic NPC",
+      "Musclecontest Iron Games",
+      "Musclecontest Masters Brasil 2x",
+    ],
+  },
   { icon: Users, value: "100+", label: "Atletas e clientes atendidos" },
   { icon: Target, value: "100%", label: "Método baseado em prática real" },
 ];
@@ -30,6 +40,16 @@ const AuthoritySection = () => {
               <span className="text-xs md:text-sm text-muted-foreground mt-1 font-body normal-case">
                 {stat.label}
               </span>
+              {"subItems" in stat && stat.subItems && (
+                <div className="mt-2 space-y-0.5">
+                  <p className="text-[10px] md:text-xs text-muted-foreground/70 font-body normal-case uppercase tracking-wider">Principais títulos</p>
+                  {stat.subItems.map((item: string) => (
+                    <p key={item} className="text-[10px] md:text-xs text-muted-foreground font-body normal-case">
+                      {item}
+                    </p>
+                  ))}
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
