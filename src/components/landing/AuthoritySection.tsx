@@ -4,7 +4,7 @@ import { Trophy, Dumbbell, Users, Target, Medal } from "lucide-react";
 const stats = [
   { icon: Dumbbell, value: "20+", label: "Anos de experiência" },
   { icon: Medal, value: "IFBB PRO", label: "Atleta profissional" },
-  { icon: Trophy, value: "6x", label: "Campeão (Estreante, Estadual, Brasileiro, Eduardo Corrêa Classic, Iron Games, Masters Brasil)" },
+  { icon: Trophy, value: "15x", label: "Campeão — Brasileiro IFBB, NPC Eduardo Corrêa Classic, Musclecontest Iron Games, Musclecontest Masters Brasil 2x" },
   { icon: Users, value: "100+", label: "Atletas e clientes atendidos" },
   { icon: Target, value: "100%", label: "Método baseado em prática real" },
 ];
