@@ -185,7 +185,6 @@ const PriceSelector = ({
             </motion.p>
           )}
         </AnimatePresence>
-      </button>
 
       {/* Dropdown */}
       <AnimatePresence>
