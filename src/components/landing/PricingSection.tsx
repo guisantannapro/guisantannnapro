@@ -51,8 +51,8 @@ const plans: Plan[] = [
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
       mensal: { value: "329,90", period: "/mês" },
-      trimestral: { value: "867,90", period: "/trimestre", savingsText: "Você economiza R$ 121,80 comparado ao mensal" },
-      semestral: { value: "1.679,90", period: "/semestre", savingsText: "Você economiza R$ 299,50 comparado ao mensal" },
+      trimestral: { value: "867,90", period: "/trimestre", savingsText: "Economia total de R$ 121,80" },
+      semestral: { value: "1.679,90", period: "/semestre", savingsText: "Economia total de R$ 299,50" },
     },
     features: [
       "Dieta individualizada completa",
@@ -73,8 +73,8 @@ const plans: Plan[] = [
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
       mensal: { value: "449,90", period: "/mês" },
-      trimestral: { value: "1.169,90", period: "/trimestre", savingsText: "Você economiza R$ 179,80 comparado ao mensal" },
-      semestral: { value: "2.249,90", period: "/semestre", savingsText: "Você economiza R$ 449,50 comparado ao mensal" },
+      trimestral: { value: "1.169,90", period: "/trimestre", savingsText: "Economia total de R$ 179,80" },
+      semestral: { value: "2.249,90", period: "/semestre", savingsText: "Economia total de R$ 449,50" },
     },
     features: [
       "Dieta individualizada completa",
@@ -120,15 +120,25 @@ const PricingSection = () => {
             profissional para evolução real.
           </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center rounded-lg border border-border bg-card p-1 gap-1">
+          {/* Billing Toggle — Sliding Pill */}
+          <div className="relative inline-flex items-center rounded-full border border-border bg-secondary p-1">
+            {/* Animated gold pill background */}
+            <motion.div
+              className="absolute top-1 bottom-1 rounded-full bg-gradient-gold"
+              layout
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              style={{
+                width: `calc(${100 / billingOptions.length}% - 4px)`,
+                left: `calc(${billingOptions.findIndex((o) => o.key === billing) * (100 / billingOptions.length)}% + 2px)`,
+              }}
+            />
             {billingOptions.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => setBilling(opt.key)}
-                className={`px-5 py-2 rounded-md text-sm font-display font-bold uppercase tracking-wider transition-all ${
+                className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-display font-bold uppercase tracking-widest transition-colors duration-200 ${
                   billing === opt.key
-                    ? "bg-gradient-gold text-primary-foreground"
+                    ? "text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -207,10 +217,11 @@ const PricingSection = () => {
                         <motion.p
                           initial={{ opacity: 0, y: 4 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1, duration: 0.25 }}
-                          className="text-xs text-primary/80 font-body normal-case mt-2 text-center"
+                          transition={{ delay: 0.15, duration: 0.3 }}
+                          className="text-[11px] font-body normal-case mt-2 text-center"
+                          style={{ color: "hsl(var(--gold-light))" }}
                         >
-                          💰 {currentPricing.savingsText}
+                          {currentPricing.savingsText}
                         </motion.p>
                       )}
                     </motion.div>
