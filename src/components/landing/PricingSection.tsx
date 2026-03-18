@@ -91,8 +91,8 @@ const PricingSection = () => {
             <span className="text-gradient-gold">Transformação</span>
           </h2>
           <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
-            Todos os planos incluem acompanhamento profissional e estratégia
-            personalizada para evolução real.
+            Todos os planos incluem estratégia personalizada e acompanhamento
+            profissional para evolução real.
           </p>
         </motion.div>
 
