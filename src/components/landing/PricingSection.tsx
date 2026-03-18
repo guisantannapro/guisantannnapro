@@ -217,10 +217,11 @@ const PricingSection = () => {
                         <motion.p
                           initial={{ opacity: 0, y: 4 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1, duration: 0.25 }}
-                          className="text-xs text-primary/80 font-body normal-case mt-2 text-center"
+                          transition={{ delay: 0.15, duration: 0.3 }}
+                          className="text-[11px] font-body normal-case mt-2 text-center"
+                          style={{ color: "hsl(var(--gold-light))" }}
                         >
-                          💰 {currentPricing.savingsText}
+                          {currentPricing.savingsText}
                         </motion.p>
                       )}
                     </motion.div>
