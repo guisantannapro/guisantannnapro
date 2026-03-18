@@ -135,15 +135,33 @@ const PricingSection = () => {
               </div>
 
               <div className="mb-8">
-                <span className="text-sm text-muted-foreground font-body normal-case">
-                  R$
-                </span>
-                <span className="text-5xl font-bold font-display text-gradient-gold ml-1">
-                  {plan.price}
-                </span>
-                <span className="text-muted-foreground font-body normal-case text-sm">
-                  /mês
-                </span>
+                <div>
+                  <span className="text-sm text-muted-foreground font-body normal-case">
+                    R$
+                  </span>
+                  <span className="text-5xl font-bold font-display text-gradient-gold ml-1">
+                    {plan.price}
+                  </span>
+                  <span className="text-lg font-bold font-display text-gradient-gold">,{plan.priceCents}</span>
+                  <span className="text-muted-foreground font-body normal-case text-sm">
+                    /mês
+                  </span>
+                </div>
+                {plan.extraPrices && (
+                  <div className="mt-3 space-y-1">
+                    {plan.extraPrices.map((ep) => (
+                      <div key={ep.period} className="text-sm text-muted-foreground font-body normal-case">
+                        <span className="font-semibold text-foreground/70">{ep.value}</span>
+                        <span>{ep.period}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {plan.savingsNote && (
+                  <p className="text-xs text-primary/70 font-body normal-case mt-2">
+                    {plan.savingsNote}
+                  </p>
+                )}
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
