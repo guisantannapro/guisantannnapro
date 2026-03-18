@@ -13,7 +13,7 @@ const billingOptions: { key: BillingPeriod; label: string }[] = [
 interface PlanPricing {
   value: string;
   period: string;
-  savings?: string;
+  savingsText?: string;
 }
 
 interface Plan {
@@ -51,8 +51,8 @@ const plans: Plan[] = [
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
       mensal: { value: "329,90", period: "/mês" },
-      trimestral: { value: "867,90", period: "/trimestre", savings: "Economize R$ 121" },
-      semestral: { value: "1.679,90", period: "/semestre", savings: "Economize R$ 299" },
+      trimestral: { value: "867,90", period: "/trimestre", savingsText: "Você economiza R$ 121,80 comparado ao mensal" },
+      semestral: { value: "1.679,90", period: "/semestre", savingsText: "Você economiza R$ 299,50 comparado ao mensal" },
     },
     features: [
       "Dieta individualizada completa",
@@ -73,8 +73,8 @@ const plans: Plan[] = [
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
       mensal: { value: "449,90", period: "/mês" },
-      trimestral: { value: "1.169,90", period: "/trimestre", savings: "Economize R$ 179" },
-      semestral: { value: "2.249,90", period: "/semestre", savings: "Economize R$ 449" },
+      trimestral: { value: "1.169,90", period: "/trimestre", savingsText: "Você economiza R$ 179,80 comparado ao mensal" },
+      semestral: { value: "2.249,90", period: "/semestre", savingsText: "Você economiza R$ 449,50 comparado ao mensal" },
     },
     features: [
       "Dieta individualizada completa",
@@ -100,7 +100,7 @@ const guarantees = [
 ];
 
 const PricingSection = () => {
-  const [billing, setBilling] = useState<BillingPeriod>("semestral");
+  const [billing, setBilling] = useState<BillingPeriod>("trimestral");
 
   return (
     <section className="py-20 md:py-32" id="planos">
