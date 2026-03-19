@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Crown, Star, Zap, ChevronDown } from "lucide-react";
+import { Check, Crown, Star, Zap, ChevronDown, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type BaseOption = "dieta" | "treino";
 type BaseSelection = BaseOption[];
