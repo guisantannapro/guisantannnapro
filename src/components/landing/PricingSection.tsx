@@ -56,7 +56,7 @@ const plans: Plan[] = [
     features: [
       "Dieta individualizada completa",
       "Periodização de treino personalizada",
-      "Feedbacks mensais",
+      "Feedback mensal",
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames",
       "Ajustes de Protocolo",
