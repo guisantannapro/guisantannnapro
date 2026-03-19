@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Crown, Star, Zap, ChevronDown } from "lucide-react";
+import { Check, Crown, Star, Zap, ChevronDown, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type BaseOption = "dieta" | "treino";
 type BaseSelection = BaseOption[];
@@ -251,11 +252,11 @@ const PricingSection = () => {
     Elite: "trimestral",
   });
   const [baseSelection, setBaseSelection] = useState<BaseSelection>(["dieta"]);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const toggleBaseOption = (opt: BaseOption) => {
     setBaseSelection((prev) => {
       if (prev.includes(opt)) {
-        // Don't allow deselecting all
         if (prev.length === 1) return prev;
         return prev.filter((o) => o !== opt);
       }
@@ -264,6 +265,31 @@ const PricingSection = () => {
   };
 
   const baseMultiplier = baseSelection.length === 2 ? 2 : 1;
+
+  const handleCheckout = async (plan: Plan) => {
+    let priceKey: string;
+    if (plan.name === "Base") {
+      const modalidade = baseSelection.length === 2 ? "dieta+treino" : baseSelection[0];
+      priceKey = `base-${modalidade}-mensal`;
+    } else {
+      priceKey = `${plan.name.toLowerCase()}-${billings[plan.name]}`;
+    }
+
+    setLoadingPlan(plan.name);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceKey },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <section className="py-20 md:py-32" id="planos">
@@ -373,16 +399,21 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <a
-                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseSelection.join("+")}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
-                className={`block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all ${
+              <button
+                onClick={() => handleCheckout(plan)}
+                disabled={loadingPlan === plan.name}
+                className={`w-full block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all disabled:opacity-70 ${
                   plan.featured
                     ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
                     : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 }`}
               >
-                {plan.cta}
-              </a>
+                {loadingPlan === plan.name ? (
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                ) : (
+                  plan.cta
+                )}
+              </button>
             </motion.div>
           ))}
         </div>
