@@ -237,6 +237,7 @@ const PricingSection = () => {
     Transformação: "trimestral",
     Elite: "trimestral",
   });
+  const [baseOption, setBaseOption] = useState<BaseOption>("dieta");
 
   return (
     <section className="py-20 md:py-32" id="planos">
