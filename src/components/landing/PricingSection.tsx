@@ -107,10 +107,12 @@ const PriceSelector = ({
   plan,
   billing,
   onSelect,
+  priceMultiplier = 1,
 }: {
   plan: Plan;
   billing: BillingPeriod;
   onSelect: (b: BillingPeriod) => void;
+  priceMultiplier?: number;
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -124,7 +126,16 @@ const PriceSelector = ({
   }, []);
 
   const current = plan.pricing[billing];
-  const [intPart, centPart] = current.value.split(",");
+  
+  // Apply multiplier to value
+  const applyMultiplier = (val: string) => {
+    const num = parseFloat(val.replace(".", "").replace(",", "."));
+    const result = num * priceMultiplier;
+    return result.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const displayValue = applyMultiplier(current.value);
+  const [intPart, centPart] = displayValue.split(",");
 
   return (
     <div className="mb-8 relative" ref={ref}>
