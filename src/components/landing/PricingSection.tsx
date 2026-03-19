@@ -59,7 +59,7 @@ const plans: Plan[] = [
       "Feedbacks mensais",
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames",
-      "Ajustes conforme evolução",
+      "Ajustes de Protocolo",
       "Atualização mensal",
     ],
     cta: "Quero Minha Transformação",
