@@ -296,6 +296,31 @@ const PricingSection = () => {
                 </p>
               </div>
 
+              {/* Base plan option selector */}
+              {plan.name === "Base" && (
+                <div className="mb-6">
+                  <p className="text-xs text-muted-foreground font-body normal-case mb-2">
+                    Escolha sua modalidade:
+                  </p>
+                  <div className="flex gap-2">
+                    {(["dieta", "treino"] as BaseOption[]).map((opt) => (
+                      <button
+                        key={opt}
+                        type="button"
+                        onClick={() => setBaseOption(opt)}
+                        className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-display font-bold uppercase tracking-wider transition-all ${
+                          baseOption === opt
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-border text-muted-foreground hover:border-primary/40"
+                        }`}
+                      >
+                        {opt === "dieta" ? "Dieta" : "Treino"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <PriceSelector
                 plan={plan}
                 billing={billings[plan.name]}
@@ -312,7 +337,7 @@ const PricingSection = () => {
               </ul>
 
               <a
-                href="#cta"
+                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseOption}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
                 className={`block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all ${
                   plan.featured
                     ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
