@@ -373,7 +373,7 @@ const PricingSection = () => {
               </ul>
 
               <a
-                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseOption}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
+                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseSelection.join("+")}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
                 className={`block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all ${
                   plan.featured
                     ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
