@@ -34,7 +34,7 @@ const plans: Plan[] = [
       semestral: { value: "129,90", period: "/mês", label: "Mensal" },
     },
     features: [
-      "Escolha entre dieta OU treino individualizado",
+      "Dieta ou treino individualizado (você escolhe)",
       "Estrutura personalizada inicial",
       "Direcionamento profissional",
     ],
