@@ -56,6 +56,7 @@ const plans: Plan[] = [
     features: [
       "Dieta individualizada completa",
       "Periodização de treino personalizada",
+      "Feedback mensal via WhatsApp",
       "Atualização mensal (fotos)",
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames",
