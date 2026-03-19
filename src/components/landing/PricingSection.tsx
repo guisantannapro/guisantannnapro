@@ -399,16 +399,21 @@ const PricingSection = () => {
                 ))}
               </ul>
 
-              <a
-                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseSelection.join("+")}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
-                className={`block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all ${
+              <button
+                onClick={() => handleCheckout(plan)}
+                disabled={loadingPlan === plan.name}
+                className={`w-full block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all disabled:opacity-70 ${
                   plan.featured
                     ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
                     : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                 }`}
               >
-                {plan.cta}
-              </a>
+                {loadingPlan === plan.name ? (
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto" />
+                ) : (
+                  plan.cta
+                )}
+              </button>
             </motion.div>
           ))}
         </div>
