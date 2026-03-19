@@ -56,7 +56,7 @@ const AboutSection = () => {
               </p>
               <p>
                 A partir daí, segui vencendo importantes eventos do cenário
-                nacional, como Eduardo Corrêa Classic, Iron Games e Masters Brasil,
+                nacional, como Musclecontest, Eduardo Corrêa Classic, Iron Games e Masters Brasil,
                 consolidando minha carreira até alcançar o
                 status de atleta profissional.
               </p>
