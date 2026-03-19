@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Crown, Star, Zap, ChevronDown } from "lucide-react";
 
 type BaseOption = "dieta" | "treino";
+type BaseSelection = BaseOption[];
 type BillingPeriod = "mensal" | "trimestral" | "semestral";
 
 interface PlanPricing {
@@ -106,10 +107,12 @@ const PriceSelector = ({
   plan,
   billing,
   onSelect,
+  priceMultiplier = 1,
 }: {
   plan: Plan;
   billing: BillingPeriod;
   onSelect: (b: BillingPeriod) => void;
+  priceMultiplier?: number;
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -123,7 +126,16 @@ const PriceSelector = ({
   }, []);
 
   const current = plan.pricing[billing];
-  const [intPart, centPart] = current.value.split(",");
+  
+  // Apply multiplier to value
+  const applyMultiplier = (val: string) => {
+    const num = parseFloat(val.replace(".", "").replace(",", "."));
+    const result = num * priceMultiplier;
+    return result.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const displayValue = applyMultiplier(current.value);
+  const [intPart, centPart] = displayValue.split(",");
 
   return (
     <div className="mb-8 relative" ref={ref}>
@@ -218,7 +230,7 @@ const PriceSelector = ({
                     {p.label}
                   </span>
                   <span className="font-body text-xs normal-case text-right whitespace-nowrap">
-                    R$ {p.value}
+                    R$ {applyMultiplier(p.value)}
                   </span>
                 </button>
               );
@@ -237,7 +249,20 @@ const PricingSection = () => {
     Transformação: "trimestral",
     Elite: "trimestral",
   });
-  const [baseOption, setBaseOption] = useState<BaseOption>("dieta");
+  const [baseSelection, setBaseSelection] = useState<BaseSelection>(["dieta"]);
+
+  const toggleBaseOption = (opt: BaseOption) => {
+    setBaseSelection((prev) => {
+      if (prev.includes(opt)) {
+        // Don't allow deselecting all
+        if (prev.length === 1) return prev;
+        return prev.filter((o) => o !== opt);
+      }
+      return [...prev, opt];
+    });
+  };
+
+  const baseMultiplier = baseSelection.length === 2 ? 2 : 1;
 
   return (
     <section className="py-20 md:py-32" id="planos">
@@ -307,9 +332,9 @@ const PricingSection = () => {
                       <button
                         key={opt}
                         type="button"
-                        onClick={() => setBaseOption(opt)}
+                        onClick={() => toggleBaseOption(opt)}
                         className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-display font-bold uppercase tracking-wider transition-all ${
-                          baseOption === opt
+                          baseSelection.includes(opt)
                             ? "bg-primary text-primary-foreground"
                             : "border border-border text-muted-foreground hover:border-primary/40"
                         }`}
@@ -318,6 +343,16 @@ const PricingSection = () => {
                       </button>
                     ))}
                   </div>
+                  {baseSelection.length === 2 && (
+                    <motion.p
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[11px] font-body normal-case mt-2"
+                      style={{ color: "hsl(var(--gold-light))" }}
+                    >
+                      Dieta + Treino selecionados
+                    </motion.p>
+                  )}
                 </div>
               )}
 
@@ -325,6 +360,7 @@ const PricingSection = () => {
                 plan={plan}
                 billing={billings[plan.name]}
                 onSelect={(b) => setBillings((prev) => ({ ...prev, [plan.name]: b }))}
+                priceMultiplier={plan.name === "Base" ? baseMultiplier : 1}
               />
 
               <ul className="space-y-3 mb-8 flex-1">
@@ -337,7 +373,7 @@ const PricingSection = () => {
               </ul>
 
               <a
-                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseOption}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
+                href={`#cta${plan.name === "Base" ? `?plano=base&modalidade=${baseSelection.join("+")}` : `?plano=${encodeURIComponent(plan.name.toLowerCase())}&periodo=${billings[plan.name]}`}`}
                 className={`block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all ${
                   plan.featured
                     ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
