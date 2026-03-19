@@ -332,9 +332,9 @@ const PricingSection = () => {
                       <button
                         key={opt}
                         type="button"
-                        onClick={() => setBaseOption(opt)}
+                        onClick={() => toggleBaseOption(opt)}
                         className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-display font-bold uppercase tracking-wider transition-all ${
-                          baseOption === opt
+                          baseSelection.includes(opt)
                             ? "bg-primary text-primary-foreground"
                             : "border border-border text-muted-foreground hover:border-primary/40"
                         }`}
@@ -343,6 +343,16 @@ const PricingSection = () => {
                       </button>
                     ))}
                   </div>
+                  {baseSelection.length === 2 && (
+                    <motion.p
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-[11px] font-body normal-case mt-2"
+                      style={{ color: "hsl(var(--gold-light))" }}
+                    >
+                      Dieta + Treino selecionados
+                    </motion.p>
+                  )}
                 </div>
               )}
 
@@ -350,6 +360,7 @@ const PricingSection = () => {
                 plan={plan}
                 billing={billings[plan.name]}
                 onSelect={(b) => setBillings((prev) => ({ ...prev, [plan.name]: b }))}
+                priceMultiplier={plan.name === "Base" ? baseMultiplier : 1}
               />
 
               <ul className="space-y-3 mb-8 flex-1">
