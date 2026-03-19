@@ -3,13 +3,13 @@ import heroImg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] md:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
           src={heroImg}
           alt="Coach Guilherme Sant'Anna - Atleta Profissional de Fisiculturismo"
-          className="w-full h-full object-cover object-center md:object-top opacity-50"
+          className="w-full h-full object-cover object-[center_20%] md:object-top opacity-50"
         />
         <div className="absolute inset-0 bg-background/40" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
