@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Crown, Star, Zap, ChevronDown } from "lucide-react";
 
 type BaseOption = "dieta" | "treino";
+type BaseSelection = BaseOption[];
 type BillingPeriod = "mensal" | "trimestral" | "semestral";
 
 interface PlanPricing {
