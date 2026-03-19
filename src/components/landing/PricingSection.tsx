@@ -252,11 +252,11 @@ const PricingSection = () => {
     Elite: "trimestral",
   });
   const [baseSelection, setBaseSelection] = useState<BaseSelection>(["dieta"]);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const toggleBaseOption = (opt: BaseOption) => {
     setBaseSelection((prev) => {
       if (prev.includes(opt)) {
-        // Don't allow deselecting all
         if (prev.length === 1) return prev;
         return prev.filter((o) => o !== opt);
       }
@@ -265,6 +265,31 @@ const PricingSection = () => {
   };
 
   const baseMultiplier = baseSelection.length === 2 ? 2 : 1;
+
+  const handleCheckout = async (plan: Plan) => {
+    let priceKey: string;
+    if (plan.name === "Base") {
+      const modalidade = baseSelection.length === 2 ? "dieta+treino" : baseSelection[0];
+      priceKey = `base-${modalidade}-mensal`;
+    } else {
+      priceKey = `${plan.name.toLowerCase()}-${billings[plan.name]}`;
+    }
+
+    setLoadingPlan(plan.name);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceKey },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <section className="py-20 md:py-32" id="planos">
