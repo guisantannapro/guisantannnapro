@@ -56,10 +56,10 @@ const plans: Plan[] = [
     features: [
       "Dieta individualizada completa",
       "Periodização de treino personalizada",
+      "Atualização mensal (fotos)",
       "Sugestão de suplementos e manipulados",
       "Avaliação de exames",
       "Ajustes de Protocolo",
-      "Atualização (fotos, peso e feedback geral) mensal",
     ],
     cta: "Quero Minha Transformação",
     badge: "Mais escolhido pelos clientes",
