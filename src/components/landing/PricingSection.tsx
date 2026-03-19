@@ -230,7 +230,7 @@ const PriceSelector = ({
                     {p.label}
                   </span>
                   <span className="font-body text-xs normal-case text-right whitespace-nowrap">
-                    R$ {p.value}
+                    R$ {applyMultiplier(p.value)}
                   </span>
                 </button>
               );
