@@ -275,6 +275,9 @@ const PricingSection = () => {
       priceKey = `${plan.name.toLowerCase()}-${billings[plan.name]}`;
     }
 
+    // Open window synchronously (before await) so Safari doesn't block it
+    const popup = window.open("about:blank", "_blank");
+
     setLoadingPlan(plan.name);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -282,10 +285,18 @@ const PricingSection = () => {
       });
       if (error) throw error;
       if (data?.url) {
-        window.location.href = data.url;
+        if (popup) {
+          popup.location.href = data.url;
+        } else {
+          // Fallback if popup was blocked
+          window.location.href = data.url;
+        }
+      } else {
+        popup?.close();
       }
     } catch (err) {
       console.error("Checkout error:", err);
+      popup?.close();
     } finally {
       setLoadingPlan(null);
     }
