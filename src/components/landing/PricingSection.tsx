@@ -249,7 +249,20 @@ const PricingSection = () => {
     Transformação: "trimestral",
     Elite: "trimestral",
   });
-  const [baseOption, setBaseOption] = useState<BaseOption>("dieta");
+  const [baseSelection, setBaseSelection] = useState<BaseSelection>(["dieta"]);
+
+  const toggleBaseOption = (opt: BaseOption) => {
+    setBaseSelection((prev) => {
+      if (prev.includes(opt)) {
+        // Don't allow deselecting all
+        if (prev.length === 1) return prev;
+        return prev.filter((o) => o !== opt);
+      }
+      return [...prev, opt];
+    });
+  };
+
+  const baseMultiplier = baseSelection.length === 2 ? 2 : 1;
 
   return (
     <section className="py-20 md:py-32" id="planos">
