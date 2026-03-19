@@ -3,7 +3,7 @@ import heroImg from "@/assets/hero-bg.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[75vh] md:min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[65vh] md:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
