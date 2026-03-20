@@ -493,8 +493,8 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
               {(["front", "side", "back", "assessment"] as const).map((type) => {
                 const labels = { front: "Frente", side: "Lado", back: "Costas", assessment: "Avaliação Física" };
                 return (
-                  <div key={type} className="flex flex-col gap-2">
-                    <label className="text-sm text-muted-foreground text-center">
+                  <div key={type} className="flex flex-col gap-2 justify-end">
+                    <label className="text-sm text-muted-foreground text-center min-h-[2.75rem] flex flex-col justify-end">
                       {labels[type]}
                       {type === "assessment" && <span className="block text-xs text-muted-foreground/60">(opcional)</span>}
                     </label>
