@@ -243,9 +243,9 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
           >
             <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl uppercase mb-4">Formulário Enviado!</h2>
+            <h2 className="text-3xl uppercase mb-4">Formulário Salvo!</h2>
             <p className="text-muted-foreground text-lg">
-              Entraremos em contato pelo WhatsApp em até 24 horas.
+              Seus dados e fotos foram salvos com sucesso. Entraremos em contato em breve para iniciar sua consultoria.
             </p>
           </motion.div>
         </div>
