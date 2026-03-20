@@ -4,12 +4,17 @@ import { Check, Lock } from "lucide-react";
 
 import legPressImg from "@/assets/equipment/leg-press.png";
 import supinoImg from "@/assets/equipment/supino.png";
+import supinoInclinadoImg from "@/assets/equipment/supino-inclinado.png";
 import puxadorImg from "@/assets/equipment/puxador.png";
 import cadeiraExtensoraImg from "@/assets/equipment/cadeira-extensora.png";
 import cadeiraFlexoraImg from "@/assets/equipment/cadeira-flexora.png";
 import crossoverImg from "@/assets/equipment/crossover.png";
 import smithMachineImg from "@/assets/equipment/smith-machine.png";
 import hackSquatImg from "@/assets/equipment/hack-squat.png";
+import shoulderPressImg from "@/assets/equipment/shoulder-press.png";
+import remadaImg from "@/assets/equipment/remada.png";
+import peckDeckImg from "@/assets/equipment/peck-deck.png";
+import pulloverImg from "@/assets/equipment/pullover.png";
 
 interface Equipment {
   id: string;
@@ -18,14 +23,19 @@ interface Equipment {
 }
 
 const equipmentList: Equipment[] = [
+  { id: "supino-reto", name: "Supino Reto", image: supinoImg },
+  { id: "supino-inclinado", name: "Supino Inclinado", image: supinoInclinadoImg },
+  { id: "shoulder-press", name: "Shoulder Press", image: shoulderPressImg },
+  { id: "peck-deck", name: "Peck Deck / Fly", image: peckDeckImg },
+  { id: "pullover", name: "Pullover", image: pulloverImg },
+  { id: "puxador", name: "Puxador Frontal", image: puxadorImg },
+  { id: "remada", name: "Remada", image: remadaImg },
   { id: "leg-press", name: "Leg Press", image: legPressImg },
-  { id: "supino", name: "Supino", image: supinoImg },
-  { id: "puxador", name: "Puxador", image: puxadorImg },
+  { id: "hack-squat", name: "Hack Squat", image: hackSquatImg },
   { id: "cadeira-extensora", name: "Cadeira Extensora", image: cadeiraExtensoraImg },
   { id: "cadeira-flexora", name: "Cadeira Flexora", image: cadeiraFlexoraImg },
   { id: "crossover", name: "Crossover", image: crossoverImg },
   { id: "smith-machine", name: "Smith Machine", image: smithMachineImg },
-  { id: "hack-squat", name: "Hack Squat", image: hackSquatImg },
 ];
 
 interface EquipmentSectionProps {
