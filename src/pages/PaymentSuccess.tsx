@@ -1,7 +1,31 @@
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const PaymentSuccess = () => {
+  const [searchParams] = useSearchParams();
+  const plan = searchParams.get("plan");
+  const [activated, setActivated] = useState(false);
+
+  useEffect(() => {
+    const activatePlan = async () => {
+      if (!plan) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase.functions.invoke("activate-plan", {
+        body: { plan },
+      });
+
+      if (!error) setActivated(true);
+    };
+
+    activatePlan();
+  }, [plan]);
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <motion.div
@@ -19,12 +43,22 @@ const PaymentSuccess = () => {
           Seu pagamento foi processado com sucesso. Entraremos em contato em breve
           para iniciar sua consultoria personalizada.
         </p>
-        <a
-          href="/"
-          className="inline-block px-8 py-4 rounded-lg bg-gradient-gold text-primary-foreground font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all"
-        >
-          Voltar ao Início
-        </a>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="/"
+            className="inline-block px-8 py-4 rounded-lg bg-gradient-gold text-primary-foreground font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all"
+          >
+            Voltar ao Início
+          </a>
+          {plan && (
+            <a
+              href="/formulario"
+              className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
+            >
+              Preencher Formulário
+            </a>
+          )}
+        </div>
       </motion.div>
     </div>
   );

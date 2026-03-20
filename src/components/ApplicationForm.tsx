@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
+import EquipmentSection from "./EquipmentSection";
 
 interface FormData {
   fullName: string;
@@ -133,9 +134,14 @@ const ScaleInput = ({ value, onChange, label }: { value: string; onChange: (v: s
   </Field>
 );
 
-const ApplicationForm = () => {
+interface ApplicationFormProps {
+  isElite?: boolean;
+}
+
+const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
 
   const update = (field: keyof FormData, value: string | boolean | string[]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -197,6 +203,10 @@ const ApplicationForm = () => {
       `Horários disponíveis: ${form.availableSchedule || "—"}`,
       `Acompanhamento profissional: ${form.hadProfessionalCoaching || "—"}`,
     ];
+    if (isElite && selectedEquipment.length > 0) {
+      lines.push("", "🔹 *EQUIPAMENTOS DISPONÍVEIS*");
+      lines.push(`Equipamentos: ${selectedEquipment.join(", ")}`);
+    }
     return lines.join("\n");
   };
 
@@ -450,7 +460,14 @@ const ApplicationForm = () => {
             </Field>
           </div>
 
-          {/* SEÇÃO 8 – ENVIO DE FOTOS */}
+          {/* SEÇÃO 8 – EQUIPAMENTOS (ELITE) */}
+          <EquipmentSection
+            isElite={isElite}
+            selectedEquipment={selectedEquipment}
+            onSelectionChange={setSelectedEquipment}
+          />
+
+          {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
           <div className="bg-muted rounded-lg p-6 border border-border space-y-3">
             <p className="text-foreground text-sm font-semibold">Enviar fotos em jejum:</p>
