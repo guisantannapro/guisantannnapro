@@ -9,11 +9,7 @@ import cadeiraExtensoraImg from "@/assets/equipment/cadeira-extensora.png";
 import cadeiraFlexoraImg from "@/assets/equipment/cadeira-flexora.png";
 import crossoverImg from "@/assets/equipment/crossover.png";
 import smithMachineImg from "@/assets/equipment/smith-machine.png";
-import barraImg from "@/assets/equipment/barra.png";
-import halteresImg from "@/assets/equipment/halteres.png";
-import kettlebellImg from "@/assets/equipment/kettlebell.png";
 import hackSquatImg from "@/assets/equipment/hack-squat.png";
-import ghdImg from "@/assets/equipment/ghd.png";
 
 interface Equipment {
   id: string;
@@ -29,11 +25,7 @@ const equipmentList: Equipment[] = [
   { id: "cadeira-flexora", name: "Cadeira Flexora", image: cadeiraFlexoraImg },
   { id: "crossover", name: "Crossover", image: crossoverImg },
   { id: "smith-machine", name: "Smith Machine", image: smithMachineImg },
-  { id: "barra", name: "Barra", image: barraImg },
-  { id: "halteres", name: "Halteres", image: halteresImg },
-  { id: "kettlebell", name: "Kettlebell", image: kettlebellImg },
   { id: "hack-squat", name: "Hack Squat", image: hackSquatImg },
-  { id: "ghd", name: "GHD", image: ghdImg },
 ];
 
 interface EquipmentSectionProps {
