@@ -277,8 +277,6 @@ const PricingSection = () => {
 
     console.log("Checkout initiated:", { priceKey, plan: plan.name });
 
-    const checkoutWindow = window.open("", "_blank", "noopener,noreferrer");
-
     setLoadingPlan(plan.name);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
@@ -289,23 +287,11 @@ const PricingSection = () => {
 
       if (error) throw error;
       if (data?.url) {
-        if (checkoutWindow) {
-          checkoutWindow.location.href = data.url;
-          return;
-        }
-
-        if (window.self !== window.top && window.top) {
-          window.top.location.href = data.url;
-          return;
-        }
-
         window.location.href = data.url;
       } else {
-        if (checkoutWindow && !checkoutWindow.closed) checkoutWindow.close();
         console.error("No checkout URL returned", data);
       }
     } catch (err) {
-      if (checkoutWindow && !checkoutWindow.closed) checkoutWindow.close();
       console.error("Checkout error:", err);
     } finally {
       setLoadingPlan(null);
