@@ -9,11 +9,7 @@ import cadeiraExtensoraImg from "@/assets/equipment/cadeira-extensora.png";
 import cadeiraFlexoraImg from "@/assets/equipment/cadeira-flexora.png";
 import crossoverImg from "@/assets/equipment/crossover.png";
 import smithMachineImg from "@/assets/equipment/smith-machine.png";
-import barraImg from "@/assets/equipment/barra.png";
-import halteresImg from "@/assets/equipment/halteres.png";
-import kettlebellImg from "@/assets/equipment/kettlebell.png";
 import hackSquatImg from "@/assets/equipment/hack-squat.png";
-import ghdImg from "@/assets/equipment/ghd.png";
 
 interface Equipment {
   id: string;
