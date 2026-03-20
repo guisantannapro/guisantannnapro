@@ -460,7 +460,14 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             </Field>
           </div>
 
-          {/* SEÇÃO 8 – ENVIO DE FOTOS */}
+          {/* SEÇÃO 8 – EQUIPAMENTOS (ELITE) */}
+          <EquipmentSection
+            isElite={isElite}
+            selectedEquipment={selectedEquipment}
+            onSelectionChange={setSelectedEquipment}
+          />
+
+          {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
           <div className="bg-muted rounded-lg p-6 border border-border space-y-3">
             <p className="text-foreground text-sm font-semibold">Enviar fotos em jejum:</p>
