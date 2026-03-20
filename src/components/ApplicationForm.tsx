@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
+import EquipmentSection from "./EquipmentSection";
 
 interface FormData {
   fullName: string;
