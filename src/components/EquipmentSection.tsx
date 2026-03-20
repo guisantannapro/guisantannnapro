@@ -25,11 +25,7 @@ const equipmentList: Equipment[] = [
   { id: "cadeira-flexora", name: "Cadeira Flexora", image: cadeiraFlexoraImg },
   { id: "crossover", name: "Crossover", image: crossoverImg },
   { id: "smith-machine", name: "Smith Machine", image: smithMachineImg },
-  { id: "barra", name: "Barra", image: barraImg },
-  { id: "halteres", name: "Halteres", image: halteresImg },
-  { id: "kettlebell", name: "Kettlebell", image: kettlebellImg },
   { id: "hack-squat", name: "Hack Squat", image: hackSquatImg },
-  { id: "ghd", name: "GHD", image: ghdImg },
 ];
 
 interface EquipmentSectionProps {
