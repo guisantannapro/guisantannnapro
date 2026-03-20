@@ -204,6 +204,15 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
+            <ClientFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              planFilter={planFilter}
+              onPlanFilterChange={setPlanFilter}
+              periodFilter={periodFilter}
+              onPeriodFilterChange={setPeriodFilter}
+              totalResults={filteredClients.length}
+            />
             {/* Desktop Table */}
             <div className="hidden md:block bg-card border border-border rounded-lg overflow-hidden">
               <Table>
