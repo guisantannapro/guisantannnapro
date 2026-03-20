@@ -181,75 +181,56 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const buildWhatsAppMessage = () => {
-    const now = new Date();
-    const dataEnvio = now.toLocaleDateString("pt-BR") + " às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    const lines: string[] = [
-      "🏆 *FORMULÁRIO DE INSCRIÇÃO*",
-      "*Consultoria Fitness — Guilherme Sant'Anna IFBBPRO*",
-      `📅 Recebido em: ${dataEnvio}`,
-      "",
-      "🔹 *IDENTIFICAÇÃO*",
-      `Nome: ${form.fullName}`,
-      `Idade: ${form.age}`,
-      `Altura: ${form.height}`,
-      `Peso: ${form.weight}`,
-      `E-mail: ${form.email}`,
-      `Instagram: ${form.instagram || "—"}`,
-      `WhatsApp: ${form.whatsapp}`,
-      `Cidade: ${form.city || "—"}`,
-      "",
-      "🔹 *OBJETIVO*",
-      `Objetivo principal: ${form.mainGoal.join(", ")}${form.mainGoal.includes("Outro") ? ` (${form.mainGoalOther})` : ""}`,
-      `Prazo desejado: ${form.timeline || "—"}`,
-      `Comprometimento: ${form.commitment}/10`,
-      "",
-      "🔹 *SAÚDE*",
-      `Condições de saúde: ${form.healthConditions.length ? form.healthConditions.join(", ") : "—"}${form.healthConditions.includes("Outro") ? ` (${form.healthConditionsOther})` : ""}`,
-      `Medicação: ${form.usesMedication || "—"}${form.usesMedication === "Sim" ? ` — ${form.medicationDetails}` : ""}`,
-      `Hormônios: ${form.usesHormones || "—"}${form.usesHormones === "Sim" ? ` — ${form.hormoneDetails}` : ""}`,
-      `Restrições alimentares: ${form.foodRestrictions || "—"}`,
-      "",
-      "🔹 *SUPLEMENTAÇÃO*",
-      `Usa suplementos: ${form.usesSupplements || "—"}${form.usesSupplements === "Sim" ? ` — ${form.supplementDetails}` : ""}`,
-      "",
-      "🔹 *ALIMENTAÇÃO*",
-      `Refeições/dia: ${form.mealsPerDay || "—"}`,
-      `Horários fixos: ${form.fixedMealTimes || "—"}`,
-      `Dieta diária: ${form.dailyDiet || "—"}`,
-      `Água/dia: ${form.waterIntake || "—"}`,
-      `Compulsão alimentar: ${form.bingEating || "—"}`,
-      "",
-      "🔹 *HISTÓRICO SOCIAL*",
-      `Tabagismo: ${form.smoking || "—"}${form.smoking === "Sim" ? ` — ${form.smokingAmount}/dia` : ""}`,
-      `Álcool: ${form.alcohol || "—"}${form.alcohol === "Sim" ? ` — ${form.alcoholFrequency}x/semana` : ""}`,
-      `Outras substâncias: ${form.otherSubstances || "—"}${form.otherSubstances === "Sim" ? ` — ${form.otherSubstancesDetails}` : ""}`,
-      `Horas de sono: ${form.sleepHours || "—"}`,
-      `Qualidade do sono: ${form.sleepQuality}/10`,
-      `Estresse: ${form.stressLevel || "—"}`,
-      "",
-      "🔹 *TREINAMENTO*",
-      `Modalidades: ${form.trainingModalities.length ? form.trainingModalities.join(", ") : "—"}${form.trainingModalities.includes("Outro") ? ` (${form.trainingModalitiesOther})` : ""}`,
-      `Frequência: ${form.trainingFrequency || "—"}x/semana`,
-      `Duração: ${form.trainingDuration || "—"}`,
-      `Experiência: ${form.trainingExperience || "—"}`,
-      `Esforço no trabalho: ${form.workEffort || "—"}`,
-      `Horários disponíveis: ${form.availableSchedule || "—"}`,
-      `Acompanhamento profissional: ${form.hadProfessionalCoaching || "—"}`,
-    ];
-    if (isElite && selectedEquipment.length > 0) {
-      lines.push("", "🔹 *EQUIPAMENTOS DISPONÍVEIS*");
-      lines.push(`Equipamentos: ${selectedEquipment.join(", ")}`);
-    }
-    return lines.join("\n");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const message = encodeURIComponent(buildWhatsAppMessage());
-    const whatsappUrl = `https://wa.me/5548999501722?text=${message}`;
-    window.open(whatsappUrl, "_blank");
-    setSubmitted(true);
+    setUploading(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert("Você precisa estar logado para enviar o formulário.");
+        setUploading(false);
+        return;
+      }
+
+      const userId = session.user.id;
+
+      // Upload photos
+      let photoFrontPath: string | null = null;
+      let photoSidePath: string | null = null;
+      let photoBackPath: string | null = null;
+      let photoAssessmentPath: string | null = null;
+
+      if (photos.front) photoFrontPath = await uploadPhoto(photos.front, userId, "frente");
+      if (photos.side) photoSidePath = await uploadPhoto(photos.side, userId, "lado");
+      if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
+      if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
+
+      // Save form data to Supabase
+      const { error } = await supabase.from("form_submissions").insert({
+        user_id: userId,
+        form_data: form as any,
+        photo_front: photoFrontPath,
+        photo_side: photoSidePath,
+        photo_back: photoBackPath,
+        photo_assessment: photoAssessmentPath,
+        selected_equipment: isElite ? selectedEquipment : [],
+      });
+
+      if (error) {
+        console.error("Submit error:", error);
+        alert("Erro ao enviar formulário. Tente novamente.");
+        setUploading(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Erro ao enviar formulário. Tente novamente.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (submitted) {
@@ -262,9 +243,9 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
           >
             <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl uppercase mb-4">Formulário Enviado!</h2>
+            <h2 className="text-3xl uppercase mb-4">Formulário Salvo!</h2>
             <p className="text-muted-foreground text-lg">
-              Entraremos em contato pelo WhatsApp em até 24 horas.
+              Seus dados e fotos foram salvos com sucesso. Entraremos em contato em breve para iniciar sua consultoria.
             </p>
           </motion.div>
         </div>
@@ -503,24 +484,43 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
 
           {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
-          <div className="bg-muted rounded-lg p-6 border border-border space-y-3">
-            <p className="text-foreground text-sm font-semibold">Enviar fotos em jejum:</p>
-            <ul className="text-muted-foreground text-sm space-y-1 list-disc list-inside">
-              <li>Frente</li>
-              <li>Lado</li>
-              <li>Costas</li>
-            </ul>
-            <div className="text-muted-foreground text-sm space-y-1">
-              <p>✔ Boa iluminação</p>
-              <p>✔ Mesmo local</p>
-              <p>✔ Postura relaxada</p>
-              <p>✔ Sem contração</p>
+          <div className="space-y-4">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <p className="text-muted-foreground text-sm mb-1">📋 Instruções para as fotos:</p>
+              <p className="text-muted-foreground text-xs">Em jejum • Boa iluminação • Postura relaxada • Sem contração</p>
             </div>
-            <div className="mt-4 p-4 bg-primary/10 border border-primary/30 rounded-lg">
-              <p className="text-foreground text-sm font-semibold">📲 Após enviar este formulário, envie suas fotos separadamente pelo WhatsApp.</p>
-              <p className="text-muted-foreground text-xs mt-1">
-                Caso possua avaliação física recente, envie junto com as fotos.
-              </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {(["front", "side", "back", "assessment"] as const).map((type) => {
+                const labels = { front: "Frente", side: "Lado", back: "Costas", assessment: "Avaliação Física" };
+                return (
+                  <div key={type} className="flex flex-col gap-2">
+                    <label className="text-sm text-muted-foreground text-center">{labels[type]}</label>
+                    {photoPreviews[type] ? (
+                      <div className="relative aspect-[3/4] rounded-lg overflow-hidden border-2 border-primary/30">
+                        <img src={photoPreviews[type]} alt={labels[type]} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(type)}
+                          className="absolute top-1 right-1 w-6 h-6 bg-destructive rounded-full flex items-center justify-center"
+                        >
+                          <X className="w-3 h-3 text-destructive-foreground" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="aspect-[3/4] rounded-lg border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer bg-muted/30">
+                        <Upload className="w-6 h-6 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Enviar</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handlePhotoChange(type, e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -544,9 +544,17 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full mt-8 bg-gradient-gold text-primary-foreground uppercase tracking-widest px-10 py-4 text-lg font-semibold glow-gold rounded-md"
+            disabled={uploading}
+            className="w-full mt-8 bg-gradient-gold text-primary-foreground uppercase tracking-widest px-10 py-4 text-lg font-semibold glow-gold rounded-md disabled:opacity-50 flex items-center justify-center gap-3"
           >
-            Enviar Inscrição
+            {uploading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Salvando...
+              </>
+            ) : (
+              "Salvar Inscrição"
+            )}
           </motion.button>
         </motion.form>
       </div>
