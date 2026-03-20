@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import EquipmentSection from "./EquipmentSection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   fullName: string;
