@@ -203,6 +203,10 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
       `Horários disponíveis: ${form.availableSchedule || "—"}`,
       `Acompanhamento profissional: ${form.hadProfessionalCoaching || "—"}`,
     ];
+    if (isElite && selectedEquipment.length > 0) {
+      lines.push("", "🔹 *EQUIPAMENTOS DISPONÍVEIS*");
+      lines.push(`Equipamentos: ${selectedEquipment.join(", ")}`);
+    }
     return lines.join("\n");
   };
 
