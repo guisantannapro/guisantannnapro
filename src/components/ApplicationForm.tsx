@@ -544,9 +544,17 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full mt-8 bg-gradient-gold text-primary-foreground uppercase tracking-widest px-10 py-4 text-lg font-semibold glow-gold rounded-md"
+            disabled={uploading}
+            className="w-full mt-8 bg-gradient-gold text-primary-foreground uppercase tracking-widest px-10 py-4 text-lg font-semibold glow-gold rounded-md disabled:opacity-50 flex items-center justify-center gap-3"
           >
-            Enviar Inscrição
+            {uploading ? (
+              <>
+                <Loader2 className="animate-spin" size={20} />
+                Salvando...
+              </>
+            ) : (
+              "Salvar Inscrição"
+            )}
           </motion.button>
         </motion.form>
       </div>
