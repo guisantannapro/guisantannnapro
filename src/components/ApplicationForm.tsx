@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import EquipmentSection from "./EquipmentSection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
   fullName: string;
@@ -142,6 +143,39 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null; assessment: File | null }>({
+    front: null, side: null, back: null, assessment: null,
+  });
+  const [photoPreviews, setPhotoPreviews] = useState<{ front: string; side: string; back: string; assessment: string }>({
+    front: "", side: "", back: "", assessment: "",
+  });
+
+  const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
+    setPhotos((prev) => ({ ...prev, [type]: file }));
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPhotoPreviews((prev) => ({ ...prev, [type]: url }));
+    } else {
+      setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
+    }
+  };
+
+  const removePhoto = (type: "front" | "side" | "back" | "assessment") => {
+    setPhotos((prev) => ({ ...prev, [type]: null }));
+    setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
+  };
+
+  const uploadPhoto = async (file: File, userId: string, type: string): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const path = `${userId}/${type}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("client-photos").upload(path, file);
+    if (error) {
+      console.error(`Upload ${type} error:`, error);
+      return null;
+    }
+    return path;
+  };
 
   const update = (field: keyof FormData, value: string | boolean | string[]) => {
     setForm((prev) => ({ ...prev, [field]: value }));

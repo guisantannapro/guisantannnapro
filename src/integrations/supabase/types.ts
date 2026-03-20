@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      form_submissions: {
+        Row: {
+          created_at: string
+          form_data: Json
+          id: string
+          photo_assessment: string | null
+          photo_back: string | null
+          photo_front: string | null
+          photo_side: string | null
+          selected_equipment: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          form_data: Json
+          id?: string
+          photo_assessment?: string | null
+          photo_back?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          selected_equipment?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json
+          id?: string
+          photo_assessment?: string | null
+          photo_back?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          selected_equipment?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
