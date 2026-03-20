@@ -510,7 +510,7 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
                         </button>
                       </div>
                     ) : (
-                      <label className="aspect-[3/4] rounded-lg border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-end pb-4 gap-2 cursor-pointer bg-muted/30">
+                      <label className="aspect-[3/4] rounded-lg border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer bg-muted/30">
                         <Upload className="w-6 h-6 text-muted-foreground" />
                         <span className="text-xs text-muted-foreground">Enviar</span>
                         <input
