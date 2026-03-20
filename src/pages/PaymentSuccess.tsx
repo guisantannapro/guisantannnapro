@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get("plan");
-  const [activated, setActivated] = useState(false);
+  const [activating, setActivating] = useState(!!plan);
 
   useEffect(() => {
     const activatePlan = async () => {
       if (!plan) return;
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session) {
+        setActivating(false);
+        return;
+      }
 
       const { error } = await supabase.functions.invoke("activate-plan", {
         body: { plan },
       });
 
-      if (!error) setActivated(true);
+      setActivating(false);
     };
 
     activatePlan();
@@ -51,12 +54,19 @@ const PaymentSuccess = () => {
             Voltar ao Início
           </a>
           {plan && (
-            <a
-              href="/formulario"
-              className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
-            >
-              Preencher Formulário
-            </a>
+            activating ? (
+              <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border border-border text-muted-foreground font-display font-bold uppercase tracking-wider">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Ativando plano...
+              </div>
+            ) : (
+              <a
+                href="/formulario"
+                className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
+              >
+                Preencher Formulário
+              </a>
+            )
           )}
         </div>
       </motion.div>
