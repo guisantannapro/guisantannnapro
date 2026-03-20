@@ -172,7 +172,6 @@ const Auth = () => {
             </svg>
             Entrar com Google
           </button>
-          </motion.button>
 
           <p className="text-center text-sm text-muted-foreground">
             {isLogin ? "Não tem conta?" : "Já tem conta?"}{" "}
