@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft } from "lucide-react";
+import ClientFilters from "@/components/dashboard/ClientFilters";
 import { useNavigate } from "react-router-dom";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -44,7 +45,32 @@ const Dashboard = () => {
   const [clients, setClients] = useState<ClientData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [planFilter, setPlanFilter] = useState("all");
+  const [periodFilter, setPeriodFilter] = useState("all");
   const navigate = useNavigate();
+
+  const filteredClients = useMemo(() => {
+    return clients.filter((client) => {
+      // Search filter
+      if (searchTerm) {
+        const name = (client.form_data?.fullName || "").toLowerCase();
+        const email = (client.form_data?.email || "").toLowerCase();
+        const term = searchTerm.toLowerCase();
+        if (!name.includes(term) && !email.includes(term)) return false;
+      }
+      // Plan filter
+      if (planFilter !== "all" && client.profile?.plan !== planFilter) return false;
+      // Period filter
+      if (periodFilter !== "all") {
+        const days = parseInt(periodFilter);
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - days);
+        if (new Date(client.created_at) < cutoff) return false;
+      }
+      return true;
+    });
+  }, [clients, searchTerm, planFilter, periodFilter]);
 
   useEffect(() => {
     fetchClients();
@@ -178,6 +204,15 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
+            <ClientFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              planFilter={planFilter}
+              onPlanFilterChange={setPlanFilter}
+              periodFilter={periodFilter}
+              onPeriodFilterChange={setPeriodFilter}
+              totalResults={filteredClients.length}
+            />
             {/* Desktop Table */}
             <div className="hidden md:block bg-card border border-border rounded-lg overflow-hidden">
               <Table>
@@ -192,7 +227,7 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {clients.map((client) => (
+                  {filteredClients.map((client) => (
                     <TableRow key={client.id} className="border-border">
                       <TableCell className="font-medium text-foreground">
                         {getField(client, "fullName")}
@@ -233,7 +268,7 @@ const Dashboard = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {clients.map((client) => (
+              {filteredClients.map((client) => (
                 <motion.div
                   key={client.id}
                   initial={{ opacity: 0, y: 10 }}
