@@ -38,6 +38,11 @@ serve(async (req) => {
       );
     }
 
+    // Determine plan type from priceKey
+    let planType = "base";
+    if (priceKey.startsWith("elite")) planType = "elite";
+    else if (priceKey.startsWith("transformação")) planType = "transformacao";
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -45,7 +50,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/pagamento-sucesso`,
+      success_url: `${req.headers.get("origin")}/pagamento-sucesso?plan=${planType}`,
       cancel_url: `${req.headers.get("origin")}/#planos`,
     });
 
