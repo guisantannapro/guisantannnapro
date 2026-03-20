@@ -181,75 +181,56 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const buildWhatsAppMessage = () => {
-    const now = new Date();
-    const dataEnvio = now.toLocaleDateString("pt-BR") + " às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    const lines: string[] = [
-      "🏆 *FORMULÁRIO DE INSCRIÇÃO*",
-      "*Consultoria Fitness — Guilherme Sant'Anna IFBBPRO*",
-      `📅 Recebido em: ${dataEnvio}`,
-      "",
-      "🔹 *IDENTIFICAÇÃO*",
-      `Nome: ${form.fullName}`,
-      `Idade: ${form.age}`,
-      `Altura: ${form.height}`,
-      `Peso: ${form.weight}`,
-      `E-mail: ${form.email}`,
-      `Instagram: ${form.instagram || "—"}`,
-      `WhatsApp: ${form.whatsapp}`,
-      `Cidade: ${form.city || "—"}`,
-      "",
-      "🔹 *OBJETIVO*",
-      `Objetivo principal: ${form.mainGoal.join(", ")}${form.mainGoal.includes("Outro") ? ` (${form.mainGoalOther})` : ""}`,
-      `Prazo desejado: ${form.timeline || "—"}`,
-      `Comprometimento: ${form.commitment}/10`,
-      "",
-      "🔹 *SAÚDE*",
-      `Condições de saúde: ${form.healthConditions.length ? form.healthConditions.join(", ") : "—"}${form.healthConditions.includes("Outro") ? ` (${form.healthConditionsOther})` : ""}`,
-      `Medicação: ${form.usesMedication || "—"}${form.usesMedication === "Sim" ? ` — ${form.medicationDetails}` : ""}`,
-      `Hormônios: ${form.usesHormones || "—"}${form.usesHormones === "Sim" ? ` — ${form.hormoneDetails}` : ""}`,
-      `Restrições alimentares: ${form.foodRestrictions || "—"}`,
-      "",
-      "🔹 *SUPLEMENTAÇÃO*",
-      `Usa suplementos: ${form.usesSupplements || "—"}${form.usesSupplements === "Sim" ? ` — ${form.supplementDetails}` : ""}`,
-      "",
-      "🔹 *ALIMENTAÇÃO*",
-      `Refeições/dia: ${form.mealsPerDay || "—"}`,
-      `Horários fixos: ${form.fixedMealTimes || "—"}`,
-      `Dieta diária: ${form.dailyDiet || "—"}`,
-      `Água/dia: ${form.waterIntake || "—"}`,
-      `Compulsão alimentar: ${form.bingEating || "—"}`,
-      "",
-      "🔹 *HISTÓRICO SOCIAL*",
-      `Tabagismo: ${form.smoking || "—"}${form.smoking === "Sim" ? ` — ${form.smokingAmount}/dia` : ""}`,
-      `Álcool: ${form.alcohol || "—"}${form.alcohol === "Sim" ? ` — ${form.alcoholFrequency}x/semana` : ""}`,
-      `Outras substâncias: ${form.otherSubstances || "—"}${form.otherSubstances === "Sim" ? ` — ${form.otherSubstancesDetails}` : ""}`,
-      `Horas de sono: ${form.sleepHours || "—"}`,
-      `Qualidade do sono: ${form.sleepQuality}/10`,
-      `Estresse: ${form.stressLevel || "—"}`,
-      "",
-      "🔹 *TREINAMENTO*",
-      `Modalidades: ${form.trainingModalities.length ? form.trainingModalities.join(", ") : "—"}${form.trainingModalities.includes("Outro") ? ` (${form.trainingModalitiesOther})` : ""}`,
-      `Frequência: ${form.trainingFrequency || "—"}x/semana`,
-      `Duração: ${form.trainingDuration || "—"}`,
-      `Experiência: ${form.trainingExperience || "—"}`,
-      `Esforço no trabalho: ${form.workEffort || "—"}`,
-      `Horários disponíveis: ${form.availableSchedule || "—"}`,
-      `Acompanhamento profissional: ${form.hadProfessionalCoaching || "—"}`,
-    ];
-    if (isElite && selectedEquipment.length > 0) {
-      lines.push("", "🔹 *EQUIPAMENTOS DISPONÍVEIS*");
-      lines.push(`Equipamentos: ${selectedEquipment.join(", ")}`);
-    }
-    return lines.join("\n");
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const message = encodeURIComponent(buildWhatsAppMessage());
-    const whatsappUrl = `https://wa.me/5548999501722?text=${message}`;
-    window.open(whatsappUrl, "_blank");
-    setSubmitted(true);
+    setUploading(true);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert("Você precisa estar logado para enviar o formulário.");
+        setUploading(false);
+        return;
+      }
+
+      const userId = session.user.id;
+
+      // Upload photos
+      let photoFrontPath: string | null = null;
+      let photoSidePath: string | null = null;
+      let photoBackPath: string | null = null;
+      let photoAssessmentPath: string | null = null;
+
+      if (photos.front) photoFrontPath = await uploadPhoto(photos.front, userId, "frente");
+      if (photos.side) photoSidePath = await uploadPhoto(photos.side, userId, "lado");
+      if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
+      if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
+
+      // Save form data to Supabase
+      const { error } = await supabase.from("form_submissions").insert({
+        user_id: userId,
+        form_data: form as any,
+        photo_front: photoFrontPath,
+        photo_side: photoSidePath,
+        photo_back: photoBackPath,
+        photo_assessment: photoAssessmentPath,
+        selected_equipment: isElite ? selectedEquipment : [],
+      });
+
+      if (error) {
+        console.error("Submit error:", error);
+        alert("Erro ao enviar formulário. Tente novamente.");
+        setUploading(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert("Erro ao enviar formulário. Tente novamente.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   if (submitted) {
