@@ -401,13 +401,31 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
 );
 
 const PhotoThumb = ({ label, path }: { label: string; path: string }) => {
-  const { data } = supabase.storage.from("client-photos").getPublicUrl(path);
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getSignedUrl = async () => {
+      const { data, error } = await supabase.storage
+        .from("client-photos")
+        .createSignedUrl(path, 3600); // 1 hour expiry
+      if (data?.signedUrl) setUrl(data.signedUrl);
+    };
+    getSignedUrl();
+  }, [path]);
+
+  if (!url) return (
+    <div className="space-y-1">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <div className="w-full aspect-[3/4] rounded-md border border-border bg-muted animate-pulse" />
+    </div>
+  );
+
   return (
     <div className="space-y-1">
       <span className="text-xs text-muted-foreground">{label}</span>
-      <a href={data?.publicUrl} target="_blank" rel="noopener noreferrer">
+      <a href={url} target="_blank" rel="noopener noreferrer">
         <img
-          src={data?.publicUrl}
+          src={url}
           alt={label}
           className="w-full aspect-[3/4] object-cover rounded-md border border-border hover:border-primary/50 transition-colors"
         />
