@@ -134,9 +134,14 @@ const ScaleInput = ({ value, onChange, label }: { value: string; onChange: (v: s
   </Field>
 );
 
-const ApplicationForm = () => {
+interface ApplicationFormProps {
+  isElite?: boolean;
+}
+
+const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
 
   const update = (field: keyof FormData, value: string | boolean | string[]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
