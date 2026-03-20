@@ -494,7 +494,10 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
                 const labels = { front: "Frente", side: "Lado", back: "Costas", assessment: "Avaliação Física" };
                 return (
                   <div key={type} className="flex flex-col gap-2">
-                    <label className="text-sm text-muted-foreground text-center">{labels[type]}</label>
+                    <label className="text-sm text-muted-foreground text-center">
+                      {labels[type]}
+                      {type === "assessment" && <span className="block text-xs text-muted-foreground/60">(opcional)</span>}
+                    </label>
                     {photoPreviews[type] ? (
                       <div className="relative aspect-[3/4] rounded-lg overflow-hidden border-2 border-primary/30">
                         <img src={photoPreviews[type]} alt={labels[type]} className="w-full h-full object-cover" />
