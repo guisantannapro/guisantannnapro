@@ -1,0 +1,1 @@
+UPDATE profiles SET plan = 'elite', plan_activated_at = now(), updated_at = now() WHERE id = '9e8bad60-0612-45d9-90e4-8b860ef3ddae'
