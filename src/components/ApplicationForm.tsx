@@ -484,24 +484,43 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
 
           {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
-          <div className="bg-muted rounded-lg p-6 border border-border space-y-3">
-            <p className="text-foreground text-sm font-semibold">Enviar fotos em jejum:</p>
-            <ul className="text-muted-foreground text-sm space-y-1 list-disc list-inside">
-              <li>Frente</li>
-              <li>Lado</li>
-              <li>Costas</li>
-            </ul>
-            <div className="text-muted-foreground text-sm space-y-1">
-              <p>✔ Boa iluminação</p>
-              <p>✔ Mesmo local</p>
-              <p>✔ Postura relaxada</p>
-              <p>✔ Sem contração</p>
+          <div className="space-y-4">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <p className="text-muted-foreground text-sm mb-1">📋 Instruções para as fotos:</p>
+              <p className="text-muted-foreground text-xs">Em jejum • Boa iluminação • Postura relaxada • Sem contração</p>
             </div>
-            <div className="mt-4 p-4 bg-primary/10 border border-primary/30 rounded-lg">
-              <p className="text-foreground text-sm font-semibold">📲 Após enviar este formulário, envie suas fotos separadamente pelo WhatsApp.</p>
-              <p className="text-muted-foreground text-xs mt-1">
-                Caso possua avaliação física recente, envie junto com as fotos.
-              </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {(["front", "side", "back", "assessment"] as const).map((type) => {
+                const labels = { front: "Frente", side: "Lado", back: "Costas", assessment: "Avaliação Física" };
+                return (
+                  <div key={type} className="flex flex-col gap-2">
+                    <label className="text-sm text-muted-foreground text-center">{labels[type]}</label>
+                    {photoPreviews[type] ? (
+                      <div className="relative aspect-[3/4] rounded-lg overflow-hidden border-2 border-primary/30">
+                        <img src={photoPreviews[type]} alt={labels[type]} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(type)}
+                          className="absolute top-1 right-1 w-6 h-6 bg-destructive rounded-full flex items-center justify-center"
+                        >
+                          <X className="w-3 h-3 text-destructive-foreground" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="aspect-[3/4] rounded-lg border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer bg-muted/30">
+                        <Upload className="w-6 h-6 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Enviar</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => handlePhotoChange(type, e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
