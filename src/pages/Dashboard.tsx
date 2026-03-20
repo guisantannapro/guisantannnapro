@@ -268,7 +268,7 @@ const Dashboard = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {clients.map((client) => (
+              {filteredClients.map((client) => (
                 <motion.div
                   key={client.id}
                   initial={{ opacity: 0, y: 10 }}
