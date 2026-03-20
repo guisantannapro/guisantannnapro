@@ -227,7 +227,7 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {clients.map((client) => (
+                  {filteredClients.map((client) => (
                     <TableRow key={client.id} className="border-border">
                       <TableCell className="font-medium text-foreground">
                         {getField(client, "fullName")}
