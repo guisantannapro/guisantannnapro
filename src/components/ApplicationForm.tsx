@@ -470,12 +470,6 @@ const ApplicationForm = () => {
             </Field>
           </div>
 
-          {/* SEÇÃO 8 – EQUIPAMENTOS (ELITE) */}
-          <EquipmentSection
-            isElite={isElite}
-            selectedEquipment={selectedEquipment}
-            onSelectionChange={setSelectedEquipment}
-          />
 
           {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
