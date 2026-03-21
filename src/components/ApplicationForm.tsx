@@ -181,14 +181,7 @@ const ApplicationForm = () => {
     setUploading(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        alert("Você precisa estar logado para enviar o formulário.");
-        setUploading(false);
-        return;
-      }
-
-      const userId = session.user.id;
+      const userId = crypto.randomUUID();
 
       // Upload photos
       let photoFrontPath: string | null = null;
