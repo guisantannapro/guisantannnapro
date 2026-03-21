@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
-import EquipmentSection from "./EquipmentSection";
 import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
@@ -135,14 +134,10 @@ const ScaleInput = ({ value, onChange, label }: { value: string; onChange: (v: s
   </Field>
 );
 
-interface ApplicationFormProps {
-  isElite?: boolean;
-}
-
-const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
+const ApplicationForm = () => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
-  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+  
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null; assessment: File | null }>({
     front: null, side: null, back: null, assessment: null,
@@ -214,7 +209,7 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
         photo_side: photoSidePath,
         photo_back: photoBackPath,
         photo_assessment: photoAssessmentPath,
-        selected_equipment: isElite ? selectedEquipment : [],
+        selected_equipment: [],
       });
 
       if (error) {
@@ -475,12 +470,6 @@ const ApplicationForm = ({ isElite = false }: ApplicationFormProps) => {
             </Field>
           </div>
 
-          {/* SEÇÃO 8 – EQUIPAMENTOS (ELITE) */}
-          <EquipmentSection
-            isElite={isElite}
-            selectedEquipment={selectedEquipment}
-            onSelectionChange={setSelectedEquipment}
-          />
 
           {/* SEÇÃO 9 – ENVIO DE FOTOS */}
           <SectionTitle icon="📸">Envio de Fotos</SectionTitle>
