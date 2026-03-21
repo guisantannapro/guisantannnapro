@@ -137,7 +137,7 @@ const ScaleInput = ({ value, onChange, label }: { value: string; onChange: (v: s
 const ApplicationForm = () => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
-  const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+  
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null; assessment: File | null }>({
     front: null, side: null, back: null, assessment: null,
