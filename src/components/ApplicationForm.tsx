@@ -209,7 +209,7 @@ const ApplicationForm = () => {
         photo_side: photoSidePath,
         photo_back: photoBackPath,
         photo_assessment: photoAssessmentPath,
-        selected_equipment: isElite ? selectedEquipment : [],
+        selected_equipment: [],
       });
 
       if (error) {
