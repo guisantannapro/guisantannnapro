@@ -502,6 +502,11 @@ const ApplicationForm = () => {
             <Field label="Quais modalidades pratica atualmente?">
               <CheckboxGroup options={modalityOptions} values={form.trainingModalities} onChange={(v) => update("trainingModalities", v)} />
             </Field>
+            {form.trainingModalities.includes("Musculação") && (
+              <Field label="Musculação — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 5 vezes" value={form.musculacaoFrequency} onChange={(e) => update("musculacaoFrequency", e.target.value)} />
+              </Field>
+            )}
             {form.trainingModalities.includes("Ciclismo") && (
               <Field label="Ciclismo — quantas vezes por semana?">
                 <input className={inputClass} placeholder="Ex: 3 vezes" value={form.ciclismoFrequency} onChange={(e) => update("ciclismoFrequency", e.target.value)} />
