@@ -24,6 +24,7 @@ interface FormSubmission {
   photo_assessment: string | null;
   selected_equipment: string[] | null;
   user_id: string;
+  plan: string | null;
 }
 
 interface Profile {
