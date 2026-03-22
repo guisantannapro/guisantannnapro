@@ -72,7 +72,7 @@ const initialForm: FormData = {
   alcohol: "", alcoholFrequency: "",
   otherSubstances: "", otherSubstancesDetails: "",
   sleepHours: "", sleepQuality: "5", stressLevel: "",
-  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "", ciclismoFrequency: "", caminhadaFrequency: "", corridaFrequency: "",
+  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "", musculacaoFrequency: "", ciclismoFrequency: "", caminhadaFrequency: "", corridaFrequency: "",
   trainingFrequency: "", trainingDuration: "", trainingExperience: "",
   workEffort: "", availableSchedule: "", hadProfessionalCoaching: "",
   agreement: false,
