@@ -23,7 +23,7 @@ const DashboardStats = ({ clients }: DashboardStatsProps) => {
   const stats = useMemo(() => {
     const planCounts: Record<string, number> = { base: 0, transformacao: 0, elite: 0 };
     clients.forEach((c) => {
-      const plan = c.profile?.plan;
+      const plan = c.plan || c.profile?.plan;
       if (plan && plan in planCounts) planCounts[plan]++;
     });
     return planCounts;
