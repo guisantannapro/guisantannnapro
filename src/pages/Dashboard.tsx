@@ -416,7 +416,10 @@ const Dashboard = () => {
                       ? selectedClient.form_data.trainingModalities.join(", ")
                       : "—"
                   } />
-                  {selectedClient.form_data?.ciclismoFrequency && (
+                   {selectedClient.form_data?.musculacaoFrequency && (
+                    <InfoItem label="Freq. Musculação" value={getField(selectedClient, "musculacaoFrequency")} />
+                   )}
+                   {selectedClient.form_data?.ciclismoFrequency && (
                     <InfoItem label="Freq. Ciclismo" value={getField(selectedClient, "ciclismoFrequency")} />
                   )}
                   {selectedClient.form_data?.caminhadaFrequency && (
