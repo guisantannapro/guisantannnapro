@@ -534,7 +534,7 @@ const ApplicationForm = () => {
                 <input className={inputClass} placeholder="Ex: 1 hora" value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
               </Field>
               <Field label="Há quanto tempo treina?">
-                <input className={inputClass} value={form.trainingExperience} onChange={(e) => update("trainingExperience", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 2 anos" value={form.trainingExperience} onChange={(e) => update("trainingExperience", e.target.value)} />
               </Field>
               <Field label="Esforço físico no trabalho">
                 <RadioGroup options={["Leve", "Moderado", "Intenso", "Sedentário"]} value={form.workEffort} onChange={(v) => update("workEffort", v)} />
