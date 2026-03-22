@@ -416,8 +416,17 @@ const Dashboard = () => {
                       ? selectedClient.form_data.trainingModalities.join(", ")
                       : "—"
                   } />
+                  {selectedClient.form_data?.boxeFrequency && (
+                    <InfoItem label="Freq. Boxe" value={getField(selectedClient, "boxeFrequency")} />
+                  )}
+                  {selectedClient.form_data?.caminhadaFrequency && (
+                    <InfoItem label="Freq. Caminhada" value={getField(selectedClient, "caminhadaFrequency")} />
+                  )}
+                  {selectedClient.form_data?.corridaFrequency && (
+                    <InfoItem label="Freq. Corrida" value={getField(selectedClient, "corridaFrequency")} />
+                  )}
                   {selectedClient.form_data?.sportFrequency && (
-                    <InfoItem label="Frequência esporte coletivo" value={getField(selectedClient, "sportFrequency")} />
+                    <InfoItem label="Freq. Esporte coletivo" value={getField(selectedClient, "sportFrequency")} />
                   )}
                   {selectedClient.form_data?.trainingModalitiesOther && (
                     <InfoItem label="Modalidade (outro)" value={getField(selectedClient, "trainingModalitiesOther")} />
