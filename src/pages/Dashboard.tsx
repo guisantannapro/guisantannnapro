@@ -437,10 +437,22 @@ const Dashboard = () => {
                       ? selectedClient.form_data.healthConditions.join(", ")
                       : "—"
                   } />
+                  {selectedClient.form_data?.healthConditionsOther && (
+                    <InfoItem label="Condição (outro)" value={getField(selectedClient, "healthConditionsOther")} />
+                  )}
                   <InfoItem label="Medicação" value={getField(selectedClient, "usesMedication")} />
+                  {selectedClient.form_data?.medicationDetails && (
+                    <InfoItem label="Detalhes da medicação" value={getField(selectedClient, "medicationDetails")} />
+                  )}
                   <InfoItem label="Hormônios" value={getField(selectedClient, "usesHormones")} />
+                  {selectedClient.form_data?.hormoneDetails && (
+                    <InfoItem label="Detalhes dos hormônios" value={getField(selectedClient, "hormoneDetails")} />
+                  )}
                   <InfoItem label="Restrições alimentares" value={getField(selectedClient, "foodRestrictions")} />
                   <InfoItem label="Suplementos" value={getField(selectedClient, "usesSupplements")} />
+                  {selectedClient.form_data?.supplementDetails && (
+                    <InfoItem label="Detalhes dos suplementos" value={getField(selectedClient, "supplementDetails")} />
+                  )}
                   <InfoItem label="Sono" value={`${getField(selectedClient, "sleepHours")} horas`} />
                   <InfoItem label="Qualidade do sono" value={`${getField(selectedClient, "sleepQuality")}/10`} />
                   <InfoItem label="Nível de estresse" value={getField(selectedClient, "stressLevel")} />
