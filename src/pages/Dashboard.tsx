@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut } from "lucide-react";
+import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import { useNavigate } from "react-router-dom";
@@ -50,20 +50,19 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 20;
 
   const filteredClients = useMemo(() => {
     return clients.filter((client) => {
-      // Search filter
       if (searchTerm) {
         const name = (client.form_data?.fullName || "").toLowerCase();
         const email = (client.form_data?.email || "").toLowerCase();
         const term = searchTerm.toLowerCase();
         if (!name.includes(term) && !email.includes(term)) return false;
       }
-      // Plan filter
       if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
-      // Period filter
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
         const cutoff = new Date();
@@ -73,6 +72,17 @@ const Dashboard = () => {
       return true;
     });
   }, [clients, searchTerm, planFilter, periodFilter]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, planFilter, periodFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredClients.length / ITEMS_PER_PAGE));
+  const paginatedClients = filteredClients.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     fetchClients();
@@ -242,7 +252,7 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredClients.map((client) => (
+                  {paginatedClients.map((client) => (
                     <TableRow key={client.id} className="border-border">
                       <TableCell className="font-medium text-foreground">
                         {getField(client, "fullName")}
@@ -283,7 +293,7 @@ const Dashboard = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {filteredClients.map((client) => (
+              {paginatedClients.map((client) => (
                 <motion.div
                   key={client.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -315,6 +325,40 @@ const Dashboard = () => {
                 </motion.div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+                <span className="text-sm text-muted-foreground">
+                  Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredClients.length)} de {filteredClients.length}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="border-border gap-1"
+                  >
+                    <ChevronLeft size={14} />
+                    Anterior
+                  </Button>
+                  <span className="text-sm text-muted-foreground px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="border-border gap-1"
+                  >
+                    Próxima
+                    <ChevronRight size={14} />
+                  </Button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </main>
