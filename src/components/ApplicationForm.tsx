@@ -203,6 +203,9 @@ const ApplicationForm = () => {
       if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
       if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
 
+      // Read purchased plan from localStorage
+      const purchasedPlan = localStorage.getItem("purchased_plan");
+
       // Save form data to Supabase
       const { error } = await supabase.from("form_submissions").insert({
         user_id: userId,
@@ -212,6 +215,7 @@ const ApplicationForm = () => {
         photo_back: photoBackPath,
         photo_assessment: photoAssessmentPath,
         selected_equipment: [],
+        plan: purchasedPlan,
       });
 
       if (error) {

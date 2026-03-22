@@ -3,6 +3,7 @@ import { Users, Crown, Flame, Dumbbell } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 interface ClientData {
+  plan?: string | null;
   profile?: {
     plan: string | null;
   };
