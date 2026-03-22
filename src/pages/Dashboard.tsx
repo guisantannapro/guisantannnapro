@@ -255,7 +255,7 @@ const Dashboard = () => {
                           variant="outline"
                           className="border-primary/30 text-primary text-xs"
                         >
-                          {planLabels[client.profile?.plan || ""] || "—"}
+                          {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
