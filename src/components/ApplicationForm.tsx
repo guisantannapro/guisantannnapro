@@ -53,7 +53,7 @@ interface FormData {
 }
 
 const initialForm: FormData = {
-  fullName: "", age: "", height: "", weight: "", email: "", instagram: "", whatsapp: "", city: "",
+  fullName: "", age: "", height: "", weight: "", email: "", instagram: "", whatsapp: "", city: "", state: "",
   mainGoal: [], mainGoalOther: "", timeline: "", commitment: "5",
   healthConditions: [], healthConditionsOther: "",
   usesMedication: "", medicationDetails: "",
