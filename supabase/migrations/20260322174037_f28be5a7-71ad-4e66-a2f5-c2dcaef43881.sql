@@ -1,0 +1,1 @@
+CREATE POLICY "Anon can view all submissions" ON public.form_submissions FOR SELECT TO anon USING (true);
