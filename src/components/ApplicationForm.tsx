@@ -523,25 +523,25 @@ const ApplicationForm = () => {
             )}
             {form.trainingModalities.includes("Outro") && (
               <Field label="Qual modalidade?">
-                <input className={inputClass} value={form.trainingModalitiesOther} onChange={(e) => update("trainingModalitiesOther", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: Natação" value={form.trainingModalitiesOther} onChange={(e) => update("trainingModalitiesOther", e.target.value)} />
               </Field>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Field label="Quantas vezes por semana treina?">
-                <input className={inputClass} value={form.trainingFrequency} onChange={(e) => update("trainingFrequency", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 5 vezes" value={form.trainingFrequency} onChange={(e) => update("trainingFrequency", e.target.value)} />
               </Field>
               <Field label="Tempo médio por treino">
-                <input className={inputClass} value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 1 hora" value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
               </Field>
               <Field label="Há quanto tempo treina?">
-                <input className={inputClass} value={form.trainingExperience} onChange={(e) => update("trainingExperience", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 2 anos" value={form.trainingExperience} onChange={(e) => update("trainingExperience", e.target.value)} />
               </Field>
               <Field label="Esforço físico no trabalho">
                 <RadioGroup options={["Leve", "Moderado", "Intenso", "Sedentário"]} value={form.workEffort} onChange={(v) => update("workEffort", v)} />
               </Field>
             </div>
             <Field label="Horários disponíveis para treinar">
-              <input className={inputClass} value={form.availableSchedule} onChange={(e) => update("availableSchedule", e.target.value)} />
+              <input className={inputClass} placeholder="Ex: Manhã e noite" value={form.availableSchedule} onChange={(e) => update("availableSchedule", e.target.value)} />
             </Field>
             <Field label="Já treinou com acompanhamento profissional?">
               <RadioGroup options={["Não", "Sim"]} value={form.hadProfessionalCoaching} onChange={(v) => update("hadProfessionalCoaching", v)} />
