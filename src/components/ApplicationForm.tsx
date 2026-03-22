@@ -46,6 +46,7 @@ interface FormData {
   trainingModalities: string[];
   trainingModalitiesOther: string;
   sportFrequency: string;
+  musculacaoFrequency: string;
   ciclismoFrequency: string;
   caminhadaFrequency: string;
   corridaFrequency: string;
