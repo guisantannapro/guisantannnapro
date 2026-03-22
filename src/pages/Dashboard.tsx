@@ -453,6 +453,9 @@ const Dashboard = () => {
                       ? selectedClient.form_data.foodRestrictions.join(", ")
                       : getField(selectedClient, "foodRestrictions")
                   } />
+                  {selectedClient.form_data?.allergyDetails && (
+                    <InfoItem label="Alergia alimentar" value={getField(selectedClient, "allergyDetails")} />
+                  )}
                   {selectedClient.form_data?.foodRestrictionsOther && (
                     <InfoItem label="Restrição (outro)" value={getField(selectedClient, "foodRestrictionsOther")} />
                   )}
