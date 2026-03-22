@@ -59,7 +59,7 @@ const initialForm: FormData = {
   healthConditions: [], healthConditionsOther: "",
   usesMedication: "", medicationDetails: "",
   usesHormones: "", hormoneDetails: "",
-  foodRestrictions: "",
+  foodRestrictions: [], foodRestrictionsOther: "",
   usesSupplements: "", supplementDetails: "",
   mealsPerDay: "", fixedMealTimes: "", dailyDiet: "", waterIntake: "", bingEating: "",
   smoking: "", smokingAmount: "",
