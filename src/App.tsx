@@ -8,6 +8,8 @@ import NotFound from "./pages/NotFound.tsx";
 import PaymentSuccess from "./pages/PaymentSuccess.tsx";
 import Formulario from "./pages/Formulario.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import Login from "./pages/Login.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,15 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/pagamento-sucesso" element={<PaymentSuccess />} />
           <Route path="/formulario" element={<Formulario />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
