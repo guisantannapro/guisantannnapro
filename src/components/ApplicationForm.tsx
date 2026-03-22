@@ -26,6 +26,7 @@ interface FormData {
   hormoneDetails: string;
   foodRestrictions: string[];
   foodRestrictionsOther: string;
+  allergyDetails: string;
   usesSupplements: string;
   supplementDetails: string;
   mealsPerDay: string;
@@ -59,7 +60,7 @@ const initialForm: FormData = {
   healthConditions: [], healthConditionsOther: "",
   usesMedication: "", medicationDetails: "",
   usesHormones: "", hormoneDetails: "",
-  foodRestrictions: [], foodRestrictionsOther: "",
+  foodRestrictions: [], foodRestrictionsOther: "", allergyDetails: "",
   usesSupplements: "", supplementDetails: "",
   mealsPerDay: "", fixedMealTimes: "", dailyDiet: "", waterIntake: "", bingEating: "",
   smoking: "", smokingAmount: "",
@@ -405,6 +406,11 @@ const ApplicationForm = () => {
                 onChange={(v) => update("foodRestrictions", v)}
               />
             </Field>
+            {form.foodRestrictions.includes("Alergia alimentar") && (
+              <Field label="Descreva a alergia alimentar">
+                <input className={inputClass} value={form.allergyDetails} onChange={(e) => update("allergyDetails", e.target.value)} />
+              </Field>
+            )}
             {form.foodRestrictions.includes("Outro") && (
               <Field label="Qual restrição?">
                 <input className={inputClass} value={form.foodRestrictionsOther} onChange={(e) => update("foodRestrictionsOther", e.target.value)} />
