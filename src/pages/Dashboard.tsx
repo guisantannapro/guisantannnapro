@@ -252,7 +252,7 @@ const Dashboard = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredClients.map((client) => (
+                  {paginatedClients.map((client) => (
                     <TableRow key={client.id} className="border-border">
                       <TableCell className="font-medium text-foreground">
                         {getField(client, "fullName")}
@@ -293,7 +293,7 @@ const Dashboard = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {filteredClients.map((client) => (
+              {paginatedClients.map((client) => (
                 <motion.div
                   key={client.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -325,6 +325,40 @@ const Dashboard = () => {
                 </motion.div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
+                <span className="text-sm text-muted-foreground">
+                  Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredClients.length)} de {filteredClients.length}
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="border-border gap-1"
+                  >
+                    <ChevronLeft size={14} />
+                    Anterior
+                  </Button>
+                  <span className="text-sm text-muted-foreground px-2">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="border-border gap-1"
+                  >
+                    Próxima
+                    <ChevronRight size={14} />
+                  </Button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </main>
