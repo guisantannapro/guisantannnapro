@@ -24,6 +24,7 @@ interface FormSubmission {
   photo_assessment: string | null;
   selected_equipment: string[] | null;
   user_id: string;
+  plan: string | null;
 }
 
 interface Profile {
@@ -61,7 +62,7 @@ const Dashboard = () => {
         if (!name.includes(term) && !email.includes(term)) return false;
       }
       // Plan filter
-      if (planFilter !== "all" && client.profile?.plan !== planFilter) return false;
+      if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
       // Period filter
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
@@ -254,7 +255,7 @@ const Dashboard = () => {
                           variant="outline"
                           className="border-primary/30 text-primary text-xs"
                         >
-                          {planLabels[client.profile?.plan || ""] || "—"}
+                          {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
@@ -295,7 +296,7 @@ const Dashboard = () => {
                       <p className="text-muted-foreground text-sm">{getField(client, "email")}</p>
                     </div>
                     <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                      {planLabels[client.profile?.plan || ""] || "—"}
+                      {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -338,7 +339,7 @@ const Dashboard = () => {
                 <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
                 <InfoItem label="Email" value={getField(selectedClient, "email")} />
                 <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
-                <InfoItem label="Plano" value={planLabels[selectedClient.profile?.plan || ""] || "—"} />
+                <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
                 <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
