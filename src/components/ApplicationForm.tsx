@@ -523,7 +523,7 @@ const ApplicationForm = () => {
             )}
             {form.trainingModalities.includes("Outro") && (
               <Field label="Qual modalidade?">
-                <input className={inputClass} value={form.trainingModalitiesOther} onChange={(e) => update("trainingModalitiesOther", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: Natação" value={form.trainingModalitiesOther} onChange={(e) => update("trainingModalitiesOther", e.target.value)} />
               </Field>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
