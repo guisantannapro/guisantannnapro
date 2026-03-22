@@ -68,7 +68,7 @@ const initialForm: FormData = {
   alcohol: "", alcoholFrequency: "",
   otherSubstances: "", otherSubstancesDetails: "",
   sleepHours: "", sleepQuality: "5", stressLevel: "",
-  trainingModalities: [], trainingModalitiesOther: "",
+  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "",
   trainingFrequency: "", trainingDuration: "", trainingExperience: "",
   workEffort: "", availableSchedule: "", hadProfessionalCoaching: "",
   agreement: false,
