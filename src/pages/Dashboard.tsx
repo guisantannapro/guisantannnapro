@@ -393,6 +393,11 @@ const Dashboard = () => {
                   } />
                 )}
                 <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
+                {selectedClient.form_data?.mainGoalOther && (
+                  <InfoItem label="Objetivo (outro)" value={getField(selectedClient, "mainGoalOther")} />
+                )}
+                <InfoItem label="Timeline" value={getField(selectedClient, "timeline")} />
+                <InfoItem label="Comprometimento" value={`${getField(selectedClient, "commitment")}/10`} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
                 <InfoItem label="Idade" value={getField(selectedClient, "age")} />
@@ -411,9 +416,15 @@ const Dashboard = () => {
                       ? selectedClient.form_data.trainingModalities.join(", ")
                       : "—"
                   } />
+                  {selectedClient.form_data?.trainingModalitiesOther && (
+                    <InfoItem label="Modalidade (outro)" value={getField(selectedClient, "trainingModalitiesOther")} />
+                  )}
                   <InfoItem label="Frequência" value={getField(selectedClient, "trainingFrequency")} />
                   <InfoItem label="Duração" value={getField(selectedClient, "trainingDuration")} />
                   <InfoItem label="Experiência" value={getField(selectedClient, "trainingExperience")} />
+                  <InfoItem label="Esforço no trabalho" value={getField(selectedClient, "workEffort")} />
+                  <InfoItem label="Horário disponível" value={getField(selectedClient, "availableSchedule")} />
+                  <InfoItem label="Já teve acompanhamento profissional" value={getField(selectedClient, "hadProfessionalCoaching")} />
                 </div>
               </div>
 
@@ -426,10 +437,22 @@ const Dashboard = () => {
                       ? selectedClient.form_data.healthConditions.join(", ")
                       : "—"
                   } />
+                  {selectedClient.form_data?.healthConditionsOther && (
+                    <InfoItem label="Condição (outro)" value={getField(selectedClient, "healthConditionsOther")} />
+                  )}
                   <InfoItem label="Medicação" value={getField(selectedClient, "usesMedication")} />
+                  {selectedClient.form_data?.medicationDetails && (
+                    <InfoItem label="Detalhes da medicação" value={getField(selectedClient, "medicationDetails")} />
+                  )}
                   <InfoItem label="Hormônios" value={getField(selectedClient, "usesHormones")} />
+                  {selectedClient.form_data?.hormoneDetails && (
+                    <InfoItem label="Detalhes dos hormônios" value={getField(selectedClient, "hormoneDetails")} />
+                  )}
                   <InfoItem label="Restrições alimentares" value={getField(selectedClient, "foodRestrictions")} />
                   <InfoItem label="Suplementos" value={getField(selectedClient, "usesSupplements")} />
+                  {selectedClient.form_data?.supplementDetails && (
+                    <InfoItem label="Detalhes dos suplementos" value={getField(selectedClient, "supplementDetails")} />
+                  )}
                   <InfoItem label="Sono" value={`${getField(selectedClient, "sleepHours")} horas`} />
                   <InfoItem label="Qualidade do sono" value={`${getField(selectedClient, "sleepQuality")}/10`} />
                   <InfoItem label="Nível de estresse" value={getField(selectedClient, "stressLevel")} />
@@ -447,6 +470,25 @@ const Dashboard = () => {
                 </div>
                 <div className="mt-3">
                   <InfoItem label="Dieta diária" value={getField(selectedClient, "dailyDiet")} />
+                </div>
+              </div>
+
+              {/* Hábitos */}
+              <div className="border-t border-border pt-4">
+                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Hábitos</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InfoItem label="Tabagismo" value={getField(selectedClient, "smoking")} />
+                  {selectedClient.form_data?.smokingAmount && (
+                    <InfoItem label="Quantidade (cigarro)" value={getField(selectedClient, "smokingAmount")} />
+                  )}
+                  <InfoItem label="Álcool" value={getField(selectedClient, "alcohol")} />
+                  {selectedClient.form_data?.alcoholFrequency && (
+                    <InfoItem label="Frequência (álcool)" value={getField(selectedClient, "alcoholFrequency")} />
+                  )}
+                  <InfoItem label="Outras substâncias" value={getField(selectedClient, "otherSubstances")} />
+                  {selectedClient.form_data?.otherSubstancesDetails && (
+                    <InfoItem label="Detalhes (substâncias)" value={getField(selectedClient, "otherSubstancesDetails")} />
+                  )}
                 </div>
               </div>
 
