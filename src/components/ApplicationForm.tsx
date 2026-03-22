@@ -225,6 +225,7 @@ const ApplicationForm = () => {
         return;
       }
 
+      localStorage.removeItem("purchased_plan");
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
