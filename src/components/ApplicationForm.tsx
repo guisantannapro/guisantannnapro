@@ -312,11 +312,11 @@ const ApplicationForm = () => {
             <Field label="Idade" required>
               <input className={inputClass} required value={form.age} onChange={(e) => update("age", e.target.value)} />
             </Field>
-            <Field label="Altura" required>
-              <input className={inputClass} required value={form.height} onChange={(e) => update("height", e.target.value)} />
+            <Field label="Altura (cm)" required>
+              <input className={inputClass} required placeholder="Ex: 175" value={form.height} onChange={(e) => update("height", e.target.value)} />
             </Field>
-            <Field label="Peso atual" required>
-              <input className={inputClass} required value={form.weight} onChange={(e) => update("weight", e.target.value)} />
+            <Field label="Peso atual (kg)" required>
+              <input className={inputClass} required placeholder="Ex: 80" value={form.weight} onChange={(e) => update("weight", e.target.value)} />
             </Field>
             <Field label="E-mail" required>
               <input className={inputClass} type="email" required value={form.email} onChange={(e) => update("email", e.target.value)} />
@@ -325,7 +325,7 @@ const ApplicationForm = () => {
               <input className={inputClass} placeholder="@usuario" value={form.instagram} onChange={(e) => update("instagram", e.target.value)} />
             </Field>
             <Field label="WhatsApp (com DDD)" required>
-              <input className={inputClass} required value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
+              <input className={inputClass} required placeholder="(00) 00000-0000" value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
             </Field>
             <Field label="Cidade/Estado">
               <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
