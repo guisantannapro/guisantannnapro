@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut } from "lucide-react";
 import ClientFilters from "@/components/dashboard/ClientFilters";
+import DashboardStats from "@/components/dashboard/DashboardStats";
 import { useNavigate } from "react-router-dom";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -216,6 +217,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
+            <DashboardStats clients={clients} />
             <ClientFilters
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
