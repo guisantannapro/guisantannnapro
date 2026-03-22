@@ -61,23 +61,27 @@ const CityStateField = ({ value, onChange, className }: CityStateFieldProps) => 
   return (
     <div ref={wrapperRef} className="relative">
       <div className="flex gap-2">
-        <input
-          className={className + " flex-1"}
-          placeholder="Digite sua cidade"
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value, selectedUf);
-            setShowSuggestions(true);
-          }}
-          onFocus={() => value.length >= 2 && setShowSuggestions(true)}
-        />
-        <input
-          className={className + " w-16 text-center"}
-          placeholder="UF"
-          value={selectedUf}
-          readOnly
-          tabIndex={-1}
-        />
+        <div className="flex-1 min-w-0">
+          <input
+            className={className}
+            placeholder="Digite sua cidade"
+            value={value}
+            onChange={(e) => {
+              onChange(e.target.value, selectedUf);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => value.length >= 2 && setShowSuggestions(true)}
+          />
+        </div>
+        <div className="w-[72px] shrink-0">
+          <input
+            className={className + " text-center"}
+            placeholder="UF"
+            value={selectedUf}
+            readOnly
+            tabIndex={-1}
+          />
+        </div>
       </div>
       {showSuggestions && suggestions.length > 0 && (
         <ul className="absolute z-50 top-full left-0 right-0 mt-1 bg-card border border-border rounded-md shadow-lg max-h-48 overflow-y-auto">
