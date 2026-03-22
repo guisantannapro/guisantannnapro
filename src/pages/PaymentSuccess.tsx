@@ -7,26 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get("plan");
-  const [activating, setActivating] = useState(!!plan);
 
   useEffect(() => {
-    const activatePlan = async () => {
-      if (!plan) return;
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setActivating(false);
-        return;
-      }
-
-      const { error } = await supabase.functions.invoke("activate-plan", {
-        body: { plan },
-      });
-
-      setActivating(false);
-    };
-
-    activatePlan();
+    if (plan) {
+      localStorage.setItem("purchased_plan", plan);
+    }
   }, [plan]);
 
   return (

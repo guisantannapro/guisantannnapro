@@ -23,6 +23,7 @@ export type Database = {
           photo_back: string | null
           photo_front: string | null
           photo_side: string | null
+          plan: string | null
           selected_equipment: string[] | null
           user_id: string
         }
@@ -34,6 +35,7 @@ export type Database = {
           photo_back?: string | null
           photo_front?: string | null
           photo_side?: string | null
+          plan?: string | null
           selected_equipment?: string[] | null
           user_id: string
         }
@@ -45,6 +47,7 @@ export type Database = {
           photo_back?: string | null
           photo_front?: string | null
           photo_side?: string | null
+          plan?: string | null
           selected_equipment?: string[] | null
           user_id?: string
         }
