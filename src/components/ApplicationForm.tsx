@@ -46,7 +46,7 @@ interface FormData {
   trainingModalities: string[];
   trainingModalitiesOther: string;
   sportFrequency: string;
-  boxeFrequency: string;
+  ciclismoFrequency: string;
   caminhadaFrequency: string;
   corridaFrequency: string;
   trainingFrequency: string;
@@ -71,7 +71,7 @@ const initialForm: FormData = {
   alcohol: "", alcoholFrequency: "",
   otherSubstances: "", otherSubstancesDetails: "",
   sleepHours: "", sleepQuality: "5", stressLevel: "",
-  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "", boxeFrequency: "", caminhadaFrequency: "", corridaFrequency: "",
+  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "", ciclismoFrequency: "", caminhadaFrequency: "", corridaFrequency: "",
   trainingFrequency: "", trainingDuration: "", trainingExperience: "",
   workEffort: "", availableSchedule: "", hadProfessionalCoaching: "",
   agreement: false,
@@ -284,7 +284,7 @@ const ApplicationForm = () => {
   ];
 
   const modalityOptions = [
-    "Musculação", "Boxe", "Caminhada", "Corrida", "Esporte coletivo", "Outro"
+    "Musculação", "Ciclismo", "Caminhada", "Corrida", "Esporte coletivo", "Outro"
   ];
 
   return (
@@ -501,9 +501,9 @@ const ApplicationForm = () => {
             <Field label="Quais modalidades pratica atualmente?">
               <CheckboxGroup options={modalityOptions} values={form.trainingModalities} onChange={(v) => update("trainingModalities", v)} />
             </Field>
-            {form.trainingModalities.includes("Boxe") && (
-              <Field label="Boxe — quantas vezes por semana?">
-                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.boxeFrequency} onChange={(e) => update("boxeFrequency", e.target.value)} />
+            {form.trainingModalities.includes("Ciclismo") && (
+              <Field label="Ciclismo — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.ciclismoFrequency} onChange={(e) => update("ciclismoFrequency", e.target.value)} />
               </Field>
             )}
             {form.trainingModalities.includes("Caminhada") && (
