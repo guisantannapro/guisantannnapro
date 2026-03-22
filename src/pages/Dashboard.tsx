@@ -296,7 +296,7 @@ const Dashboard = () => {
                       <p className="text-muted-foreground text-sm">{getField(client, "email")}</p>
                     </div>
                     <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                      {planLabels[client.profile?.plan || ""] || "—"}
+                      {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-sm">
