@@ -24,7 +24,8 @@ interface FormData {
   medicationDetails: string;
   usesHormones: string;
   hormoneDetails: string;
-  foodRestrictions: string;
+  foodRestrictions: string[];
+  foodRestrictionsOther: string;
   usesSupplements: string;
   supplementDetails: string;
   mealsPerDay: string;
@@ -58,7 +59,7 @@ const initialForm: FormData = {
   healthConditions: [], healthConditionsOther: "",
   usesMedication: "", medicationDetails: "",
   usesHormones: "", hormoneDetails: "",
-  foodRestrictions: "",
+  foodRestrictions: [], foodRestrictionsOther: "",
   usesSupplements: "", supplementDetails: "",
   mealsPerDay: "", fixedMealTimes: "", dailyDiet: "", waterIntake: "", bingEating: "",
   smoking: "", smokingAmount: "",
@@ -398,8 +399,17 @@ const ApplicationForm = () => {
               </Field>
             )}
             <Field label="Possui restrição alimentar ou intolerância?">
-              <textarea className={inputClass} rows={2} value={form.foodRestrictions} onChange={(e) => update("foodRestrictions", e.target.value)} />
+              <CheckboxGroup
+                options={["Não possuo", "Intolerância à lactose", "Intolerância ao glúten", "Vegetariano(a)", "Vegano(a)", "Alergia alimentar", "Outro"]}
+                values={form.foodRestrictions}
+                onChange={(v) => update("foodRestrictions", v)}
+              />
             </Field>
+            {form.foodRestrictions.includes("Outro") && (
+              <Field label="Qual restrição?">
+                <input className={inputClass} value={form.foodRestrictionsOther} onChange={(e) => update("foodRestrictionsOther", e.target.value)} />
+              </Field>
+            )}
           </div>
 
           {/* SEÇÃO 4 – SUPLEMENTAÇÃO */}
