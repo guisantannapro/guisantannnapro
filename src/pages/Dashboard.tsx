@@ -50,7 +50,9 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 20;
 
   const filteredClients = useMemo(() => {
     return clients.filter((client) => {
