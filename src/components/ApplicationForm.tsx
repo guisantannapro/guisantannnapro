@@ -541,7 +541,7 @@ const ApplicationForm = () => {
               </Field>
             </div>
             <Field label="Horários disponíveis para treinar">
-              <input className={inputClass} value={form.availableSchedule} onChange={(e) => update("availableSchedule", e.target.value)} />
+              <input className={inputClass} placeholder="Ex: Manhã e noite" value={form.availableSchedule} onChange={(e) => update("availableSchedule", e.target.value)} />
             </Field>
             <Field label="Já treinou com acompanhamento profissional?">
               <RadioGroup options={["Não", "Sim"]} value={form.hadProfessionalCoaching} onChange={(v) => update("hadProfessionalCoaching", v)} />
