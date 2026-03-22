@@ -531,7 +531,7 @@ const ApplicationForm = () => {
                 <input className={inputClass} placeholder="Ex: 5 vezes" value={form.trainingFrequency} onChange={(e) => update("trainingFrequency", e.target.value)} />
               </Field>
               <Field label="Tempo médio por treino">
-                <input className={inputClass} value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 1 hora" value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
               </Field>
               <Field label="Há quanto tempo treina?">
                 <input className={inputClass} value={form.trainingExperience} onChange={(e) => update("trainingExperience", e.target.value)} />
