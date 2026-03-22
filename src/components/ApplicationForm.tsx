@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { BRAZILIAN_STATES } from "@/lib/brazilian-states";
 
 interface FormData {
   fullName: string;
@@ -312,11 +313,17 @@ const ApplicationForm = () => {
             <Field label="Idade" required>
               <input className={inputClass} required value={form.age} onChange={(e) => update("age", e.target.value)} />
             </Field>
-            <Field label="Altura" required>
-              <input className={inputClass} required value={form.height} onChange={(e) => update("height", e.target.value)} />
+            <Field label="Altura (cm)" required>
+              <div className="relative">
+                <input className={inputClass} type="number" required placeholder="Ex: 175" value={form.height} onChange={(e) => update("height", e.target.value)} />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">cm</span>
+              </div>
             </Field>
-            <Field label="Peso atual" required>
-              <input className={inputClass} required value={form.weight} onChange={(e) => update("weight", e.target.value)} />
+            <Field label="Peso atual (kg)" required>
+              <div className="relative">
+                <input className={inputClass} type="number" step="0.1" required placeholder="Ex: 80.5" value={form.weight} onChange={(e) => update("weight", e.target.value)} />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm pointer-events-none">kg</span>
+              </div>
             </Field>
             <Field label="E-mail" required>
               <input className={inputClass} type="email" required value={form.email} onChange={(e) => update("email", e.target.value)} />
@@ -328,7 +335,16 @@ const ApplicationForm = () => {
               <input className={inputClass} required value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
             </Field>
             <Field label="Cidade/Estado">
-              <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
+              <select className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)}>
+                <option value="">Selecione...</option>
+                {BRAZILIAN_STATES.map((s) => (
+                  <optgroup key={s.state} label={s.state}>
+                    {s.cities.map((c) => (
+                      <option key={c} value={`${c} - ${s.uf}`}>{c}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </Field>
           </div>
 
