@@ -325,7 +325,7 @@ const ApplicationForm = () => {
               <input className={inputClass} placeholder="@usuario" value={form.instagram} onChange={(e) => update("instagram", e.target.value)} />
             </Field>
             <Field label="WhatsApp (com DDD)" required>
-              <input className={inputClass} required value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
+              <input className={inputClass} required placeholder="(00) 00000-0000" value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
             </Field>
             <Field label="Cidade/Estado">
               <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
