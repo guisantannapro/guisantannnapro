@@ -365,7 +365,7 @@ const ApplicationForm = () => {
               </Field>
             )}
             <Field label="Em quanto tempo deseja atingir esse objetivo?">
-              <input className={inputClass} value={form.timeline} onChange={(e) => update("timeline", e.target.value)} />
+              <input className={inputClass} placeholder="Ex: 6 meses" value={form.timeline} onChange={(e) => update("timeline", e.target.value)} />
             </Field>
             <ScaleInput value={form.commitment} onChange={(v) => update("commitment", v)} label="Nível de comprometimento" />
           </div>
