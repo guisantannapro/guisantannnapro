@@ -1,0 +1,115 @@
+import { useMemo } from "react";
+import { Users, Crown, Flame, Dumbbell } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
+interface ClientData {
+  profile?: {
+    plan: string | null;
+  };
+}
+
+interface DashboardStatsProps {
+  clients: ClientData[];
+}
+
+const planConfig: Record<string, { label: string; color: string }> = {
+  base: { label: "Base", color: "hsl(43, 74%, 49%)" },
+  transformacao: { label: "Transformação", color: "hsl(25, 95%, 53%)" },
+  elite: { label: "Elite", color: "hsl(0, 84%, 60%)" },
+};
+
+const DashboardStats = ({ clients }: DashboardStatsProps) => {
+  const stats = useMemo(() => {
+    const planCounts: Record<string, number> = { base: 0, transformacao: 0, elite: 0 };
+    clients.forEach((c) => {
+      const plan = c.profile?.plan;
+      if (plan && plan in planCounts) planCounts[plan]++;
+    });
+    return planCounts;
+  }, [clients]);
+
+  const chartData = useMemo(() => {
+    return Object.entries(planConfig).map(([key, config]) => ({
+      name: config.label,
+      value: stats[key] || 0,
+      color: config.color,
+    })).filter((d) => d.value > 0);
+  }, [stats]);
+
+  const cards = [
+    { label: "Total de Clientes", value: clients.length, icon: Users },
+    { label: "Plano Base", value: stats.base, icon: Dumbbell },
+    { label: "Transformação", value: stats.transformacao, icon: Flame },
+    { label: "Elite", value: stats.elite, icon: Crown },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      {/* Cards */}
+      <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            className="bg-card border border-border rounded-lg p-4 flex flex-col items-center justify-center text-center gap-2"
+          >
+            <card.icon className="w-5 h-5 text-primary" />
+            <span className="text-2xl font-bold text-foreground">{card.value}</span>
+            <span className="text-xs text-muted-foreground uppercase tracking-wider">
+              {card.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div className="bg-card border border-border rounded-lg p-4 flex flex-col items-center">
+        <h3 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
+          Distribuição por Plano
+        </h3>
+        {chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={160}>
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={40}
+                outerRadius={65}
+                paddingAngle={3}
+                dataKey="value"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={index} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(0, 0%, 8%)",
+                  border: "1px solid hsl(0, 0%, 15%)",
+                  borderRadius: "8px",
+                  color: "hsl(0, 0%, 95%)",
+                  fontSize: "12px",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <p className="text-muted-foreground text-sm py-8">Sem dados</p>
+        )}
+        <div className="flex gap-4 mt-2">
+          {Object.entries(planConfig).map(([key, config]) => (
+            <div key={key} className="flex items-center gap-1.5">
+              <div
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: config.color }}
+              />
+              <span className="text-xs text-muted-foreground">{config.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DashboardStats;
