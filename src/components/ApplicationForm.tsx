@@ -13,6 +13,7 @@ interface FormData {
   instagram: string;
   whatsapp: string;
   city: string;
+  state: string;
   mainGoal: string[];
   mainGoalOther: string;
   timeline: string;
