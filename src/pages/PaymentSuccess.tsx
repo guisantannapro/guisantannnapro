@@ -38,19 +38,12 @@ const PaymentSuccess = () => {
             Voltar ao Início
           </a>
           {plan && (
-            activating ? (
-              <div className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border border-border text-muted-foreground font-display font-bold uppercase tracking-wider">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Ativando plano...
-              </div>
-            ) : (
-              <a
-                href="/formulario"
-                className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
-              >
-                Preencher Formulário
-              </a>
-            )
+            <a
+              href="/formulario"
+              className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
+            >
+              Preencher Formulário
+            </a>
           )}
         </div>
       </motion.div>
