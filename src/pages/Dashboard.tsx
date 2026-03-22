@@ -62,7 +62,7 @@ const Dashboard = () => {
         if (!name.includes(term) && !email.includes(term)) return false;
       }
       // Plan filter
-      if (planFilter !== "all" && client.profile?.plan !== planFilter) return false;
+      if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
       // Period filter
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
