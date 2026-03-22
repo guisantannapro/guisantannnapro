@@ -26,6 +26,7 @@ interface FormData {
   hormoneDetails: string;
   foodRestrictions: string[];
   foodRestrictionsOther: string;
+  allergyDetails: string;
   usesSupplements: string;
   supplementDetails: string;
   mealsPerDay: string;
