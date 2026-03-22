@@ -177,6 +177,18 @@ const Dashboard = () => {
               <Users size={14} />
               {clients.length} clientes
             </Badge>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/login");
+              }}
+              className="border-destructive/30 text-destructive hover:bg-destructive/10 gap-1.5"
+            >
+              <LogOut size={14} />
+              Sair
+            </Button>
           </div>
         </div>
       </header>
