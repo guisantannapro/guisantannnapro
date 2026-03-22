@@ -448,7 +448,14 @@ const Dashboard = () => {
                   {selectedClient.form_data?.hormoneDetails && (
                     <InfoItem label="Detalhes dos hormônios" value={getField(selectedClient, "hormoneDetails")} />
                   )}
-                  <InfoItem label="Restrições alimentares" value={getField(selectedClient, "foodRestrictions")} />
+                  <InfoItem label="Restrições alimentares" value={
+                    Array.isArray(selectedClient.form_data?.foodRestrictions)
+                      ? selectedClient.form_data.foodRestrictions.join(", ")
+                      : getField(selectedClient, "foodRestrictions")
+                  } />
+                  {selectedClient.form_data?.foodRestrictionsOther && (
+                    <InfoItem label="Restrição (outro)" value={getField(selectedClient, "foodRestrictionsOther")} />
+                  )}
                   <InfoItem label="Suplementos" value={getField(selectedClient, "usesSupplements")} />
                   {selectedClient.form_data?.supplementDetails && (
                     <InfoItem label="Detalhes dos suplementos" value={getField(selectedClient, "supplementDetails")} />
