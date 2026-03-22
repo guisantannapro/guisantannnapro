@@ -325,7 +325,19 @@ const ApplicationForm = () => {
               <input className={inputClass} placeholder="@usuario" value={form.instagram} onChange={(e) => update("instagram", e.target.value)} />
             </Field>
             <Field label="WhatsApp (com DDD)" required>
-              <input className={inputClass} required placeholder="(00) 00000-0000" value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} />
+              <input className={inputClass} required placeholder="(00) 00000-0000" value={form.whatsapp} onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "").slice(0, 11);
+                let masked = digits;
+                if (digits.length > 2) {
+                  masked = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+                } else if (digits.length > 0) {
+                  masked = `(${digits}`;
+                }
+                if (digits.length > 7) {
+                  masked = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+                }
+                update("whatsapp", masked);
+              }} />
             </Field>
             <Field label="Cidade/Estado">
               <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
