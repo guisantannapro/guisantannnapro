@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
+import CityStateField from "./CityStateField";
 import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
@@ -12,6 +13,7 @@ interface FormData {
   instagram: string;
   whatsapp: string;
   city: string;
+  state: string;
   mainGoal: string[];
   mainGoalOther: string;
   timeline: string;
@@ -51,7 +53,7 @@ interface FormData {
 }
 
 const initialForm: FormData = {
-  fullName: "", age: "", height: "", weight: "", email: "", instagram: "", whatsapp: "", city: "",
+  fullName: "", age: "", height: "", weight: "", email: "", instagram: "", whatsapp: "", city: "", state: "",
   mainGoal: [], mainGoalOther: "", timeline: "", commitment: "5",
   healthConditions: [], healthConditionsOther: "",
   usesMedication: "", medicationDetails: "",
@@ -340,7 +342,14 @@ const ApplicationForm = () => {
               }} />
             </Field>
             <Field label="Cidade/Estado">
-              <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
+              <CityStateField
+                className={inputClass}
+                value={form.city}
+                onChange={(city, uf) => {
+                  update("city", city);
+                  update("state", uf);
+                }}
+              />
             </Field>
           </div>
 
