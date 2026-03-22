@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
+import CityStateField from "./CityStateField";
 import { supabase } from "@/integrations/supabase/client";
 
 interface FormData {
