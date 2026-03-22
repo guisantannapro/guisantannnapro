@@ -61,7 +61,7 @@ serve(async (req) => {
     if (modality) successParams.set("modality", modality);
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "pix"],
+      payment_method_types: ["card"],
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       mode: "payment",
       success_url: `${req.headers.get("origin")}/pagamento-sucesso?${successParams.toString()}`,
