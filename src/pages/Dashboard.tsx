@@ -393,6 +393,11 @@ const Dashboard = () => {
                   } />
                 )}
                 <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
+                {selectedClient.form_data?.mainGoalOther && (
+                  <InfoItem label="Objetivo (outro)" value={getField(selectedClient, "mainGoalOther")} />
+                )}
+                <InfoItem label="Timeline" value={getField(selectedClient, "timeline")} />
+                <InfoItem label="Comprometimento" value={`${getField(selectedClient, "commitment")}/10`} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
                 <InfoItem label="Idade" value={getField(selectedClient, "age")} />
@@ -411,9 +416,15 @@ const Dashboard = () => {
                       ? selectedClient.form_data.trainingModalities.join(", ")
                       : "—"
                   } />
+                  {selectedClient.form_data?.trainingModalitiesOther && (
+                    <InfoItem label="Modalidade (outro)" value={getField(selectedClient, "trainingModalitiesOther")} />
+                  )}
                   <InfoItem label="Frequência" value={getField(selectedClient, "trainingFrequency")} />
                   <InfoItem label="Duração" value={getField(selectedClient, "trainingDuration")} />
                   <InfoItem label="Experiência" value={getField(selectedClient, "trainingExperience")} />
+                  <InfoItem label="Esforço no trabalho" value={getField(selectedClient, "workEffort")} />
+                  <InfoItem label="Horário disponível" value={getField(selectedClient, "availableSchedule")} />
+                  <InfoItem label="Já teve acompanhamento profissional" value={getField(selectedClient, "hadProfessionalCoaching")} />
                 </div>
               </div>
 
