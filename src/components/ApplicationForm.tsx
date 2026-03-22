@@ -501,9 +501,24 @@ const ApplicationForm = () => {
             <Field label="Quais modalidades pratica atualmente?">
               <CheckboxGroup options={modalityOptions} values={form.trainingModalities} onChange={(v) => update("trainingModalities", v)} />
             </Field>
+            {form.trainingModalities.includes("Boxe") && (
+              <Field label="Boxe — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.boxeFrequency} onChange={(e) => update("boxeFrequency", e.target.value)} />
+              </Field>
+            )}
+            {form.trainingModalities.includes("Caminhada") && (
+              <Field label="Caminhada — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 5 vezes" value={form.caminhadaFrequency} onChange={(e) => update("caminhadaFrequency", e.target.value)} />
+              </Field>
+            )}
+            {form.trainingModalities.includes("Corrida") && (
+              <Field label="Corrida — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.corridaFrequency} onChange={(e) => update("corridaFrequency", e.target.value)} />
+              </Field>
+            )}
             {form.trainingModalities.includes("Esporte coletivo") && (
-              <Field label="Quantas vezes por semana pratica o esporte?">
-                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.sportFrequency} onChange={(e) => update("sportFrequency", e.target.value)} />
+              <Field label="Esporte coletivo — quantas vezes por semana?">
+                <input className={inputClass} placeholder="Ex: 2 vezes" value={form.sportFrequency} onChange={(e) => update("sportFrequency", e.target.value)} />
               </Field>
             )}
             {form.trainingModalities.includes("Outro") && (
