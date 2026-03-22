@@ -56,16 +56,13 @@ const Dashboard = () => {
 
   const filteredClients = useMemo(() => {
     return clients.filter((client) => {
-      // Search filter
       if (searchTerm) {
         const name = (client.form_data?.fullName || "").toLowerCase();
         const email = (client.form_data?.email || "").toLowerCase();
         const term = searchTerm.toLowerCase();
         if (!name.includes(term) && !email.includes(term)) return false;
       }
-      // Plan filter
       if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
-      // Period filter
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
         const cutoff = new Date();
@@ -75,6 +72,17 @@ const Dashboard = () => {
       return true;
     });
   }, [clients, searchTerm, planFilter, periodFilter]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, planFilter, periodFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredClients.length / ITEMS_PER_PAGE));
+  const paginatedClients = filteredClients.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   useEffect(() => {
     fetchClients();
