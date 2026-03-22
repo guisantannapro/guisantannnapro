@@ -396,7 +396,9 @@ const Dashboard = () => {
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
                 <InfoItem label="Idade" value={getField(selectedClient, "age")} />
-                <InfoItem label="Cidade" value={getField(selectedClient, "city")} />
+                <InfoItem label="Cidade/UF" value={
+                  `${getField(selectedClient, "city")}${selectedClient.form_data?.state ? ` - ${selectedClient.form_data.state}` : ""}`
+                } />
                 <InfoItem label="Instagram" value={getField(selectedClient, "instagram")} />
               </div>
 
