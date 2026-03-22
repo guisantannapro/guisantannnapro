@@ -339,7 +339,7 @@ const Dashboard = () => {
                 <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
                 <InfoItem label="Email" value={getField(selectedClient, "email")} />
                 <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
-                <InfoItem label="Plano" value={planLabels[selectedClient.profile?.plan || ""] || "—"} />
+                <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
                 <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
