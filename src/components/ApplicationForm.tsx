@@ -342,7 +342,14 @@ const ApplicationForm = () => {
               }} />
             </Field>
             <Field label="Cidade/Estado">
-              <input className={inputClass} value={form.city} onChange={(e) => update("city", e.target.value)} />
+              <CityStateField
+                className={inputClass}
+                value={form.city}
+                onChange={(city, uf) => {
+                  update("city", city);
+                  update("state", uf);
+                }}
+              />
             </Field>
           </div>
 
