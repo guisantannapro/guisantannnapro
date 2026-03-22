@@ -473,6 +473,25 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              {/* Hábitos */}
+              <div className="border-t border-border pt-4">
+                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Hábitos</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <InfoItem label="Tabagismo" value={getField(selectedClient, "smoking")} />
+                  {selectedClient.form_data?.smokingAmount && (
+                    <InfoItem label="Quantidade (cigarro)" value={getField(selectedClient, "smokingAmount")} />
+                  )}
+                  <InfoItem label="Álcool" value={getField(selectedClient, "alcohol")} />
+                  {selectedClient.form_data?.alcoholFrequency && (
+                    <InfoItem label="Frequência (álcool)" value={getField(selectedClient, "alcoholFrequency")} />
+                  )}
+                  <InfoItem label="Outras substâncias" value={getField(selectedClient, "otherSubstances")} />
+                  {selectedClient.form_data?.otherSubstancesDetails && (
+                    <InfoItem label="Detalhes (substâncias)" value={getField(selectedClient, "otherSubstancesDetails")} />
+                  )}
+                </div>
+              </div>
+
               {/* Photos */}
               {(selectedClient.photo_front || selectedClient.photo_side || selectedClient.photo_back || selectedClient.photo_assessment) && (
                 <div className="border-t border-border pt-4">
