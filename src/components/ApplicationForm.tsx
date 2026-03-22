@@ -45,6 +45,7 @@ interface FormData {
   stressLevel: string;
   trainingModalities: string[];
   trainingModalitiesOther: string;
+  sportFrequency: string;
   trainingFrequency: string;
   trainingDuration: string;
   trainingExperience: string;
