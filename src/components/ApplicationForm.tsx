@@ -528,7 +528,7 @@ const ApplicationForm = () => {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Field label="Quantas vezes por semana treina?">
-                <input className={inputClass} value={form.trainingFrequency} onChange={(e) => update("trainingFrequency", e.target.value)} />
+                <input className={inputClass} placeholder="Ex: 5 vezes" value={form.trainingFrequency} onChange={(e) => update("trainingFrequency", e.target.value)} />
               </Field>
               <Field label="Tempo médio por treino">
                 <input className={inputClass} value={form.trainingDuration} onChange={(e) => update("trainingDuration", e.target.value)} />
