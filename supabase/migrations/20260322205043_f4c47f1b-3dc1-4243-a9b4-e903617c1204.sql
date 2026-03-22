@@ -1,0 +1,1 @@
+DROP POLICY "Anon can view all submissions" ON public.form_submissions;
