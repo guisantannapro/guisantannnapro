@@ -284,7 +284,7 @@ const ApplicationForm = () => {
   ];
 
   const modalityOptions = [
-    "Musculação", "Boxe", "Caminhada", "Corrida", "Esporte coletivo", "Outro"
+    "Musculação", "Ciclismo", "Caminhada", "Corrida", "Esporte coletivo", "Outro"
   ];
 
   return (
