@@ -181,7 +181,16 @@ const ApplicationForm = () => {
     setUploading(true);
 
     try {
-      const userId = crypto.randomUUID();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.warn("Could not read auth user, falling back to anonymous submission:", userError);
+      }
+
+      const userId = user?.id ?? crypto.randomUUID();
 
       // Upload photos
       let photoFrontPath: string | null = null;
