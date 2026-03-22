@@ -45,6 +45,7 @@ interface FormData {
   stressLevel: string;
   trainingModalities: string[];
   trainingModalitiesOther: string;
+  sportFrequency: string;
   trainingFrequency: string;
   trainingDuration: string;
   trainingExperience: string;
@@ -67,7 +68,7 @@ const initialForm: FormData = {
   alcohol: "", alcoholFrequency: "",
   otherSubstances: "", otherSubstancesDetails: "",
   sleepHours: "", sleepQuality: "5", stressLevel: "",
-  trainingModalities: [], trainingModalitiesOther: "",
+  trainingModalities: [], trainingModalitiesOther: "", sportFrequency: "",
   trainingFrequency: "", trainingDuration: "", trainingExperience: "",
   workEffort: "", availableSchedule: "", hadProfessionalCoaching: "",
   agreement: false,
@@ -497,6 +498,11 @@ const ApplicationForm = () => {
             <Field label="Quais modalidades pratica atualmente?">
               <CheckboxGroup options={modalityOptions} values={form.trainingModalities} onChange={(v) => update("trainingModalities", v)} />
             </Field>
+            {form.trainingModalities.includes("Esporte coletivo") && (
+              <Field label="Quantas vezes por semana pratica o esporte?">
+                <input className={inputClass} placeholder="Ex: 3 vezes" value={form.sportFrequency} onChange={(e) => update("sportFrequency", e.target.value)} />
+              </Field>
+            )}
             {form.trainingModalities.includes("Outro") && (
               <Field label="Qual modalidade?">
                 <input className={inputClass} value={form.trainingModalitiesOther} onChange={(e) => update("trainingModalitiesOther", e.target.value)} />
