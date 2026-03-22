@@ -38,19 +38,32 @@ serve(async (req) => {
       );
     }
 
-    // Determine plan type from priceKey
     let planType = "base";
     if (priceKey.startsWith("elite")) planType = "elite";
     else if (priceKey.startsWith("transformação")) planType = "transformacao";
+
+    let period = "mensal";
+    if (priceKey.includes("trimestral")) period = "trimestral";
+    else if (priceKey.includes("semestral")) period = "semestral";
+
+    let modality = "";
+    if (planType === "base") {
+      if (priceKey.includes("dieta+treino")) modality = "ambos";
+      else if (priceKey.includes("dieta")) modality = "dieta";
+      else if (priceKey.includes("treino")) modality = "treino";
+    }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
+    const successParams = new URLSearchParams({ plan: planType, period });
+    if (modality) successParams.set("modality", modality);
+
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/pagamento-sucesso?plan=${planType}`,
+      success_url: `${req.headers.get("origin")}/pagamento-sucesso?${successParams.toString()}`,
       cancel_url: `${req.headers.get("origin")}/#planos`,
     });
 

@@ -340,6 +340,14 @@ const Dashboard = () => {
                 <InfoItem label="Email" value={getField(selectedClient, "email")} />
                 <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
                 <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
+                <InfoItem label="Período" value={
+                  { mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" }[selectedClient.form_data?.billingPeriod] || "—"
+                } />
+                {(selectedClient.plan === "base" || selectedClient.profile?.plan === "base") && (
+                  <InfoItem label="Modalidade" value={
+                    { dieta: "Dieta", treino: "Treino", ambos: "Dieta + Treino" }[selectedClient.form_data?.billingModality] || "—"
+                  } />
+                )}
                 <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />

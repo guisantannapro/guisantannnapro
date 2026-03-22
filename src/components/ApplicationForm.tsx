@@ -203,13 +203,21 @@ const ApplicationForm = () => {
       if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
       if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
 
-      // Read purchased plan from localStorage
+      // Read purchased plan info from localStorage
       const purchasedPlan = localStorage.getItem("purchased_plan");
+      const purchasedPeriod = localStorage.getItem("purchased_period");
+      const purchasedModality = localStorage.getItem("purchased_modality");
+
+      const enrichedFormData = {
+        ...form,
+        billingPeriod: purchasedPeriod || null,
+        billingModality: purchasedModality || null,
+      };
 
       // Save form data to Supabase
       const { error } = await supabase.from("form_submissions").insert({
         user_id: userId,
-        form_data: form as any,
+        form_data: enrichedFormData as any,
         photo_front: photoFrontPath,
         photo_side: photoSidePath,
         photo_back: photoBackPath,
@@ -226,6 +234,8 @@ const ApplicationForm = () => {
       }
 
       localStorage.removeItem("purchased_plan");
+      localStorage.removeItem("purchased_period");
+      localStorage.removeItem("purchased_modality");
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);

@@ -6,12 +6,14 @@ import { motion } from "framer-motion";
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get("plan");
+  const period = searchParams.get("period");
+  const modality = searchParams.get("modality");
 
   useEffect(() => {
-    if (plan) {
-      localStorage.setItem("purchased_plan", plan);
-    }
-  }, [plan]);
+    if (plan) localStorage.setItem("purchased_plan", plan);
+    if (period) localStorage.setItem("purchased_period", period);
+    if (modality) localStorage.setItem("purchased_modality", modality);
+  }, [plan, period, modality]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
