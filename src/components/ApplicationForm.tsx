@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { BRAZILIAN_STATES } from "@/lib/brazilian-states";
 
 interface FormData {
   fullName: string;
