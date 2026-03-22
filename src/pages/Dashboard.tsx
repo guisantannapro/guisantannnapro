@@ -396,7 +396,7 @@ const Dashboard = () => {
                 {selectedClient.form_data?.mainGoalOther && (
                   <InfoItem label="Objetivo (outro)" value={getField(selectedClient, "mainGoalOther")} />
                 )}
-                <InfoItem label="Timeline" value={getField(selectedClient, "timeline")} />
+                <InfoItem label="Tempo para objetivo" value={getField(selectedClient, "timeline")} />
                 <InfoItem label="Comprometimento" value={`${getField(selectedClient, "commitment")}/10`} />
                 <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
                 <InfoItem label="Altura" value={getField(selectedClient, "height")} />
