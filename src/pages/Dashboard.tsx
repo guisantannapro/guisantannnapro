@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
+import ProtocolPreviewModal from "@/components/dashboard/ProtocolPreviewModal";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import { useNavigate } from "react-router-dom";
@@ -53,6 +54,7 @@ const Dashboard = () => {
   const [periodFilter, setPeriodFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [clientProtocols, setClientProtocols] = useState<any[]>([]);
+  const [protocolPreviewOpen, setProtocolPreviewOpen] = useState(false);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
@@ -559,6 +561,24 @@ const Dashboard = () => {
                 clientUserId={selectedClient.user_id}
                 protocols={clientProtocols}
                 onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
+              />
+
+              {/* Generate Protocol Preview */}
+              <div className="border-t border-border pt-4">
+                <Button
+                  onClick={() => setProtocolPreviewOpen(true)}
+                  className="w-full gap-2"
+                  variant="outline"
+                >
+                  <ClipboardList size={16} />
+                  Gerar Protocolo
+                </Button>
+              </div>
+
+              <ProtocolPreviewModal
+                open={protocolPreviewOpen}
+                onOpenChange={setProtocolPreviewOpen}
+                client={selectedClient}
               />
 
               {/* Actions */}
