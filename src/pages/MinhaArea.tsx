@@ -334,36 +334,33 @@ const PhotosSection = ({
       transition={{ delay: 0.2 }}
       className="bg-card border border-border rounded-lg p-6"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <Camera className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
-        </div>
-        {submissions.length > 0 && (
+      <div className="flex items-center gap-3 mb-4">
+        <Camera className="w-5 h-5 text-primary" />
+        <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
+      </div>
+
+      {submissions.length > 0 ? (
+        <>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowPhotos(!showPhotos)}
-            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 mb-4"
           >
             {showPhotos ? <EyeOff size={14} /> : <Eye size={14} />}
             {showPhotos ? "Ocultar fotos" : "Ver fotos"}
           </Button>
-        )}
-      </div>
-
-      {submissions.length > 0 ? (
-        showPhotos ? (
-          <div className="space-y-6">
-            {submissions.map((sub) => (
-              <SubmissionPhotos key={sub.id} submission={sub} getPhotoSignedUrl={getPhotoSignedUrl} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            {submissions.length} {submissions.length === 1 ? "envio de fotos" : "envios de fotos"} disponíveis. Clique em "Ver fotos" para visualizar.
+          <p className="text-muted-foreground text-xs mb-4">
+            {submissions.length} {submissions.length === 1 ? "envio de fotos" : "envios de fotos"} disponíveis.
           </p>
-        )
+          {showPhotos && (
+            <div className="space-y-6">
+              {submissions.map((sub) => (
+                <SubmissionPhotos key={sub.id} submission={sub} getPhotoSignedUrl={getPhotoSignedUrl} />
+              ))}
+            </div>
+          )}
+        </>
       ) : (
         <p className="text-muted-foreground text-sm">Nenhuma foto enviada ainda.</p>
       )}
