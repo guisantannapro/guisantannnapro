@@ -248,7 +248,7 @@
   padding: 22px 24px;
   font-size: 13.5px;
   line-height: 1.85;
-  color: #333;
+  color: hsl(0 0% 72%);
   white-space: pre-line;
 }
 
