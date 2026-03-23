@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/formulario" element={<Formulario />} />
           <Route path="/login" element={<Login />} />
           <Route path="/area-do-cliente" element={<MinhaArea />} />
+          <Route path="/protocolo/:id" element={<Protocolo />} />
           <Route
             path="/dashboard"
             element={
