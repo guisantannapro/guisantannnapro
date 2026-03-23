@@ -294,7 +294,7 @@ const Dashboard = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setSelectedClient(client)}
+                          onClick={() => handleSelectClient(client)}
                           className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                         >
                           <Eye size={14} />
