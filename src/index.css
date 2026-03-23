@@ -88,15 +88,15 @@
   }
 }
 
-/* ── PDF Protocol — Ebook Style (White Background) ── */
+/* ── PDF Protocol — Dark on screen, white in PDF ── */
 .pdf-protocol-wrapper {
   width: 800px;
   max-width: 800px;
   margin: 0 auto;
   padding: 40px 36px;
   font-family: 'Inter', sans-serif;
-  color: #1a1a1a;
-  background: #ffffff;
+  color: hsl(0 0% 90%);
+  background: hsl(0 0% 5%);
 }
 
 /* Cover Header */
@@ -104,7 +104,7 @@
   padding: 32px 28px;
   border: 1.5px solid hsl(43 74% 49% / 0.25);
   border-radius: 14px;
-  background: linear-gradient(135deg, #fafaf7, #f5f0e6);
+  background: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 6%));
   margin-bottom: 32px;
   position: relative;
   overflow: hidden;
@@ -145,14 +145,17 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: hsl(43 74% 35%);
+  background: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 49%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .pdf-brand-sub {
   font-size: 10px;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: #888;
+  color: hsl(0 0% 55%);
   margin-top: 2px;
 }
 
@@ -193,31 +196,30 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: hsl(43 74% 42%);
+  color: hsl(43 74% 49%);
 }
 
 .pdf-cover-title {
   font-family: 'Oswald', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: hsl(0 0% 95%);
   text-transform: uppercase;
 }
 
 .pdf-cover-value {
   font-size: 13px;
-  color: #555;
+  color: hsl(0 0% 70%);
   font-weight: 500;
 }
 
 /* Sections — Ebook card style */
 .pdf-section {
-  border: 1px solid #e5e5e5;
+  border: 1px solid hsl(0 0% 18%);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 24px;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  background: hsl(0 0% 8%);
 }
 
 .pdf-section-header {
@@ -225,7 +227,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 22px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid hsl(0 0% 18%);
   background: linear-gradient(90deg, hsl(43 74% 49% / 0.08), transparent);
 }
 
@@ -246,7 +248,7 @@
   padding: 22px 24px;
   font-size: 13.5px;
   line-height: 1.85;
-  color: #333;
+  color: hsl(0 0% 72%);
   white-space: pre-line;
 }
 
@@ -264,7 +266,7 @@
 
 .pdf-footer-text {
   font-size: 10px;
-  color: #999;
+  color: hsl(0 0% 45%);
   letter-spacing: 0.08em;
 }
 
@@ -272,7 +274,7 @@
   margin-top: 4px;
   font-size: 9px;
   font-style: italic;
-  color: #bbb;
+  color: hsl(0 0% 35%);
 }
 
 /* Page breaks */
