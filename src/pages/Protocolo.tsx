@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { Loader2, ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
