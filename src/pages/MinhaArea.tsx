@@ -95,6 +95,17 @@ const MinhaArea = () => {
     }
   };
 
+  const handleDownloadPdf = (proto: any) => {
+    const content = `${proto.nome}\nTipo: ${tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}\n\n--- PLANO ALIMENTAR ---\n${proto.plano_alimentar || ""}\n\n--- TREINO ---\n${proto.treino || ""}\n\n--- OBSERVAÇÕES ---\n${proto.observacoes || ""}`;
+    const blob = new Blob([content], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `protocolo-${proto.nome || "meu-protocolo"}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const getPhotoSignedUrl = async (path: string) => {
     const { data } = await supabase.storage
       .from("client-photos")
