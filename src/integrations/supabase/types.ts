@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_protocols: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          id: string
+          uploaded_by: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          id?: string
+          uploaded_by: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          uploaded_by?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       form_submissions: {
         Row: {
           created_at: string
@@ -60,6 +87,8 @@ export type Database = {
           id: string
           plan: Database["public"]["Enums"]["user_plan"] | null
           plan_activated_at: string | null
+          plan_duration: string | null
+          plan_expires_at: string | null
           updated_at: string
         }
         Insert: {
@@ -68,6 +97,8 @@ export type Database = {
           id: string
           plan?: Database["public"]["Enums"]["user_plan"] | null
           plan_activated_at?: string | null
+          plan_duration?: string | null
+          plan_expires_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -76,6 +107,8 @@ export type Database = {
           id?: string
           plan?: Database["public"]["Enums"]["user_plan"] | null
           plan_activated_at?: string | null
+          plan_duration?: string | null
+          plan_expires_at?: string | null
           updated_at?: string
         }
         Relationships: []
