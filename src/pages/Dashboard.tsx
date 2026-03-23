@@ -52,6 +52,7 @@ const Dashboard = () => {
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [clientProtocols, setClientProtocols] = useState<any[]>([]);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
