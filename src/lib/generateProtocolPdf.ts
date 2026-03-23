@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { saveAs } from "file-saver";
 
 interface ProtocolData {
   nome: string;
