@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
+import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
+import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 
 const planLabels: Record<string, string> = {
   base: "Base",
@@ -29,10 +31,14 @@ const MinhaArea = () => {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [protocols, setProtocols] = useState<any[]>([]);
   const [protocolo, setProtocolo] = useState<any>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (!session) {
         navigate("/login");
@@ -78,9 +84,7 @@ const MinhaArea = () => {
 
   const downloadProtocol = async (protocol: any) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("client-protocols")
-        .download(protocol.file_path);
+      const { data, error } = await supabase.storage.from("client-protocols").download(protocol.file_path);
 
       if (error) throw error;
 
@@ -96,23 +100,36 @@ const MinhaArea = () => {
     }
   };
 
-  const handleDownloadPdf = (proto: any) => {
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.src = `${window.location.origin}/protocolo/${proto.id}?download=1`;
-    document.body.appendChild(iframe);
-    toast.info("Gerando PDF e iniciando download...");
+  const handleDownloadPdf = async (proto: any) => {
+    if (isDownloadingPdf) return;
 
-    window.setTimeout(() => {
-      iframe.remove();
-    }, 60000);
+    try {
+      setPdfProtocol(proto);
+      setIsDownloadingPdf(true);
+      toast.info("Gerando PDF...");
+
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+
+      const filename = `protocolo-${proto.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
+      const ok = await generateProtocolPdf("protocolo-content-inline", filename);
+
+      if (!ok) {
+        toast.error("Não foi possível gerar o PDF.");
+        return;
+      }
+
+      toast.success("Download iniciado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao gerar PDF:", error);
+      toast.error("Erro ao gerar o PDF.");
+    } finally {
+      setIsDownloadingPdf(false);
+      setPdfProtocol(null);
+    }
   };
 
   const getPhotoSignedUrl = async (path: string) => {
-    const { data } = await supabase.storage
-      .from("client-photos")
-      .createSignedUrl(path, 3600);
+    const { data } = await supabase.storage.from("client-photos").createSignedUrl(path, 3600);
     return data?.signedUrl || null;
   };
 
@@ -138,16 +155,11 @@ const MinhaArea = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold uppercase text-gradient-gold">
-              Área do Cliente
-            </h1>
-            <p className="text-muted-foreground text-sm mt-1">
-              Olá, {profile?.full_name || session?.user?.email}
-            </p>
+            <h1 className="text-2xl md:text-3xl font-bold uppercase text-gradient-gold">Área do Cliente</h1>
+            <p className="text-muted-foreground text-sm mt-1">Olá, {profile?.full_name || session?.user?.email}</p>
           </div>
           <Button
             variant="outline"
@@ -165,12 +177,7 @@ const MinhaArea = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Plan Status */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card border border-border rounded-lg p-6">
           <div className="flex items-center gap-3 mb-4">
             <User className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-bold uppercase text-foreground">Meu Plano</h2>
@@ -179,20 +186,12 @@ const MinhaArea = () => {
           {profile?.plan ? (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
-                  {planLabels[profile.plan] || profile.plan}
-                </Badge>
-                {profile.plan_duration && (
-                  <span className="text-muted-foreground text-sm">
-                    Período: {profile.plan_duration}
-                  </span>
-                )}
+                <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">{planLabels[profile.plan] || profile.plan}</Badge>
+                {profile.plan_duration && <span className="text-muted-foreground text-sm">Período: {profile.plan_duration}</span>}
               </div>
 
               {daysRemaining !== null && (
-                <div className={`flex items-center gap-2 text-sm ${
-                  isExpired ? "text-destructive" : isExpiringSoon ? "text-yellow-500" : "text-muted-foreground"
-                }`}>
+                <div className={`flex items-center gap-2 text-sm ${isExpired ? "text-destructive" : isExpiringSoon ? "text-yellow-500" : "text-muted-foreground"}`}>
                   {(isExpired || isExpiringSoon) && <AlertTriangle size={16} />}
                   <Calendar size={16} />
                   {isExpired ? (
@@ -211,7 +210,6 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        {/* Meu Protocolo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -251,10 +249,11 @@ const MinhaArea = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleDownloadPdf(protocolo)}
-                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                  disabled={isDownloadingPdf}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
                 >
-                  <Download size={14} />
-                  Baixar PDF
+                  {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                  {isDownloadingPdf ? "Gerando PDF..." : "Baixar PDF"}
                 </Button>
               </div>
             </div>
@@ -263,7 +262,6 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        {/* Protocols / Downloads */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -284,9 +282,7 @@ const MinhaArea = () => {
                 >
                   <div>
                     <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
-                    <p className="text-muted-foreground text-xs">
-                      Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}
-                    </p>
+                    <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
                   </div>
                   <Button
                     variant="outline"
@@ -305,7 +301,6 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        {/* Photos History */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -328,6 +323,17 @@ const MinhaArea = () => {
           )}
         </motion.div>
       </main>
+
+      {pdfProtocol && (
+        <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
+          <ProtocolPdfContent
+            wrapperId="protocolo-content-inline"
+            protocolo={pdfProtocol}
+            clientName={profile?.full_name || session?.user?.email || "Cliente"}
+            formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+          />
+        </div>
+      )}
     </div>
   );
 };
@@ -366,9 +372,7 @@ const SubmissionPhotos = ({
 
   return (
     <div className="border-t border-border pt-4 first:border-t-0 first:pt-0">
-      <p className="text-xs text-muted-foreground mb-3">
-        Enviadas em {new Date(submission.created_at).toLocaleDateString("pt-BR")}
-      </p>
+      <p className="text-xs text-muted-foreground mb-3">Enviadas em {new Date(submission.created_at).toLocaleDateString("pt-BR")}</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {photoFields.map((field) =>
           submission[field.key] ? (
