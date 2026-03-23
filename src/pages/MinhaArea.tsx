@@ -15,6 +15,12 @@ const planLabels: Record<string, string> = {
   elite: "Elite",
 };
 
+const tipoProtocoloLabels: Record<string, string> = {
+  bulking: "Bulking",
+  cutting: "Cutting",
+  recomp: "Recomposição Corporal",
+};
+
 const MinhaArea = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
