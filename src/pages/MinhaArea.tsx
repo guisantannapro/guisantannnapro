@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 
@@ -14,12 +15,19 @@ const planLabels: Record<string, string> = {
   elite: "Elite",
 };
 
+const tipoProtocoloLabels: Record<string, string> = {
+  bulking: "Bulking",
+  cutting: "Cutting",
+  recomp: "Recomposição Corporal",
+};
+
 const MinhaArea = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [protocols, setProtocols] = useState<any[]>([]);
+  const [protocolo, setProtocolo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,15 +57,17 @@ const MinhaArea = () => {
   const fetchData = async (userId: string) => {
     setLoading(true);
     try {
-      const [profileRes, submissionsRes, protocolsRes] = await Promise.all([
+      const [profileRes, submissionsRes, protocolsRes, protocoloRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(1),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
+      if (protocoloRes.data && protocoloRes.data.length > 0) setProtocolo(protocoloRes.data[0]);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -184,6 +194,73 @@ const MinhaArea = () => {
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">Nenhum plano ativo no momento.</p>
+          )}
+        </motion.div>
+
+        {/* Meu Protocolo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-card border border-border rounded-lg p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <ClipboardList className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold uppercase text-foreground">Meu Protocolo</h2>
+          </div>
+
+          {protocolo ? (
+            <div className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge className="bg-primary text-primary-foreground">
+                    {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                  </Badge>
+                  <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  Atualizado em: {new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR")}
+                </span>
+              </div>
+
+              {protocolo.plano_alimentar && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Plano Alimentar</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.plano_alimentar}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {protocolo.treino && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.treino}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {protocolo.observacoes && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Observações</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.observacoes}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
           )}
         </motion.div>
 
