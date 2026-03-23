@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { ClipboardList, Save } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ClientData {
   form_data: any;
   plan: string | null;
+  user_id: string;
   profile?: { plan: string | null; full_name: string | null };
 }
 
@@ -31,115 +35,157 @@ interface ProtocolPreviewModalProps {
   client: ClientData;
 }
 
-const dietTemplates: Record<ProtocolType, React.ReactNode> = {
-  bulking: (
-    <>
-      <p><strong className="text-foreground">Refeição 1 — Café da manhã (07:00)</strong></p>
-      <p>• 4 ovos mexidos + 3 fatias de pão integral + 1 banana + pasta de amendoim</p>
-      <p><strong className="text-foreground">Refeição 2 — Lanche da manhã (10:00)</strong></p>
-      <p>• Shake: whey + aveia + leite integral + banana</p>
-      <p><strong className="text-foreground">Refeição 3 — Almoço (12:30)</strong></p>
-      <p>• 200g frango grelhado + 150g arroz + 100g feijão + salada + azeite</p>
-      <p><strong className="text-foreground">Refeição 4 — Lanche da tarde (15:30)</strong></p>
-      <p>• Batata doce + frango desfiado + suco natural</p>
-      <p><strong className="text-foreground">Refeição 5 — Pré-treino (17:30)</strong></p>
-      <p>• Tapioca com queijo + café preto</p>
-      <p><strong className="text-foreground">Refeição 6 — Jantar (20:00)</strong></p>
-      <p>• 200g carne vermelha + macarrão integral + legumes refogados</p>
-      <p className="text-xs italic mt-3">* Template Bulking — superávit calórico para ganho de massa.</p>
-    </>
-  ),
-  cutting: (
-    <>
-      <p><strong className="text-foreground">Refeição 1 — Café da manhã (07:00)</strong></p>
-      <p>• 3 claras + 1 ovo inteiro + 1 fatia pão integral + café sem açúcar</p>
-      <p><strong className="text-foreground">Refeição 2 — Lanche da manhã (10:00)</strong></p>
-      <p>• Iogurte natural desnatado + 10g chia + morangos</p>
-      <p><strong className="text-foreground">Refeição 3 — Almoço (12:30)</strong></p>
-      <p>• 150g frango grelhado + 80g arroz integral + salada volumosa + limão</p>
-      <p><strong className="text-foreground">Refeição 4 — Lanche da tarde (15:30)</strong></p>
-      <p>• Whey isolado com água + 1 maçã</p>
-      <p><strong className="text-foreground">Refeição 5 — Jantar (19:00)</strong></p>
-      <p>• 150g peixe grelhado + legumes no vapor + azeite</p>
-      <p className="text-xs italic mt-3">* Template Cutting — déficit calórico para perda de gordura.</p>
-    </>
-  ),
-  recomp: (
-    <>
-      <p><strong className="text-foreground">Refeição 1 — Café da manhã (07:00)</strong></p>
-      <p>• 3 ovos mexidos + 2 fatias de pão integral + 1 fruta</p>
-      <p><strong className="text-foreground">Refeição 2 — Lanche da manhã (10:00)</strong></p>
-      <p>• Iogurte natural + 30g granola + 1 banana</p>
-      <p><strong className="text-foreground">Refeição 3 — Almoço (12:30)</strong></p>
-      <p>• 150g frango grelhado + 100g arroz + 80g feijão + salada à vontade</p>
-      <p><strong className="text-foreground">Refeição 4 — Lanche da tarde (15:30)</strong></p>
-      <p>• Whey protein + 1 fruta + 20g castanhas</p>
-      <p><strong className="text-foreground">Refeição 5 — Jantar (19:00)</strong></p>
-      <p>• 150g carne vermelha magra + batata doce + legumes refogados</p>
-      <p className="text-xs italic mt-3">* Template Recomposição — equilíbrio entre ganho muscular e perda de gordura.</p>
-    </>
-  ),
+const dietTextTemplates: Record<ProtocolType, string> = {
+  bulking: `Refeição 1 — Café da manhã (07:00)
+• 4 ovos mexidos + 3 fatias de pão integral + 1 banana + pasta de amendoim
+
+Refeição 2 — Lanche da manhã (10:00)
+• Shake: whey + aveia + leite integral + banana
+
+Refeição 3 — Almoço (12:30)
+• 200g frango grelhado + 150g arroz + 100g feijão + salada + azeite
+
+Refeição 4 — Lanche da tarde (15:30)
+• Batata doce + frango desfiado + suco natural
+
+Refeição 5 — Pré-treino (17:30)
+• Tapioca com queijo + café preto
+
+Refeição 6 — Jantar (20:00)
+• 200g carne vermelha + macarrão integral + legumes refogados`,
+
+  cutting: `Refeição 1 — Café da manhã (07:00)
+• 3 claras + 1 ovo inteiro + 1 fatia pão integral + café sem açúcar
+
+Refeição 2 — Lanche da manhã (10:00)
+• Iogurte natural desnatado + 10g chia + morangos
+
+Refeição 3 — Almoço (12:30)
+• 150g frango grelhado + 80g arroz integral + salada volumosa + limão
+
+Refeição 4 — Lanche da tarde (15:30)
+• Whey isolado com água + 1 maçã
+
+Refeição 5 — Jantar (19:00)
+• 150g peixe grelhado + legumes no vapor + azeite`,
+
+  recomp: `Refeição 1 — Café da manhã (07:00)
+• 3 ovos mexidos + 2 fatias de pão integral + 1 fruta
+
+Refeição 2 — Lanche da manhã (10:00)
+• Iogurte natural + 30g granola + 1 banana
+
+Refeição 3 — Almoço (12:30)
+• 150g frango grelhado + 100g arroz + 80g feijão + salada à vontade
+
+Refeição 4 — Lanche da tarde (15:30)
+• Whey protein + 1 fruta + 20g castanhas
+
+Refeição 5 — Jantar (19:00)
+• 150g carne vermelha magra + batata doce + legumes refogados`,
 };
 
-const trainingTemplates: Record<ProtocolType, React.ReactNode> = {
-  bulking: (
-    <>
-      <p><strong className="text-foreground">Segunda — Peito / Tríceps (Volume)</strong></p>
-      <p>• Supino reto 4x8 | Supino inclinado 4x10 | Crucifixo 3x12 | Tríceps testa 4x10</p>
-      <p><strong className="text-foreground">Terça — Costas / Bíceps (Volume)</strong></p>
-      <p>• Barra fixa 4x8 | Remada curvada 4x10 | Pulley 3x12 | Rosca Scott 4x10</p>
-      <p><strong className="text-foreground">Quarta — Pernas (Força)</strong></p>
-      <p>• Agachamento livre 5x6 | Leg press 4x10 | Extensora 3x12 | Panturrilha 4x15</p>
-      <p><strong className="text-foreground">Quinta — Ombros / Trapézio</strong></p>
-      <p>• Desenvolvimento militar 4x8 | Elevação lateral 4x12 | Encolhimento 4x12</p>
-      <p><strong className="text-foreground">Sexta — Posterior / Glúteos (Volume)</strong></p>
-      <p>• Stiff 4x8 | Cadeira flexora 4x10 | Hip thrust 4x10 | Abdômen 3x20</p>
-      <p className="text-xs italic mt-3">* Template Bulking — foco em cargas progressivas e volume alto.</p>
-    </>
-  ),
-  cutting: (
-    <>
-      <p><strong className="text-foreground">Segunda — Full Upper (Circuito)</strong></p>
-      <p>• Supino reto 3x12 | Remada 3x12 | Desenvolvimento 3x12 | Tríceps/Bíceps 2x15</p>
-      <p><strong className="text-foreground">Terça — Full Lower + HIIT</strong></p>
-      <p>• Agachamento 3x12 | Leg press 3x12 | Stiff 3x12 | 15min HIIT bike</p>
-      <p><strong className="text-foreground">Quarta — Cardio moderado</strong></p>
-      <p>• 40min esteira inclinada ou elíptico</p>
-      <p><strong className="text-foreground">Quinta — Full Upper (Circuito)</strong></p>
-      <p>• Puxada 3x12 | Supino inclinado 3x12 | Elevação lateral 3x15 | Abdômen 3x20</p>
-      <p><strong className="text-foreground">Sexta — Full Lower + HIIT</strong></p>
-      <p>• Hip thrust 3x12 | Extensora 3x15 | Flexora 3x15 | 15min HIIT</p>
-      <p className="text-xs italic mt-3">* Template Cutting — foco em manutenção muscular e gasto calórico.</p>
-    </>
-  ),
-  recomp: (
-    <>
-      <p><strong className="text-foreground">Segunda — Peito / Tríceps</strong></p>
-      <p>• Supino reto 4x10 | Crucifixo 3x12 | Tríceps corda 3x12</p>
-      <p><strong className="text-foreground">Terça — Costas / Bíceps</strong></p>
-      <p>• Puxada frontal 4x10 | Remada curvada 3x12 | Rosca direta 3x12</p>
-      <p><strong className="text-foreground">Quarta — Pernas</strong></p>
-      <p>• Agachamento livre 4x10 | Leg press 3x12 | Extensora 3x15</p>
-      <p><strong className="text-foreground">Quinta — Ombros / Abdômen</strong></p>
-      <p>• Desenvolvimento 4x10 | Elevação lateral 3x12 | Prancha 3x45s</p>
-      <p><strong className="text-foreground">Sexta — Posterior / Glúteos</strong></p>
-      <p>• Stiff 4x10 | Cadeira flexora 3x12 | Hip thrust 3x12</p>
-      <p className="text-xs italic mt-3">* Template Recomposição — equilíbrio entre força e condicionamento.</p>
-    </>
-  ),
+const trainingTextTemplates: Record<ProtocolType, string> = {
+  bulking: `Segunda — Peito / Tríceps (Volume)
+• Supino reto 4x8 | Supino inclinado 4x10 | Crucifixo 3x12 | Tríceps testa 4x10
+
+Terça — Costas / Bíceps (Volume)
+• Barra fixa 4x8 | Remada curvada 4x10 | Pulley 3x12 | Rosca Scott 4x10
+
+Quarta — Pernas (Força)
+• Agachamento livre 5x6 | Leg press 4x10 | Extensora 3x12 | Panturrilha 4x15
+
+Quinta — Ombros / Trapézio
+• Desenvolvimento militar 4x8 | Elevação lateral 4x12 | Encolhimento 4x12
+
+Sexta — Posterior / Glúteos (Volume)
+• Stiff 4x8 | Cadeira flexora 4x10 | Hip thrust 4x10 | Abdômen 3x20`,
+
+  cutting: `Segunda — Full Upper (Circuito)
+• Supino reto 3x12 | Remada 3x12 | Desenvolvimento 3x12 | Tríceps/Bíceps 2x15
+
+Terça — Full Lower + HIIT
+• Agachamento 3x12 | Leg press 3x12 | Stiff 3x12 | 15min HIIT bike
+
+Quarta — Cardio moderado
+• 40min esteira inclinada ou elíptico
+
+Quinta — Full Upper (Circuito)
+• Puxada 3x12 | Supino inclinado 3x12 | Elevação lateral 3x15 | Abdômen 3x20
+
+Sexta — Full Lower + HIIT
+• Hip thrust 3x12 | Extensora 3x15 | Flexora 3x15 | 15min HIIT`,
+
+  recomp: `Segunda — Peito / Tríceps
+• Supino reto 4x10 | Crucifixo 3x12 | Tríceps corda 3x12
+
+Terça — Costas / Bíceps
+• Puxada frontal 4x10 | Remada curvada 3x12 | Rosca direta 3x12
+
+Quarta — Pernas
+• Agachamento livre 4x10 | Leg press 3x12 | Extensora 3x15
+
+Quinta — Ombros / Abdômen
+• Desenvolvimento 4x10 | Elevação lateral 3x12 | Prancha 3x45s
+
+Sexta — Posterior / Glúteos
+• Stiff 4x10 | Cadeira flexora 3x12 | Hip thrust 3x12`,
 };
 
 const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewModalProps) => {
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
+  const [planoAlimentar, setPlanoAlimentar] = useState("");
+  const [treino, setTreino] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [saving, setSaving] = useState(false);
+
   const getField = (field: string) => client.form_data?.[field] || "—";
   const plan = client.plan || client.profile?.plan || "";
   const clientGoal = Array.isArray(client.form_data?.mainGoal)
     ? client.form_data.mainGoal.join(", ")
     : getField("mainGoal");
 
+  // Load template when type is selected
+  useEffect(() => {
+    if (protocolType) {
+      setPlanoAlimentar(dietTextTemplates[protocolType]);
+      setTreino(trainingTextTemplates[protocolType]);
+      setObservacoes("");
+    }
+  }, [protocolType]);
+
   const handleClose = (value: boolean) => {
-    if (!value) setProtocolType(null);
+    if (!value) {
+      setProtocolType(null);
+      setPlanoAlimentar("");
+      setTreino("");
+      setObservacoes("");
+    }
     onOpenChange(value);
+  };
+
+  const handleSave = async () => {
+    if (!protocolType) return;
+    setSaving(true);
+    try {
+      const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
+      const { error } = await supabase.from("protocolos").insert({
+        user_id: client.user_id,
+        nome,
+        tipo_protocolo: protocolType,
+        plano_alimentar: planoAlimentar,
+        treino,
+        observacoes,
+      });
+      if (error) throw error;
+      toast.success("Protocolo salvo com sucesso!");
+      handleClose(false);
+    } catch (err: any) {
+      console.error("Error saving protocol:", err);
+      toast.error("Erro ao salvar protocolo.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -153,13 +199,11 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
         {!protocolType ? (
           <div className="space-y-6 mt-4">
-            {/* Objetivo como referência */}
             <div className="bg-muted/50 border border-border rounded-lg p-4">
               <span className="text-xs text-muted-foreground uppercase">Objetivo informado pelo cliente (referência)</span>
               <p className="text-sm text-foreground mt-1">{clientGoal}</p>
             </div>
 
-            {/* Seleção de tipo */}
             <div>
               <h3 className="text-sm font-semibold uppercase text-foreground mb-3">
                 Selecione o tipo de protocolo <span className="text-destructive">*</span>
@@ -185,7 +229,6 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
           </div>
         ) : (
           <div className="space-y-6 mt-4 text-foreground">
-            {/* Tipo selecionado */}
             <div className="flex items-center gap-3">
               <Badge className="bg-primary text-primary-foreground">{protocolTypeLabels[protocolType]}</Badge>
               <Button variant="ghost" size="sm" onClick={() => setProtocolType(null)} className="text-xs text-muted-foreground">
@@ -224,21 +267,51 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
             {/* Plano Alimentar */}
             <section>
-              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Plano Alimentar — {protocolTypeLabels[protocolType]}</h3>
-              <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground space-y-2">
-                {dietTemplates[protocolType]}
-              </div>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Plano Alimentar</h3>
+              <Textarea
+                value={planoAlimentar}
+                onChange={(e) => setPlanoAlimentar(e.target.value)}
+                rows={14}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
+              />
             </section>
 
             <Separator />
 
             {/* Treino */}
             <section>
-              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino — {protocolTypeLabels[protocolType]}</h3>
-              <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground space-y-2">
-                {trainingTemplates[protocolType]}
-              </div>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
+              <Textarea
+                value={treino}
+                onChange={(e) => setTreino(e.target.value)}
+                rows={14}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
+              />
             </section>
+
+            <Separator />
+
+            {/* Observações */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Observações</h3>
+              <Textarea
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={4}
+                placeholder="Adicione observações sobre o protocolo..."
+                className="bg-muted/50 border-border text-sm text-foreground resize-y"
+              />
+            </section>
+
+            {/* Salvar */}
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="w-full gap-2"
+            >
+              <Save size={16} />
+              {saving ? "Salvando..." : "Salvar Protocolo"}
+            </Button>
           </div>
         )}
       </DialogContent>
