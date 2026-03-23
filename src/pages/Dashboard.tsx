@@ -122,6 +122,20 @@ const Dashboard = () => {
     }
   };
 
+  const fetchClientProtocols = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("client_protocols")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    setClientProtocols(data || []);
+  }, []);
+
+  const handleSelectClient = (client: ClientData) => {
+    setSelectedClient(client);
+    fetchClientProtocols(client.user_id);
+  };
+
   const getField = (client: ClientData, field: string) => {
     return client.form_data?.[field] || "—";
   };
