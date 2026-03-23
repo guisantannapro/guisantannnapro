@@ -45,16 +45,12 @@ const Protocolo = () => {
     fetchProtocolo();
   }, [id, navigate]);
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     if (!protocolo) return;
-    const content = `${protocolo.nome}\nTipo: ${tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}\n\n--- PLANO ALIMENTAR ---\n${protocolo.plano_alimentar || ""}\n\n--- TREINO ---\n${protocolo.treino || ""}\n\n--- OBSERVAÇÕES ---\n${protocolo.observacoes || ""}`;
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `protocolo-${protocolo.nome || "meu-protocolo"}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", session?.user?.id || "").single();
+    const clientName = profile?.full_name || session?.user?.email || "Cliente";
+    generateProtocolPdf(protocolo, clientName);
   };
 
   if (loading) {
