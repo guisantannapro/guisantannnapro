@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList } from "lucide-react";
+import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
