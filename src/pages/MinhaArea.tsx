@@ -95,6 +95,17 @@ const MinhaArea = () => {
     }
   };
 
+  const handleDownloadPdf = (proto: any) => {
+    const content = `${proto.nome}\nTipo: ${tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}\n\n--- PLANO ALIMENTAR ---\n${proto.plano_alimentar || ""}\n\n--- TREINO ---\n${proto.treino || ""}\n\n--- OBSERVAÇÕES ---\n${proto.observacoes || ""}`;
+    const blob = new Blob([content], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `protocolo-${proto.nome || "meu-protocolo"}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const getPhotoSignedUrl = async (path: string) => {
     const { data } = await supabase.storage
       .from("client-photos")
@@ -210,8 +221,7 @@ const MinhaArea = () => {
           </div>
 
           {protocolo ? (
-            <div className="space-y-6">
-              {/* Header: tipo + nome + data */}
+            <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
@@ -224,38 +234,26 @@ const MinhaArea = () => {
                 </span>
               </div>
 
-              {protocolo.plano_alimentar && (
-                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
-                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
-                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Plano Alimentar</h3>
-                  </div>
-                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
-                    {protocolo.plano_alimentar}
-                  </div>
-                </div>
-              )}
-
-              {protocolo.treino && (
-                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
-                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
-                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Treino</h3>
-                  </div>
-                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
-                    {protocolo.treino}
-                  </div>
-                </div>
-              )}
-
-              {protocolo.observacoes && (
-                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
-                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
-                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Observações</h3>
-                  </div>
-                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
-                    {protocolo.observacoes}
-                  </div>
-                </div>
-              )}
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/protocolo/${protocolo.id}`)}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                >
+                  <FileText size={14} />
+                  Abrir protocolo completo
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownloadPdf(protocolo)}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                >
+                  <Download size={14} />
+                  Baixar PDF
+                </Button>
+              </div>
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
