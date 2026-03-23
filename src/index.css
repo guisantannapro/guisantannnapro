@@ -88,15 +88,15 @@
   }
 }
 
-/* ── PDF Protocol — Ebook Style (White Background) ── */
+/* ── PDF Protocol — Dark on screen, white in PDF ── */
 .pdf-protocol-wrapper {
   width: 800px;
   max-width: 800px;
   margin: 0 auto;
   padding: 40px 36px;
   font-family: 'Inter', sans-serif;
-  color: #1a1a1a;
-  background: #ffffff;
+  color: hsl(0 0% 90%);
+  background: hsl(0 0% 5%);
 }
 
 /* Cover Header */
