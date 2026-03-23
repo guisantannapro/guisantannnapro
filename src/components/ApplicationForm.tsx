@@ -174,7 +174,12 @@ const ApplicationForm = () => {
     }
   };
 
-  const uploadPhoto = async (file: File, userId: string, label: string): Promise<string | null> => {
+  const removePhoto = (type: "front" | "side" | "back" | "assessment") => {
+    setPhotos((prev) => ({ ...prev, [type]: null }));
+    setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
+  };
+
+
     const ext = file.name.split(".").pop();
     const path = `${userId}/${label}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("client-photos").upload(path, file);
