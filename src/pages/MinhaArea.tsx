@@ -27,6 +27,7 @@ const MinhaArea = () => {
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [protocols, setProtocols] = useState<any[]>([]);
+  const [protocolo, setProtocolo] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
