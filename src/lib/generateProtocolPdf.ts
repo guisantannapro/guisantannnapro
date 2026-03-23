@@ -214,18 +214,7 @@ export function generateProtocolPdf(protocol: ProtocolData, clientName: string):
     const fileName = rawName.replace(/[\\/:*?"<>|]/g, "-");
     const blob = doc.output("blob");
 
-    // 1) Try direct download first
     saveAs(blob, fileName);
-
-    // 2) Reliable fallback for sandboxed iframe previews:
-    // open PDF in the same tab so the browser viewer can handle manual download.
-    if (window.self !== window.top) {
-      const blobUrl = URL.createObjectURL(blob);
-      setTimeout(() => {
-        window.location.href = blobUrl;
-      }, 180);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
-    }
 
     return true;
   } catch (error) {

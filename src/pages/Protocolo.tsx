@@ -83,6 +83,20 @@ const Protocolo = () => {
     if (!ok) toast.error("Não foi possível gerar o PDF.");
   };
 
+  useEffect(() => {
+    if (loading || !protocolo || autoDownloaded) return;
+    if (searchParams.get("download") !== "1") return;
+
+    const ok = generateProtocolPdf(protocolo, clientName);
+    if (!ok) {
+      toast.error("Não foi possível gerar o PDF.");
+      return;
+    }
+
+    setAutoDownloaded(true);
+    toast.success("Download iniciado.");
+  }, [loading, protocolo, autoDownloaded, searchParams, clientName]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
