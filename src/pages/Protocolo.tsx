@@ -164,7 +164,7 @@ const Protocolo = () => {
         )}
 
         {protocolo.treino && (
-          <div className="pdf-section">
+          <div className="pdf-section pdf-page-break">
             <div className="pdf-section-header">
               <span className="pdf-section-icon">🏋️</span>
               <h3 className="pdf-section-title">Treino</h3>
