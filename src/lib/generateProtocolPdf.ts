@@ -236,5 +236,13 @@ export function generateProtocolPdf(protocol: ProtocolData, clientName: string) 
   addFooter(doc, clientName);
 
   // Download
-  doc.save(`protocolo-${protocol.nome || "personalizado"}.pdf`);
+  const pdfBlob = doc.output("blob");
+  const url = URL.createObjectURL(pdfBlob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `protocolo-${protocol.nome || "personalizado"}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
