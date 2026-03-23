@@ -327,6 +327,13 @@ const PhotosSection = ({
 }) => {
   const [showPhotos, setShowPhotos] = useState(false);
 
+  const photoFields = ["photo_front", "photo_side", "photo_back", "photo_assessment"];
+  const submissionsWithPhotos = submissions.filter((sub) => photoFields.some((f) => sub[f]));
+  const totalPhotos = submissionsWithPhotos.reduce(
+    (acc, sub) => acc + photoFields.filter((f) => sub[f]).length,
+    0
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -339,7 +346,7 @@ const PhotosSection = ({
         <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
       </div>
 
-      {submissions.length > 0 ? (
+      {submissionsWithPhotos.length > 0 ? (
         <>
           <Button
             variant="outline"
@@ -351,11 +358,11 @@ const PhotosSection = ({
             {showPhotos ? "Ocultar fotos" : "Ver fotos"}
           </Button>
           <p className="text-muted-foreground text-xs mb-4">
-            {submissions.length} {submissions.length === 1 ? "envio de fotos" : "envios de fotos"} disponíveis.
+            {totalPhotos} {totalPhotos === 1 ? "foto disponível" : "fotos disponíveis"}.
           </p>
           {showPhotos && (
             <div className="space-y-6">
-              {submissions.map((sub) => (
+              {submissionsWithPhotos.map((sub) => (
                 <SubmissionPhotos key={sub.id} submission={sub} getPhotoSignedUrl={getPhotoSignedUrl} />
               ))}
             </div>
