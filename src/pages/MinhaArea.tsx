@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList } from "lucide-react";
-import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -97,29 +97,9 @@ const MinhaArea = () => {
   };
 
   const handleDownloadPdf = (proto: any) => {
-    const clientName = profile?.full_name || session?.user?.email || "Cliente";
-
-    const isInIframe = (() => {
-      try {
-        return window.self !== window.top;
-      } catch {
-        return true;
-      }
-    })();
-
-    if (isInIframe) {
-      const url = `${window.location.origin}/protocolo/${proto.id}?download=1`;
-      const opened = window.open(url, "_blank", "noopener,noreferrer");
-      if (!opened) {
-        toast.error("O navegador bloqueou a nova aba. Permita pop-ups e tente novamente.");
-        return;
-      }
-      toast.info("Abrimos o protocolo em nova aba para concluir o download do PDF.");
-      return;
-    }
-
-    const ok = generateProtocolPdf(proto, clientName);
-    if (!ok) toast.error("Não foi possível gerar o PDF.");
+    const url = `${window.location.origin}/protocolo/${proto.id}?download=1`;
+    window.open(url, "_blank", "noopener,noreferrer");
+    toast.info("Abrimos o protocolo em nova aba para gerar o PDF.");
   };
 
   const getPhotoSignedUrl = async (path: string) => {

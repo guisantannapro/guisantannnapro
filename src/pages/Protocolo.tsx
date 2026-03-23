@@ -32,16 +32,8 @@ const Protocolo = () => {
       }
 
       const [{ data, error }, { data: profile }] = await Promise.all([
-        supabase
-          .from("protocolos")
-          .select("*")
-          .eq("id", id!)
-          .single(),
-        supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", session.user.id)
-          .single(),
+        supabase.from("protocolos").select("*").eq("id", id!).single(),
+        supabase.from("profiles").select("full_name").eq("id", session.user.id).single(),
       ]);
 
       if (error || !data) {
@@ -60,26 +52,8 @@ const Protocolo = () => {
   const handleDownloadPdf = () => {
     if (!protocolo) return;
 
-    const isInIframe = (() => {
-      try {
-        return window.self !== window.top;
-      } catch {
-        return true;
-      }
-    })();
-
-    if (isInIframe) {
-      const url = `${window.location.origin}/protocolo/${protocolo.id}?download=1`;
-      const opened = window.open(url, "_blank", "noopener,noreferrer");
-      if (!opened) {
-        toast.error("O navegador bloqueou a nova aba. Permita pop-ups e tente novamente.");
-        return;
-      }
-      toast.info("Abrimos o protocolo em nova aba para concluir o download do PDF.");
-      return;
-    }
-
-    const ok = generateProtocolPdf(protocolo, clientName);
+    const filename = `protocolo-${protocolo.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
+    const ok = generateProtocolPdf("protocolo-content", filename);
     if (!ok) toast.error("Não foi possível gerar o PDF.");
   };
 
@@ -87,15 +61,17 @@ const Protocolo = () => {
     if (loading || !protocolo || autoDownloaded) return;
     if (searchParams.get("download") !== "1") return;
 
-    const ok = generateProtocolPdf(protocolo, clientName);
-    if (!ok) {
-      toast.error("Não foi possível gerar o PDF.");
-      return;
-    }
-
-    setAutoDownloaded(true);
-    toast.success("Download iniciado.");
-  }, [loading, protocolo, autoDownloaded, searchParams, clientName]);
+    setTimeout(() => {
+      const filename = `protocolo-${protocolo.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
+      const ok = generateProtocolPdf("protocolo-content", filename);
+      if (!ok) {
+        toast.error("Não foi possível gerar o PDF.");
+        return;
+      }
+      setAutoDownloaded(true);
+      toast.success("Download iniciado.");
+    }, 500);
+  }, [loading, protocolo, autoDownloaded, searchParams]);
 
   if (loading) {
     return (
@@ -135,7 +111,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
+      <main id="protocolo-content" className="container mx-auto px-4 py-8 space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
