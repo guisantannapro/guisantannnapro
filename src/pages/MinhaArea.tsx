@@ -210,10 +210,11 @@ const MinhaArea = () => {
           </div>
 
           {protocolo ? (
-            <div className="space-y-5">
-              <div className="flex items-center justify-between">
+            <div className="space-y-6">
+              {/* Header: tipo + nome + data */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <Badge className="bg-primary text-primary-foreground">
+                  <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
                     {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
                   </Badge>
                   <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
@@ -224,39 +225,36 @@ const MinhaArea = () => {
               </div>
 
               {protocolo.plano_alimentar && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Plano Alimentar</h3>
-                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
-                      {protocolo.plano_alimentar}
-                    </div>
+                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
+                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
+                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Plano Alimentar</h3>
                   </div>
-                </>
+                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+                    {protocolo.plano_alimentar}
+                  </div>
+                </div>
               )}
 
               {protocolo.treino && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
-                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
-                      {protocolo.treino}
-                    </div>
+                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
+                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
+                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Treino</h3>
                   </div>
-                </>
+                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+                    {protocolo.treino}
+                  </div>
+                </div>
               )}
 
               {protocolo.observacoes && (
-                <>
-                  <Separator />
-                  <div>
-                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Observações</h3>
-                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
-                      {protocolo.observacoes}
-                    </div>
+                <div className="bg-secondary/50 border border-border rounded-lg overflow-hidden">
+                  <div className="bg-secondary px-4 py-2.5 border-b border-border">
+                    <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Observações</h3>
                   </div>
-                </>
+                  <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+                    {protocolo.observacoes}
+                  </div>
+                </div>
               )}
             </div>
           ) : (
