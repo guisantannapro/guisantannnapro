@@ -97,9 +97,16 @@ const MinhaArea = () => {
   };
 
   const handleDownloadPdf = (proto: any) => {
-    const url = `${window.location.origin}/protocolo/${proto.id}?download=1`;
-    window.open(url, "_blank", "noopener,noreferrer");
-    toast.info("Abrimos o protocolo em nova aba para gerar o PDF.");
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.src = `${window.location.origin}/protocolo/${proto.id}?download=1`;
+    document.body.appendChild(iframe);
+    toast.info("Gerando PDF e iniciando download...");
+
+    window.setTimeout(() => {
+      iframe.remove();
+    }, 60000);
   };
 
   const getPhotoSignedUrl = async (path: string) => {
