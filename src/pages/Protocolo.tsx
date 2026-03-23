@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { Loader2, ArrowLeft, Download } from "lucide-react";
@@ -17,8 +17,11 @@ const tipoProtocoloLabels: Record<string, string> = {
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [protocolo, setProtocolo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [clientName, setClientName] = useState("Cliente");
+  const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
     const fetchProtocolo = async () => {
@@ -28,17 +31,25 @@ const Protocolo = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("protocolos")
-        .select("*")
-        .eq("id", id!)
-        .single();
+      const [{ data, error }, { data: profile }] = await Promise.all([
+        supabase
+          .from("protocolos")
+          .select("*")
+          .eq("id", id!)
+          .single(),
+        supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", session.user.id)
+          .single(),
+      ]);
 
       if (error || !data) {
         navigate("/area-do-cliente");
         return;
       }
 
+      setClientName(profile?.full_name || session.user.email || "Cliente");
       setProtocolo(data);
       setLoading(false);
     };
@@ -46,21 +57,45 @@ const Protocolo = () => {
     fetchProtocolo();
   }, [id, navigate]);
 
-  const handleDownloadPdf = async () => {
+  const handleDownloadPdf = () => {
     if (!protocolo) return;
-    const { data: { session } } = await supabase.auth.getSession();
-    const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", session?.user?.id || "").single();
-    const clientName = profile?.full_name || session?.user?.email || "Cliente";
+
+    const isInIframe = (() => {
+      try {
+        return window.self !== window.top;
+      } catch {
+        return true;
+      }
+    })();
+
+    if (isInIframe) {
+      const url = `${window.location.origin}/protocolo/${protocolo.id}?download=1`;
+      const opened = window.open(url, "_blank", "noopener,noreferrer");
+      if (!opened) {
+        toast.error("O navegador bloqueou a nova aba. Permita pop-ups e tente novamente.");
+        return;
+      }
+      toast.info("Abrimos o protocolo em nova aba para concluir o download do PDF.");
+      return;
+    }
+
+    const ok = generateProtocolPdf(protocolo, clientName);
+    if (!ok) toast.error("Não foi possível gerar o PDF.");
+  };
+
+  useEffect(() => {
+    if (loading || !protocolo || autoDownloaded) return;
+    if (searchParams.get("download") !== "1") return;
+
     const ok = generateProtocolPdf(protocolo, clientName);
     if (!ok) {
       toast.error("Não foi possível gerar o PDF.");
       return;
     }
 
-    if (window.self !== window.top) {
-      toast.info("Se o download não iniciar automático, o PDF será aberto no visualizador para baixar manualmente.");
-    }
-  };
+    setAutoDownloaded(true);
+    toast.success("Download iniciado.");
+  }, [loading, protocolo, autoDownloaded, searchParams, clientName]);
 
   if (loading) {
     return (
