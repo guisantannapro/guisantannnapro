@@ -5,8 +5,7 @@ import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { Loader2, ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import logoGS from "@/assets/logo-gs.png";
 
 const tipoProtocoloLabels: Record<string, string> = {
   bulking: "Bulking",
@@ -51,7 +50,6 @@ const Protocolo = () => {
 
   const handleDownloadPdf = async () => {
     if (!protocolo) return;
-
     const filename = `protocolo-${protocolo.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
     toast.info("Gerando PDF...");
     const ok = await generateProtocolPdf("protocolo-content", filename);
@@ -85,9 +83,12 @@ const Protocolo = () => {
     );
   }
 
+  const formattedDate = new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR");
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
+      {/* Navigation header - hidden in PDF */}
+      <header className="border-b border-border bg-card print:hidden">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -115,71 +116,88 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <main id="protocolo-content" className="container mx-auto px-4 py-8 space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-        >
-          <div className="flex items-center gap-3">
-            <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
-              {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
-            </Badge>
-            <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
-          </div>
-          <span className="text-xs text-muted-foreground">
-            Atualizado em: {new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR")}
-          </span>
-        </motion.div>
-
-        {protocolo.plano_alimentar && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="bg-card border border-border rounded-lg overflow-hidden"
-          >
-            <div className="bg-secondary px-4 py-2.5 border-b border-border">
-              <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Plano Alimentar</h3>
+      {/* PDF Content */}
+      <div id="protocolo-content" className="pdf-protocol-wrapper">
+        {/* PDF Cover Header */}
+        <div className="pdf-cover-header">
+          <div className="pdf-cover-logo-row">
+            <img src={logoGS} alt="GS" className="pdf-cover-logo" />
+            <div className="pdf-cover-brand">
+              <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
+              <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
             </div>
-            <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+          </div>
+          <div className="pdf-cover-divider" />
+          <div className="pdf-cover-info">
+            <div className="pdf-cover-info-left">
+              <span className="pdf-cover-label">PROTOCOLO</span>
+              <span className="pdf-cover-title">{protocolo.nome}</span>
+            </div>
+            <div className="pdf-cover-info-right">
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">CLIENTE</span>
+                <span className="pdf-cover-value">{clientName}</span>
+              </div>
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">TIPO</span>
+                <span className="pdf-cover-value">{tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}</span>
+              </div>
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">DATA</span>
+                <span className="pdf-cover-value">{formattedDate}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Protocol Sections */}
+        {protocolo.plano_alimentar && (
+          <div className="pdf-section">
+            <div className="pdf-section-header">
+              <span className="pdf-section-icon">🍽</span>
+              <h3 className="pdf-section-title">Plano Alimentar</h3>
+            </div>
+            <div className="pdf-section-body">
               {protocolo.plano_alimentar}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {protocolo.treino && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-card border border-border rounded-lg overflow-hidden"
-          >
-            <div className="bg-secondary px-4 py-2.5 border-b border-border">
-              <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Treino</h3>
+          <div className="pdf-section">
+            <div className="pdf-section-header">
+              <span className="pdf-section-icon">🏋️</span>
+              <h3 className="pdf-section-title">Treino</h3>
             </div>
-            <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+            <div className="pdf-section-body">
               {protocolo.treino}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {protocolo.observacoes && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="bg-card border border-border rounded-lg overflow-hidden"
-          >
-            <div className="bg-secondary px-4 py-2.5 border-b border-border">
-              <h3 className="text-sm font-semibold uppercase text-primary tracking-wide">Observações</h3>
+          <div className="pdf-section">
+            <div className="pdf-section-header">
+              <span className="pdf-section-icon">📋</span>
+              <h3 className="pdf-section-title">Observações</h3>
             </div>
-            <div className="p-4 text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+            <div className="pdf-section-body">
               {protocolo.observacoes}
             </div>
-          </motion.div>
+          </div>
         )}
-      </main>
+
+        {/* Footer */}
+        <div className="pdf-footer">
+          <div className="pdf-footer-divider" />
+          <p className="pdf-footer-text">
+            Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva
+          </p>
+          <p className="pdf-footer-text pdf-footer-disclaimer">
+            Este documento é pessoal e intransferível. Proibida a reprodução sem autorização.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

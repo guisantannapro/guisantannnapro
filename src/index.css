@@ -87,3 +87,177 @@
     box-shadow: 0 0 30px hsl(43 74% 49% / 0.3), 0 0 60px hsl(43 74% 49% / 0.1);
   }
 }
+
+/* ── PDF Protocol Premium Styles ── */
+.pdf-protocol-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  font-family: 'Inter', sans-serif;
+  color: hsl(0 0% 90%);
+  background: hsl(0 0% 5%);
+}
+
+.pdf-cover-header {
+  padding: 28px 24px;
+  border: 1px solid hsl(43 74% 49% / 0.3);
+  border-radius: 12px;
+  background: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 6%));
+  margin-bottom: 28px;
+}
+
+.pdf-cover-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pdf-cover-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+}
+
+.pdf-cover-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-brand-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 49%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pdf-brand-sub {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: hsl(0 0% 55%);
+  margin-top: 2px;
+}
+
+.pdf-cover-divider {
+  height: 1px;
+  background: linear-gradient(90deg, hsl(43 74% 49% / 0.5), transparent);
+  margin-bottom: 20px;
+}
+
+.pdf-cover-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.pdf-cover-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pdf-cover-info-right {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.pdf-cover-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pdf-cover-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: hsl(43 74% 49%);
+}
+
+.pdf-cover-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: hsl(0 0% 95%);
+  text-transform: uppercase;
+}
+
+.pdf-cover-value {
+  font-size: 13px;
+  color: hsl(0 0% 80%);
+  font-weight: 500;
+}
+
+/* Sections */
+.pdf-section {
+  border: 1px solid hsl(0 0% 18%);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: hsl(0 0% 8%);
+}
+
+.pdf-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-bottom: 1px solid hsl(0 0% 18%);
+  background: linear-gradient(90deg, hsl(43 74% 49% / 0.08), transparent);
+}
+
+.pdf-section-icon {
+  font-size: 16px;
+}
+
+.pdf-section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(43 74% 55%);
+}
+
+.pdf-section-body {
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: hsl(0 0% 72%);
+  white-space: pre-line;
+}
+
+/* Footer */
+.pdf-footer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.pdf-footer-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(43 74% 49% / 0.4), transparent);
+  margin-bottom: 16px;
+}
+
+.pdf-footer-text {
+  font-size: 10px;
+  color: hsl(0 0% 45%);
+  letter-spacing: 0.08em;
+}
+
+.pdf-footer-disclaimer {
+  margin-top: 4px;
+  font-size: 9px;
+  font-style: italic;
+  color: hsl(0 0% 35%);
+}
