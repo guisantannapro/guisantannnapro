@@ -104,7 +104,7 @@
   padding: 32px 28px;
   border: 1.5px solid hsl(43 74% 49% / 0.25);
   border-radius: 14px;
-  background: linear-gradient(135deg, #fafaf7, #f5f0e6);
+  background: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 6%));
   margin-bottom: 32px;
   position: relative;
   overflow: hidden;
