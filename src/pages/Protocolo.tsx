@@ -57,20 +57,30 @@ const Protocolo = () => {
     fetchProtocolo();
   }, [id, navigate]);
 
-  const handleDownloadPdf = async () => {
+  const handleDownloadPdf = () => {
     if (!protocolo) return;
-    const { data: { session } } = await supabase.auth.getSession();
-    const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", session?.user?.id || "").single();
-    const clientName = profile?.full_name || session?.user?.email || "Cliente";
-    const ok = generateProtocolPdf(protocolo, clientName);
-    if (!ok) {
-      toast.error("Não foi possível gerar o PDF.");
+
+    const isInIframe = (() => {
+      try {
+        return window.self !== window.top;
+      } catch {
+        return true;
+      }
+    })();
+
+    if (isInIframe) {
+      const url = `${window.location.origin}/protocolo/${protocolo.id}?download=1`;
+      const opened = window.open(url, "_blank", "noopener,noreferrer");
+      if (!opened) {
+        toast.error("O navegador bloqueou a nova aba. Permita pop-ups e tente novamente.");
+        return;
+      }
+      toast.info("Abrimos o protocolo em nova aba para concluir o download do PDF.");
       return;
     }
 
-    if (window.self !== window.top) {
-      toast.info("Se o download não iniciar automático, o PDF será aberto no visualizador para baixar manualmente.");
-    }
+    const ok = generateProtocolPdf(protocolo, clientName);
+    if (!ok) toast.error("Não foi possível gerar o PDF.");
   };
 
   if (loading) {
