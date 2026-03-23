@@ -9,6 +9,7 @@ import PaymentSuccess from "./pages/PaymentSuccess.tsx";
 import Formulario from "./pages/Formulario.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Login from "./pages/Login.tsx";
+import MinhaArea from "./pages/MinhaArea.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/pagamento-sucesso" element={<PaymentSuccess />} />
           <Route path="/formulario" element={<Formulario />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/minha-area" element={<MinhaArea />} />
           <Route
             path="/dashboard"
             element={

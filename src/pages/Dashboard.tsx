@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +52,7 @@ const Dashboard = () => {
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [clientProtocols, setClientProtocols] = useState<any[]>([]);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
@@ -118,6 +120,20 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchClientProtocols = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from("client_protocols")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    setClientProtocols(data || []);
+  }, []);
+
+  const handleSelectClient = (client: ClientData) => {
+    setSelectedClient(client);
+    fetchClientProtocols(client.user_id);
   };
 
   const getField = (client: ClientData, field: string) => {
@@ -278,7 +294,7 @@ const Dashboard = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setSelectedClient(client)}
+                          onClick={() => handleSelectClient(client)}
                           className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                         >
                           <Eye size={14} />
@@ -316,7 +332,7 @@ const Dashboard = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setSelectedClient(client)}
+                    onClick={() => handleSelectClient(client)}
                     className="w-full border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                   >
                     <Eye size={14} />
@@ -537,6 +553,13 @@ const Dashboard = () => {
                   </div>
                 </div>
               )}
+
+              {/* Protocol Upload */}
+              <ProtocolUpload
+                clientUserId={selectedClient.user_id}
+                protocols={clientProtocols}
+                onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
+              />
 
               {/* Actions */}
               <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
