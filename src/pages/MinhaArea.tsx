@@ -197,6 +197,73 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
+        {/* Meu Protocolo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-card border border-border rounded-lg p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <ClipboardList className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold uppercase text-foreground">Meu Protocolo</h2>
+          </div>
+
+          {protocolo ? (
+            <div className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Badge className="bg-primary text-primary-foreground">
+                    {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                  </Badge>
+                  <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  Atualizado em: {new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR")}
+                </span>
+              </div>
+
+              {protocolo.plano_alimentar && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Plano Alimentar</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.plano_alimentar}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {protocolo.treino && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.treino}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {protocolo.observacoes && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase text-primary mb-3">Observações</h3>
+                    <div className="bg-muted/50 border border-border rounded-lg p-4 text-sm text-muted-foreground whitespace-pre-line">
+                      {protocolo.observacoes}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
+          )}
+        </motion.div>
+
         {/* Protocols / Downloads */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
