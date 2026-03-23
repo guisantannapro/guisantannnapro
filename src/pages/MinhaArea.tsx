@@ -67,6 +67,7 @@ const MinhaArea = () => {
       if (profileRes.data) setProfile(profileRes.data);
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
+      if (protocoloRes.data && protocoloRes.data.length > 0) setProtocolo(protocoloRes.data[0]);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
