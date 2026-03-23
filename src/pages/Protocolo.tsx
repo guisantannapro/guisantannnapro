@@ -17,8 +17,11 @@ const tipoProtocoloLabels: Record<string, string> = {
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [protocolo, setProtocolo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [clientName, setClientName] = useState("Cliente");
+  const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
     const fetchProtocolo = async () => {
