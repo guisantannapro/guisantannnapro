@@ -561,6 +561,24 @@ const Dashboard = () => {
                 onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
               />
 
+              {/* Generate Protocol Preview */}
+              <div className="border-t border-border pt-4">
+                <Button
+                  onClick={() => setProtocolPreviewOpen(true)}
+                  className="w-full gap-2"
+                  variant="outline"
+                >
+                  <ClipboardList size={16} />
+                  Gerar Protocolo
+                </Button>
+              </div>
+
+              <ProtocolPreviewModal
+                open={protocolPreviewOpen}
+                onOpenChange={setProtocolPreviewOpen}
+                client={selectedClient}
+              />
+
               {/* Actions */}
               <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
                 <Button
