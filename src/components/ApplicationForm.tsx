@@ -146,7 +146,15 @@ const ScaleInput = ({ value, onChange, label }: { value: string; onChange: (v: s
 const ApplicationForm = () => {
   const [form, setForm] = useState<FormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
-  
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [tempUserId, setTempUserId] = useState<string | null>(null);
+  const [accountCreated, setAccountCreated] = useState(false);
+  const [creatingAccount, setCreatingAccount] = useState(false);
+  const [regEmail, setRegEmail] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regName, setRegName] = useState("");
+  const [regError, setRegError] = useState("");
+
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null; assessment: File | null }>({
     front: null, side: null, back: null, assessment: null,
@@ -158,8 +166,9 @@ const ApplicationForm = () => {
   const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
     setPhotos((prev) => ({ ...prev, [type]: file }));
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPhotoPreviews((prev) => ({ ...prev, [type]: url }));
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoPreviews((prev) => ({ ...prev, [type]: reader.result as string }));
+      reader.readAsDataURL(file);
     } else {
       setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
     }
@@ -170,12 +179,12 @@ const ApplicationForm = () => {
     setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
   };
 
-  const uploadPhoto = async (file: File, userId: string, type: string): Promise<string | null> => {
+
     const ext = file.name.split(".").pop();
-    const path = `${userId}/${type}-${Date.now()}.${ext}`;
+    const path = `${userId}/${label}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("client-photos").upload(path, file);
     if (error) {
-      console.error(`Upload ${type} error:`, error);
+      console.error(`Upload error (${label}):`, error);
       return null;
     }
     return path;
@@ -201,7 +210,6 @@ const ApplicationForm = () => {
 
       const userId = user?.id ?? crypto.randomUUID();
 
-      // Upload photos
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
       let photoBackPath: string | null = null;
@@ -212,7 +220,6 @@ const ApplicationForm = () => {
       if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
       if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
 
-      // Read purchased plan info from localStorage
       const purchasedPlan = localStorage.getItem("purchased_plan");
       const purchasedPeriod = localStorage.getItem("purchased_period");
       const purchasedModality = localStorage.getItem("purchased_modality");
@@ -223,8 +230,7 @@ const ApplicationForm = () => {
         billingModality: purchasedModality || null,
       };
 
-      // Save form data to Supabase
-      const { error } = await supabase.from("form_submissions").insert({
+      const { data: insertedData, error } = await supabase.from("form_submissions").insert({
         user_id: userId,
         form_data: enrichedFormData as any,
         photo_front: photoFrontPath,
@@ -233,7 +239,7 @@ const ApplicationForm = () => {
         photo_assessment: photoAssessmentPath,
         selected_equipment: [],
         plan: purchasedPlan,
-      });
+      }).select("id").single();
 
       if (error) {
         console.error("Submit error:", error);
@@ -245,6 +251,10 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
+      setSubmissionId(insertedData?.id || null);
+      setTempUserId(userId);
+      setRegEmail(form.email);
+      setRegName(form.fullName);
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
@@ -254,20 +264,164 @@ const ApplicationForm = () => {
     }
   };
 
+  const handleCreateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRegError("");
+    setCreatingAccount(true);
+
+    try {
+      if (regPassword.length < 6) {
+        setRegError("A senha deve ter pelo menos 6 caracteres.");
+        setCreatingAccount(false);
+        return;
+      }
+
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: regEmail,
+        password: regPassword,
+        options: {
+          data: { full_name: regName },
+          emailRedirectTo: window.location.origin,
+        },
+      });
+
+      if (signUpError) {
+        if (signUpError.message.includes("already registered")) {
+          setRegError("Este e-mail já possui uma conta. Faça login na Área do Cliente.");
+        } else {
+          setRegError(signUpError.message);
+        }
+        setCreatingAccount(false);
+        return;
+      }
+
+      const newUserId = signUpData.user?.id;
+
+      if (newUserId && submissionId && tempUserId && tempUserId !== newUserId) {
+        await supabase
+          .from("form_submissions")
+          .update({ user_id: newUserId } as any)
+          .eq("id", submissionId);
+      }
+
+      if (newUserId) {
+        await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
+      }
+
+      setAccountCreated(true);
+    } catch (err) {
+      console.error("Account creation error:", err);
+      setRegError("Erro ao criar conta. Tente novamente.");
+    } finally {
+      setCreatingAccount(false);
+    }
+  };
+
   if (submitted) {
+    if (accountCreated) {
+      return (
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4 max-w-2xl text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
+            >
+              <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
+              <h2 className="text-3xl uppercase mb-4">Conta Criada com Sucesso!</h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                Seus dados foram salvos e sua conta foi criada. Use seu e-mail e senha para acessar a Área do Cliente.
+              </p>
+              <a
+                href="/area-do-cliente"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold uppercase text-sm hover:opacity-90 transition-opacity"
+              >
+                Acessar Área do Cliente
+              </a>
+            </motion.div>
+          </div>
+        </section>
+      );
+    }
+
     return (
       <section className="py-24 bg-background">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
+        <div className="container mx-auto px-4 max-w-lg">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
+            className="bg-card border border-primary/20 rounded-lg p-8 md:p-12"
           >
-            <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl uppercase mb-4">Formulário Salvo!</h2>
-            <p className="text-muted-foreground text-lg">
-              Seus dados e fotos foram salvos com sucesso. Entraremos em contato em breve para iniciar sua consultoria.
+            <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h2 className="text-2xl uppercase mb-2 text-center">Formulário Salvo!</h2>
+            <p className="text-muted-foreground text-sm text-center mb-8">
+              Agora crie sua conta para acessar a Área do Cliente, acompanhar seu protocolo e ver suas fotos.
             </p>
+
+            <form onSubmit={handleCreateAccount} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="reg-name" className="text-sm font-medium text-foreground">
+                  Nome completo
+                </label>
+                <input
+                  id="reg-name"
+                  type="text"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="reg-email" className="text-sm font-medium text-foreground">
+                  E-mail
+                </label>
+                <input
+                  id="reg-email"
+                  type="email"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="reg-password" className="text-sm font-medium text-foreground">
+                  Crie uma senha (mín. 6 caracteres)
+                </label>
+                <input
+                  id="reg-password"
+                  type="password"
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              {regError && (
+                <p className="text-destructive text-sm">{regError}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={creatingAccount}
+                className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-semibold uppercase text-sm hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {creatingAccount ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Criando conta...
+                  </>
+                ) : (
+                  "Criar conta e acessar"
+                )}
+              </button>
+            </form>
           </motion.div>
         </div>
       </section>
