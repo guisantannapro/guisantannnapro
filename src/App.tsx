@@ -25,7 +25,7 @@ const App = () => (
           <Route path="/pagamento-sucesso" element={<PaymentSuccess />} />
           <Route path="/formulario" element={<Formulario />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/minha-area" element={<MinhaArea />} />
+          <Route path="/area-do-cliente" element={<MinhaArea />} />
           <Route
             path="/dashboard"
             element={
