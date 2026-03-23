@@ -540,6 +540,13 @@ const Dashboard = () => {
                 </div>
               )}
 
+              {/* Protocol Upload */}
+              <ProtocolUpload
+                clientUserId={selectedClient.user_id}
+                protocols={clientProtocols}
+                onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
+              />
+
               {/* Actions */}
               <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
                 <Button
