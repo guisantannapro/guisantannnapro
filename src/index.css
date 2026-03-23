@@ -266,7 +266,7 @@
 
 .pdf-footer-text {
   font-size: 10px;
-  color: #999;
+  color: hsl(0 0% 45%);
   letter-spacing: 0.08em;
 }
 
