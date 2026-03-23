@@ -49,28 +49,32 @@ const Protocolo = () => {
     fetchProtocolo();
   }, [id, navigate]);
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     if (!protocolo) return;
 
     const filename = `protocolo-${protocolo.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
-    const ok = generateProtocolPdf("protocolo-content", filename);
+    toast.info("Gerando PDF...");
+    const ok = await generateProtocolPdf("protocolo-content", filename);
     if (!ok) toast.error("Não foi possível gerar o PDF.");
+    else toast.success("PDF gerado com sucesso!");
   };
 
   useEffect(() => {
     if (loading || !protocolo || autoDownloaded) return;
     if (searchParams.get("download") !== "1") return;
 
-    setTimeout(() => {
+    const timer = setTimeout(async () => {
+      setAutoDownloaded(true);
       const filename = `protocolo-${protocolo.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
-      const ok = generateProtocolPdf("protocolo-content", filename);
+      const ok = await generateProtocolPdf("protocolo-content", filename);
       if (!ok) {
         toast.error("Não foi possível gerar o PDF.");
         return;
       }
-      setAutoDownloaded(true);
-      toast.success("Download iniciado.");
-    }, 500);
+      toast.success("PDF gerado com sucesso!");
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, [loading, protocolo, autoDownloaded, searchParams]);
 
   if (loading) {
