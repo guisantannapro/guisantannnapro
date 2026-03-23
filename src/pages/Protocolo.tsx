@@ -51,7 +51,8 @@ const Protocolo = () => {
     const { data: { session } } = await supabase.auth.getSession();
     const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", session?.user?.id || "").single();
     const clientName = profile?.full_name || session?.user?.email || "Cliente";
-    generateProtocolPdf(protocolo, clientName);
+    const ok = generateProtocolPdf(protocolo, clientName);
+    if (!ok) toast.error("Não foi possível gerar o PDF.");
   };
 
   if (loading) {

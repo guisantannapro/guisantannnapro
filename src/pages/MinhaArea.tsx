@@ -98,7 +98,8 @@ const MinhaArea = () => {
 
   const handleDownloadPdf = (proto: any) => {
     const clientName = profile?.full_name || session?.user?.email || "Cliente";
-    generateProtocolPdf(proto, clientName);
+    const ok = generateProtocolPdf(proto, clientName);
+    if (!ok) toast.error("Não foi possível gerar o PDF.");
   };
 
   const getPhotoSignedUrl = async (path: string) => {
