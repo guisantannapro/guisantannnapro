@@ -10,6 +10,7 @@ import Formulario from "./pages/Formulario.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import Login from "./pages/Login.tsx";
 import MinhaArea from "./pages/MinhaArea.tsx";
+import Protocolo from "./pages/Protocolo.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
