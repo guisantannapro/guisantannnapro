@@ -31,17 +31,25 @@ const Protocolo = () => {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("protocolos")
-        .select("*")
-        .eq("id", id!)
-        .single();
+      const [{ data, error }, { data: profile }] = await Promise.all([
+        supabase
+          .from("protocolos")
+          .select("*")
+          .eq("id", id!)
+          .single(),
+        supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", session.user.id)
+          .single(),
+      ]);
 
       if (error || !data) {
         navigate("/area-do-cliente");
         return;
       }
 
+      setClientName(profile?.full_name || session.user.email || "Cliente");
       setProtocolo(data);
       setLoading(false);
     };
