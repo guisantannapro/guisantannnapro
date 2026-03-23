@@ -301,27 +301,7 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <Camera className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
-          </div>
-
-          {submissions.length > 0 ? (
-            <div className="space-y-6">
-              {submissions.map((sub) => (
-                <SubmissionPhotos key={sub.id} submission={sub} getPhotoSignedUrl={getPhotoSignedUrl} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground text-sm">Nenhuma foto enviada ainda.</p>
-          )}
-        </motion.div>
+        <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
       </main>
 
       {pdfProtocol && (
