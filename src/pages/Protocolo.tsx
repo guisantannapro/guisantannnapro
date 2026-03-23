@@ -121,7 +121,7 @@ const Protocolo = () => {
         {/* PDF Cover Header */}
         <div className="pdf-cover-header">
           <div className="pdf-cover-logo-row">
-            <img src={logoGS} alt="GS" className="pdf-cover-logo" />
+            <img src={logoGS} alt="GS" className="pdf-cover-logo" crossOrigin="anonymous" />
             <div className="pdf-cover-brand">
               <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
               <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
