@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
