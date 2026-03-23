@@ -277,6 +277,57 @@
   color: hsl(0 0% 35%);
 }
 
+/* Light export override (apenas no momento da geração do PDF) */
+.pdf-protocol-wrapper.pdf-export-light {
+  background: hsl(0 0% 100%) !important;
+  color: hsl(0 0% 10%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-cover-header {
+  background: linear-gradient(135deg, hsl(45 33% 97%), hsl(42 45% 92%)) !important;
+  border-color: hsl(43 74% 49% / 0.25) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-brand-name {
+  background: none !important;
+  -webkit-text-fill-color: hsl(43 74% 35%) !important;
+  color: hsl(43 74% 35%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-brand-sub {
+  color: hsl(0 0% 50%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-cover-title {
+  color: hsl(0 0% 12%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-cover-value {
+  color: hsl(0 0% 35%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-section {
+  background: hsl(0 0% 100%) !important;
+  border-color: hsl(0 0% 90%) !important;
+  box-shadow: 0 1px 4px hsl(0 0% 0% / 0.04) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-section-header {
+  border-bottom-color: hsl(0 0% 90%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-section-body {
+  color: hsl(0 0% 22%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-footer-text {
+  color: hsl(0 0% 45%) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-footer-disclaimer {
+  color: hsl(0 0% 60%) !important;
+}
+
 /* Page breaks */
 .pdf-page-break {
   page-break-before: always;
