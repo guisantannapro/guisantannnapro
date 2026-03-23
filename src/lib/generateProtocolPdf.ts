@@ -1,6 +1,9 @@
 import html2pdf from "html2pdf.js";
 
-export function generateProtocolPdf(elementId = "protocolo-content", filename = "protocolo.pdf"): boolean {
+export async function generateProtocolPdf(
+  elementId = "protocolo-content",
+  filename = "protocolo.pdf"
+): Promise<boolean> {
   const element = document.getElementById(elementId);
   if (!element) {
     console.error("Elemento não encontrado:", elementId);
@@ -15,6 +18,11 @@ export function generateProtocolPdf(elementId = "protocolo-content", filename = 
     jsPDF: { unit: "mm" as const, format: "a4" as const, orientation: "portrait" as const },
   };
 
-  html2pdf().from(element).set(opt).save();
-  return true;
+  try {
+    await html2pdf().from(element).set(opt).save();
+    return true;
+  } catch (err) {
+    console.error("Erro ao gerar PDF:", err);
+    return false;
+  }
 }
