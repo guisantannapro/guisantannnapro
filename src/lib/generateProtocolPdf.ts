@@ -214,8 +214,26 @@ export function generateProtocolPdf(protocol: ProtocolData, clientName: string):
     const fileName = rawName.replace(/[\\/:*?"<>|]/g, "-");
     const blob = doc.output("blob");
 
-    // Robust download for iframe/browser quirks
+    // 1) Try direct download first
     saveAs(blob, fileName);
+
+    // 2) In iframe environments, also open the PDF viewer as reliable fallback
+    if (window.self !== window.top) {
+      const blobUrl = URL.createObjectURL(blob);
+      const opened = window.open(blobUrl, "_blank", "noopener,noreferrer");
+
+      if (!opened) {
+        const openLink = document.createElement("a");
+        openLink.href = blobUrl;
+        openLink.target = "_blank";
+        openLink.rel = "noopener noreferrer";
+        document.body.appendChild(openLink);
+        openLink.click();
+        document.body.removeChild(openLink);
+      }
+
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
+    }
 
     return true;
   } catch (error) {

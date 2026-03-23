@@ -99,7 +99,14 @@ const MinhaArea = () => {
   const handleDownloadPdf = (proto: any) => {
     const clientName = profile?.full_name || session?.user?.email || "Cliente";
     const ok = generateProtocolPdf(proto, clientName);
-    if (!ok) toast.error("Não foi possível gerar o PDF.");
+    if (!ok) {
+      toast.error("Não foi possível gerar o PDF.");
+      return;
+    }
+
+    if (window.self !== window.top) {
+      toast.info("Se o download não iniciar aqui, use o botão de download na aba do PDF que abriu.");
+    }
   };
 
   const getPhotoSignedUrl = async (path: string) => {
