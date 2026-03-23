@@ -90,6 +90,7 @@
 
 /* ── PDF Protocol Premium Styles ── */
 .pdf-protocol-wrapper {
+  width: 800px;
   max-width: 800px;
   margin: 0 auto;
   padding: 32px 24px;
@@ -260,4 +261,40 @@
   font-size: 9px;
   font-style: italic;
   color: hsl(0 0% 35%);
+}
+
+/* Page breaks for PDF generation */
+.pdf-page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: hsl(0 0% 5%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print\\:hidden,
+  header.print\\:hidden {
+    display: none !important;
+  }
+
+  .pdf-protocol-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 20px !important;
+    margin: 0 !important;
+  }
+
+  .pdf-section {
+    break-inside: avoid;
+  }
+
+  .pdf-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
 }
