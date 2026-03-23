@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf";
+import { saveAs } from "file-saver";
 
 interface ProtocolData {
   nome: string;
@@ -209,30 +210,13 @@ export function generateProtocolPdf(protocol: ProtocolData, clientName: string):
 
     addFooter(doc, clientName);
 
-    const fileName = `protocolo-${protocol.nome || "personalizado"}.pdf`;
+    const rawName = `protocolo-${protocol.nome || "personalizado"}.pdf`;
+    const fileName = rawName.replace(/[\\/:*?"<>|]/g, "-");
     const blob = doc.output("blob");
-    const url = URL.createObjectURL(blob);
 
-    // Attempt direct download first
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Robust download for iframe/browser quirks
+    saveAs(blob, fileName);
 
-    // Fallback for iframe/browser restrictions
-    setTimeout(() => {
-      try {
-        window.open(url, "_blank", "noopener,noreferrer");
-      } catch {
-        // noop
-      }
-    }, 120);
-
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
     return true;
   } catch (error) {
     console.error("Erro ao gerar PDF:", error);
