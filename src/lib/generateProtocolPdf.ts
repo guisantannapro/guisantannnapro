@@ -217,21 +217,13 @@ export function generateProtocolPdf(protocol: ProtocolData, clientName: string):
     // 1) Try direct download first
     saveAs(blob, fileName);
 
-    // 2) In iframe environments, also open the PDF viewer as reliable fallback
+    // 2) Reliable fallback for sandboxed iframe previews:
+    // open PDF in the same tab so the browser viewer can handle manual download.
     if (window.self !== window.top) {
       const blobUrl = URL.createObjectURL(blob);
-      const opened = window.open(blobUrl, "_blank", "noopener,noreferrer");
-
-      if (!opened) {
-        const openLink = document.createElement("a");
-        openLink.href = blobUrl;
-        openLink.target = "_blank";
-        openLink.rel = "noopener noreferrer";
-        document.body.appendChild(openLink);
-        openLink.click();
-        document.body.removeChild(openLink);
-      }
-
+      setTimeout(() => {
+        window.location.href = blobUrl;
+      }, 180);
       setTimeout(() => URL.revokeObjectURL(blobUrl), 120000);
     }
 

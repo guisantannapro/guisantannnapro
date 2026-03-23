@@ -58,7 +58,7 @@ const Protocolo = () => {
     }
 
     if (window.self !== window.top) {
-      toast.info("Se o download não iniciar aqui, use o botão de download na aba do PDF que abriu.");
+      toast.info("Se o download não iniciar automático, o PDF será aberto no visualizador para baixar manualmente.");
     }
   };
 
