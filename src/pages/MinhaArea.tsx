@@ -119,7 +119,7 @@ const MinhaArea = () => {
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold uppercase text-gradient-gold">
-              Minha Área
+              Área do Cliente
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
               Olá, {profile?.full_name || session?.user?.email}
