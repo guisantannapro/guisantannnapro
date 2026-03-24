@@ -152,6 +152,7 @@ const ApplicationForm = () => {
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [regName, setRegName] = useState("");
   const [regError, setRegError] = useState("");
 
