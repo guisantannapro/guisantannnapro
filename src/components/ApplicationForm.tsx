@@ -148,10 +148,10 @@ const ApplicationForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [tempUserId, setTempUserId] = useState<string | null>(null);
-  const [accountCreated, setAccountCreated] = useState(false);
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
+  const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [regName, setRegName] = useState("");
   const [regError, setRegError] = useState("");
 
@@ -276,6 +276,12 @@ const ApplicationForm = () => {
         return;
       }
 
+      if (regPassword !== regConfirmPassword) {
+        setRegError("As senhas não coincidem.");
+        setCreatingAccount(false);
+        return;
+      }
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: regEmail,
         password: regPassword,
@@ -308,7 +314,8 @@ const ApplicationForm = () => {
         await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
       }
 
-      setAccountCreated(true);
+      // Auto-redirect to client area
+      window.location.href = "/area-do-cliente";
     } catch (err) {
       console.error("Account creation error:", err);
       setRegError("Erro ao criar conta. Tente novamente.");
@@ -318,32 +325,6 @@ const ApplicationForm = () => {
   };
 
   if (submitted) {
-    if (accountCreated) {
-      return (
-        <section className="py-24 bg-background">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
-            >
-              <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-              <h2 className="text-3xl uppercase mb-4">Conta Criada com Sucesso!</h2>
-              <p className="text-muted-foreground text-lg mb-6">
-                Seus dados foram salvos e sua conta foi criada. Use seu e-mail e senha para acessar a Área do Cliente.
-              </p>
-              <a
-                href="/area-do-cliente"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold uppercase text-sm hover:opacity-90 transition-opacity"
-              >
-                Acessar Área do Cliente
-              </a>
-            </motion.div>
-          </div>
-        </section>
-      );
-    }
-
     return (
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-lg">
@@ -353,9 +334,9 @@ const ApplicationForm = () => {
             className="bg-card border border-primary/20 rounded-lg p-8 md:p-12"
           >
             <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl uppercase mb-2 text-center">Formulário Salvo!</h2>
+            <h2 className="text-2xl uppercase mb-2 text-center">Crie sua conta para acessar seu protocolo</h2>
             <p className="text-muted-foreground text-sm text-center mb-8">
-              Agora crie sua conta para acessar a Área do Cliente, acompanhar seu protocolo e ver suas fotos.
+              Use o mesmo e-mail do formulário
             </p>
 
             <form onSubmit={handleCreateAccount} className="space-y-4">
@@ -389,13 +370,29 @@ const ApplicationForm = () => {
 
               <div className="space-y-2">
                 <label htmlFor="reg-password" className="text-sm font-medium text-foreground">
-                  Crie uma senha (mín. 6 caracteres)
+                  Senha (mín. 6 caracteres)
                 </label>
                 <input
                   id="reg-password"
                   type="password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="reg-confirm-password" className="text-sm font-medium text-foreground">
+                  Confirmar senha
+                </label>
+                <input
+                  id="reg-confirm-password"
+                  type="password"
+                  value={regConfirmPassword}
+                  onChange={(e) => setRegConfirmPassword(e.target.value)}
                   required
                   minLength={6}
                   placeholder="••••••••"
