@@ -303,6 +303,32 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
             <Separator />
 
+            {/* Suplementação */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Suplementação</h3>
+              <Textarea
+                value={suplementacao}
+                onChange={(e) => setSuplementacao(e.target.value)}
+                rows={10}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
+              />
+            </section>
+
+            <Separator />
+
+            {/* Cardio */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Cardio</h3>
+              <Textarea
+                value={cardio}
+                onChange={(e) => setCardio(e.target.value)}
+                rows={8}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
+              />
+            </section>
+
+            <Separator />
+
             {/* Treino */}
             <section>
               <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
