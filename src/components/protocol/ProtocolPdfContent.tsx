@@ -65,7 +65,7 @@ export function ProtocolPdfContent({
         <div className="pdf-cover-info">
           <div className="pdf-cover-info-left">
             <span className="pdf-cover-label">PROTOCOLO</span>
-            <span className="pdf-cover-title">{protocolo.nome}</span>
+            <span className="pdf-cover-title">{clientName}</span>
           </div>
           <div className="pdf-cover-info-right">
             <div className="pdf-cover-meta">
