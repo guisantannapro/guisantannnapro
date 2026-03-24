@@ -116,7 +116,7 @@ const handleRecoverableError = (error: unknown) => {
 
 window.addEventListener("vite:preloadError", (event) => {
   event.preventDefault();
-  const payload = (event as CustomEvent<{ payload?: unknown }>).payload;
+  const payload = (event as Event & { payload?: unknown }).payload;
 
   if (!handleRecoverableError(payload ?? event)) {
     reloadBypassingStaleCache();
