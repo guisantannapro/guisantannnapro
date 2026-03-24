@@ -371,13 +371,29 @@ const ApplicationForm = () => {
 
               <div className="space-y-2">
                 <label htmlFor="reg-password" className="text-sm font-medium text-foreground">
-                  Crie uma senha (mín. 6 caracteres)
+                  Senha (mín. 6 caracteres)
                 </label>
                 <input
                   id="reg-password"
                   type="password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="reg-confirm-password" className="text-sm font-medium text-foreground">
+                  Confirmar senha
+                </label>
+                <input
+                  id="reg-confirm-password"
+                  type="password"
+                  value={regConfirmPassword}
+                  onChange={(e) => setRegConfirmPassword(e.target.value)}
                   required
                   minLength={6}
                   placeholder="••••••••"
