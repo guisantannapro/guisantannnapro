@@ -178,6 +178,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_form_submission: {
+        Args: { _old_user_id: string; _submission_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
