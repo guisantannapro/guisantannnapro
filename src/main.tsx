@@ -2,48 +2,27 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-const RECOVERY_RELOAD_KEY = "__chunk_recovery_reload__";
-
-const shouldReloadForRecovery = () => {
-  try {
-    const hasReloaded = sessionStorage.getItem(RECOVERY_RELOAD_KEY) === "1";
-    if (hasReloaded) {
-      sessionStorage.removeItem(RECOVERY_RELOAD_KEY);
-      return false;
-    }
-    sessionStorage.setItem(RECOVERY_RELOAD_KEY, "1");
-    return true;
-  } catch {
-    return true;
-  }
-};
+const RECOVERY_PARAM = "__recover";
 
 const reloadBypassingStaleCache = () => {
   const url = new URL(window.location.href);
+  if (url.searchParams.has(RECOVERY_PARAM)) return;
+
+  url.searchParams.set(RECOVERY_PARAM, "1");
   url.searchParams.set("_reload", Date.now().toString());
   window.location.replace(url.toString());
 };
 
 window.addEventListener("vite:preloadError", (event) => {
   event.preventDefault();
-  if (shouldReloadForRecovery()) {
-    reloadBypassingStaleCache();
-  }
+  reloadBypassingStaleCache();
 });
 
-window.addEventListener("unhandledrejection", (event) => {
-  const reason = event.reason;
-  const message = reason instanceof Error ? reason.message : String(reason ?? "");
-
-  if (
-    message.includes("Failed to fetch dynamically imported module") ||
-    message.includes("Importing a module script failed")
-  ) {
-    event.preventDefault();
-    if (shouldReloadForRecovery()) {
-      reloadBypassingStaleCache();
-    }
-  }
-});
+const currentUrl = new URL(window.location.href);
+if (currentUrl.searchParams.has(RECOVERY_PARAM)) {
+  currentUrl.searchParams.delete(RECOVERY_PARAM);
+  currentUrl.searchParams.delete("_reload");
+  window.history.replaceState({}, "", currentUrl.toString());
+}
 
 createRoot(document.getElementById("root")!).render(<App />);
