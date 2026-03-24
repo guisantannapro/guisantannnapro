@@ -192,12 +192,14 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     setSaving(true);
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
-      const { error } = await supabase.from("protocolos").insert({
+      const { error } = await (supabase.from("protocolos") as any).insert({
         user_id: client.user_id,
         nome,
         tipo_protocolo: protocolType,
         plano_alimentar: planoAlimentar,
         treino,
+        suplementacao,
+        cardio,
         observacoes,
       });
       if (error) throw error;
