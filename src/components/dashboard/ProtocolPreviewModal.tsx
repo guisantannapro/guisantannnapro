@@ -180,6 +180,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
       setProtocolType(null);
       setPlanoAlimentar("");
       setTreino("");
+      setSuplementacao("");
+      setCardio("");
       setObservacoes("");
     }
     onOpenChange(value);
