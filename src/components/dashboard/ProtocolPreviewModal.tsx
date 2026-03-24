@@ -132,10 +132,29 @@ Sexta — Posterior / Glúteos
 • Stiff 4x10 | Cadeira flexora 3x12 | Hip thrust 3x12`,
 };
 
+const defaultSupplementacao = `Whey Protein - nas refeições indicadas
+Creatina - 10g/dia (qualquer horário)
+Ômega 3 3g - 1x ao dia junto a primeira refeição
+Multivitamínico 1 caps - 1x ao dia junto a primeira refeição
+Vit C - 1g ao dia junto a primeira refeição
+Vita D - 30mil ui 1x na semana
+Vita E - 400ui ao dia junto a primeira refeição
+Zinco - 50mg ao dia junto a ultima refeição
+Os molhos, caldas, temperos zero liberados com moderação`;
+
+const defaultCardio = `Semana: 7x qualquer horário
+Intensidade: média/moderada
+Duração: 30/30 min 2x ao dia
+Média de 200-300 Kcals por sessão
+Frequência Cardíaca Média: 120-130bpm
+Tipo: Qualquer um de sua preferência. O importante é manter a frequência cardíaca indicada (intensidade elevada) durante a sessão. O elíptico (transfer) é uma ótima opção por não envolver nenhum tipo de impacto ou estresse nos ligamentos (joelhos)`;
+
 const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewModalProps) => {
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
   const [treino, setTreino] = useState("");
+  const [suplementacao, setSuplementacao] = useState("");
+  const [cardio, setCardio] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [saving, setSaving] = useState(false);
 
