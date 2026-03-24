@@ -148,7 +148,6 @@ const ApplicationForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [tempUserId, setTempUserId] = useState<string | null>(null);
-  const [accountCreated] = useState(false);
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
