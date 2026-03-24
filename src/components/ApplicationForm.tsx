@@ -315,7 +315,8 @@ const ApplicationForm = () => {
         await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
       }
 
-      setAccountCreated(true);
+      // Auto-redirect to client area
+      window.location.href = "/area-do-cliente";
     } catch (err) {
       console.error("Account creation error:", err);
       setRegError("Erro ao criar conta. Tente novamente.");
