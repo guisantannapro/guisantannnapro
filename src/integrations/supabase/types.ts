@@ -115,33 +115,39 @@ export type Database = {
       }
       protocolos: {
         Row: {
+          cardio: string
           created_at: string
           id: string
           nome: string
           observacoes: string | null
           plano_alimentar: string
+          suplementacao: string
           tipo_protocolo: string
           treino: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          cardio?: string
           created_at?: string
           id?: string
           nome: string
           observacoes?: string | null
           plano_alimentar?: string
+          suplementacao?: string
           tipo_protocolo: string
           treino?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          cardio?: string
           created_at?: string
           id?: string
           nome?: string
           observacoes?: string | null
           plano_alimentar?: string
+          suplementacao?: string
           tipo_protocolo?: string
           treino?: string
           updated_at?: string

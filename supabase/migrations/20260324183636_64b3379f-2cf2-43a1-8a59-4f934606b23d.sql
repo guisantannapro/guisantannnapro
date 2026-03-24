@@ -1,0 +1,1 @@
+ALTER TABLE public.protocolos ADD COLUMN suplementacao text NOT NULL DEFAULT '', ADD COLUMN cardio text NOT NULL DEFAULT '';

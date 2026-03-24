@@ -132,10 +132,29 @@ Sexta — Posterior / Glúteos
 • Stiff 4x10 | Cadeira flexora 3x12 | Hip thrust 3x12`,
 };
 
+const defaultSupplementacao = `Whey Protein - nas refeições indicadas
+Creatina - 10g/dia (qualquer horário)
+Ômega 3 3g - 1x ao dia junto a primeira refeição
+Multivitamínico 1 caps - 1x ao dia junto a primeira refeição
+Vit C - 1g ao dia junto a primeira refeição
+Vita D - 30mil ui 1x na semana
+Vita E - 400ui ao dia junto a primeira refeição
+Zinco - 50mg ao dia junto a ultima refeição
+Os molhos, caldas, temperos zero liberados com moderação`;
+
+const defaultCardio = `Semana: 7x qualquer horário
+Intensidade: média/moderada
+Duração: 30/30 min 2x ao dia
+Média de 200-300 Kcals por sessão
+Frequência Cardíaca Média: 120-130bpm
+Tipo: Qualquer um de sua preferência. O importante é manter a frequência cardíaca indicada (intensidade elevada) durante a sessão. O elíptico (transfer) é uma ótima opção por não envolver nenhum tipo de impacto ou estresse nos ligamentos (joelhos)`;
+
 const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewModalProps) => {
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
   const [treino, setTreino] = useState("");
+  const [suplementacao, setSuplementacao] = useState("");
+  const [cardio, setCardio] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -150,6 +169,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
       setTreino(trainingTextTemplates[protocolType]);
+      setSuplementacao(defaultSupplementacao);
+      setCardio(defaultCardio);
       setObservacoes("");
     }
   }, [protocolType]);
@@ -159,6 +180,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
       setProtocolType(null);
       setPlanoAlimentar("");
       setTreino("");
+      setSuplementacao("");
+      setCardio("");
       setObservacoes("");
     }
     onOpenChange(value);
@@ -169,12 +192,14 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     setSaving(true);
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
-      const { error } = await supabase.from("protocolos").insert({
+      const { error } = await (supabase.from("protocolos") as any).insert({
         user_id: client.user_id,
         nome,
         tipo_protocolo: protocolType,
         plano_alimentar: planoAlimentar,
         treino,
+        suplementacao,
+        cardio,
         observacoes,
       });
       if (error) throw error;
@@ -273,6 +298,32 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
                 onChange={(e) => setPlanoAlimentar(e.target.value)}
                 rows={14}
                 className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
+              />
+            </section>
+
+            <Separator />
+
+            {/* Suplementação */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Suplementação</h3>
+              <Textarea
+                value={suplementacao}
+                onChange={(e) => setSuplementacao(e.target.value)}
+                rows={10}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
+              />
+            </section>
+
+            <Separator />
+
+            {/* Cardio */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Cardio</h3>
+              <Textarea
+                value={cardio}
+                onChange={(e) => setCardio(e.target.value)}
+                rows={8}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
               />
             </section>
 
