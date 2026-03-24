@@ -169,6 +169,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
       setTreino(trainingTextTemplates[protocolType]);
+      setSuplementacao(defaultSupplementacao);
+      setCardio(defaultCardio);
       setObservacoes("");
     }
   }, [protocolType]);
