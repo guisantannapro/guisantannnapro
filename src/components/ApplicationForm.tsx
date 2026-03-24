@@ -277,6 +277,12 @@ const ApplicationForm = () => {
         return;
       }
 
+      if (regPassword !== regConfirmPassword) {
+        setRegError("As senhas não coincidem.");
+        setCreatingAccount(false);
+        return;
+      }
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: regEmail,
         password: regPassword,
