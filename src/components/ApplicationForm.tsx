@@ -326,32 +326,6 @@ const ApplicationForm = () => {
   };
 
   if (submitted) {
-    if (accountCreated) {
-      return (
-        <section className="py-24 bg-background">
-          <div className="container mx-auto px-4 max-w-2xl text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-card border border-primary/20 rounded-lg p-12 glow-gold"
-            >
-              <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-              <h2 className="text-3xl uppercase mb-4">Conta Criada com Sucesso!</h2>
-              <p className="text-muted-foreground text-lg mb-6">
-                Seus dados foram salvos e sua conta foi criada. Use seu e-mail e senha para acessar a Área do Cliente.
-              </p>
-              <a
-                href="/area-do-cliente"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold uppercase text-sm hover:opacity-90 transition-opacity"
-              >
-                Acessar Área do Cliente
-              </a>
-            </motion.div>
-          </div>
-        </section>
-      );
-    }
-
     return (
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4 max-w-lg">
@@ -361,9 +335,9 @@ const ApplicationForm = () => {
             className="bg-card border border-primary/20 rounded-lg p-8 md:p-12"
           >
             <CheckCircle className="w-12 h-12 text-primary mx-auto mb-4" />
-            <h2 className="text-2xl uppercase mb-2 text-center">Formulário Salvo!</h2>
+            <h2 className="text-2xl uppercase mb-2 text-center">Crie sua conta para acessar seu protocolo</h2>
             <p className="text-muted-foreground text-sm text-center mb-8">
-              Agora crie sua conta para acessar a Área do Cliente, acompanhar seu protocolo e ver suas fotos.
+              Use o mesmo e-mail do formulário
             </p>
 
             <form onSubmit={handleCreateAccount} className="space-y-4">
