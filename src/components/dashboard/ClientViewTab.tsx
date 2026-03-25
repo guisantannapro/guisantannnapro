@@ -260,12 +260,12 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
       </div>
 
       {/* Histórico de Protocolos */}
-      {protocolosHistorico.length > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <History className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Histórico de Protocolos</h3>
-          </div>
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <History className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold uppercase text-foreground">Histórico de Protocolos</h3>
+        </div>
+        {protocolosHistorico.length > 0 ? (
           <div className="space-y-2">
             {protocolosHistorico.map((proto) => (
               <div key={proto.id} className="flex items-center justify-between p-2 border border-border rounded-md text-xs">
@@ -277,16 +277,18 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhum protocolo anterior.</p>
+        )}
+      </div>
 
       {/* Arquivos Enviados */}
-      {protocols.length > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <FileText className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Arquivos Enviados</h3>
-          </div>
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <FileText className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold uppercase text-foreground">Arquivos Enviados</h3>
+        </div>
+        {protocols.length > 0 ? (
           <div className="space-y-2">
             {protocols.map((protocol) => (
               <div key={protocol.id} className="flex items-center justify-between p-2 border border-border rounded-md">
@@ -301,17 +303,19 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhum arquivo enviado.</p>
+        )}
+      </div>
 
       {/* Fotos */}
-      {totalPhotos > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold uppercase text-foreground">Fotos ({totalPhotos})</h3>
-            </div>
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Eye className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Fotos ({totalPhotos})</h3>
+          </div>
+          {totalPhotos > 0 && (
             <Button
               variant="ghost"
               size="sm"
@@ -321,8 +325,10 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
               {showPhotos ? <EyeOff size={12} /> : <Eye size={12} />}
               {showPhotos ? "Ocultar" : "Mostrar"}
             </Button>
-          </div>
-          {showPhotos && (
+          )}
+        </div>
+        {totalPhotos > 0 ? (
+          showPhotos && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {submissionsWithPhotos.map((sub) =>
                 photoFields.map((field) => {
@@ -344,28 +350,32 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                 })
               )}
             </div>
-          )}
-        </div>
-      )}
+          )
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
+        )}
+      </div>
 
       {/* Evolução */}
-      {evolutions.length > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
-          </div>
-          <EvolutionSection evolutions={evolutions} />
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
         </div>
-      )}
+        {evolutions.length > 0 ? (
+          <EvolutionSection evolutions={evolutions} />
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhuma evolução registrada.</p>
+        )}
+      </div>
 
       {/* Check-ins de Progresso */}
-      {checkins.length > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Scale className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
-          </div>
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Scale className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
+        </div>
+        {checkins.length > 0 ? (
           <div className="space-y-3">
             {checkins.map((checkin: any) => {
               const hasPhotos = checkin.photo_front || checkin.photo_side || checkin.photo_back;
@@ -383,23 +393,23 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                     )}
                   </div>
                   {checkin.notes && <p className="text-xs text-muted-foreground">{checkin.notes}</p>}
-                  {hasPhotos && (
-                    <CheckinPhotos checkin={checkin} />
-                  )}
+                  {hasPhotos && <CheckinPhotos checkin={checkin} />}
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhum check-in registrado.</p>
+        )}
+      </div>
 
       {/* Feedbacks */}
-      {feedbacks.length > 0 && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <MessageSquare className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
-          </div>
+      <div className="border border-border rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <MessageSquare className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
+        </div>
+        {feedbacks.length > 0 ? (
           <div className="space-y-3">
             {feedbacks.map((fb: any) => (
               <div key={fb.id} className="border border-border rounded-md p-3 space-y-1">
@@ -418,9 +428,10 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
+        ) : (
+          <p className="text-muted-foreground text-xs">Nenhum feedback recebido.</p>
+        )}
+      </div>
 
       {pdfProtocol && (
         <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
