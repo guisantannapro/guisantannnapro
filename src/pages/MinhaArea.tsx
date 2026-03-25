@@ -331,8 +331,6 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        <EvolutionSection evolutions={evolutions} />
-
         {protocolosHistorico.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -413,6 +411,8 @@ const MinhaArea = () => {
         )}
 
         <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
+
+        <EvolutionSection evolutions={evolutions} />
       </main>
 
       {pdfProtocol && (
