@@ -85,6 +85,11 @@ const RenewalModal = ({ open, onOpenChange, currentPlan, currentPeriod, currentM
     return `${planName}-${selectedPeriod}`;
   };
 
+  const currentPrice = prices[buildPriceKey()] || null;
+
+  const formatPrice = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
   const handleCheckout = async () => {
     setLoading(true);
     try {
