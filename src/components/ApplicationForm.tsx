@@ -402,8 +402,8 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
-      setSubmissionId(null);
-      setTempUserId(null);
+      setSubmissionId(generatedId);
+      setTempUserId(sessionUserId);
       setRegEmail(form.email);
       setRegName(form.fullName);
       setSubmitted(true);
