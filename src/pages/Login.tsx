@@ -17,7 +17,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast.error("Credenciais inválidas. Tente novamente.");
@@ -25,7 +25,21 @@ const Login = () => {
       return;
     }
 
-    navigate("/dashboard");
+    // Check if user is admin to decide where to redirect
+    const userId = authData.user?.id;
+    if (userId) {
+      const { data: isAdmin } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      if (isAdmin) {
+        navigate("/dashboard");
+      } else {
+        navigate("/area-do-cliente");
+      }
+    } else {
+      navigate("/area-do-cliente");
+    }
   };
 
   return (
