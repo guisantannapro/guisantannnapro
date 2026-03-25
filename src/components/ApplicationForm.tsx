@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import CityStateField from "./CityStateField";
@@ -163,6 +163,20 @@ const ApplicationForm = () => {
     front: "", side: "", back: "", assessment: "",
   });
 
+  useEffect(() => {
+    const clearStaleSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        await supabase.auth.signOut();
+      }
+    };
+
+    clearStaleSession();
+  }, []);
+
   const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
     setPhotos((prev) => ({ ...prev, [type]: file }));
     if (file) {
@@ -199,16 +213,7 @@ const ApplicationForm = () => {
     setUploading(true);
 
     try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError) {
-        console.warn("Could not read auth user, falling back to anonymous submission:", userError);
-      }
-
-      const userId = user?.id ?? crypto.randomUUID();
+      const userId = crypto.randomUUID();
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
@@ -282,6 +287,8 @@ const ApplicationForm = () => {
         return;
       }
 
+      await supabase.auth.signOut();
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: regEmail,
         password: regPassword,
@@ -303,16 +310,25 @@ const ApplicationForm = () => {
 
       const newUserId = signUpData.user?.id;
 
-      if (newUserId && submissionId && tempUserId && tempUserId !== newUserId) {
-        await supabase
-          .from("form_submissions")
-          .update({ user_id: newUserId } as any)
-          .eq("id", submissionId);
+      if (!newUserId || !submissionId || !tempUserId) {
+        setRegError("Não foi possível concluir a vinculação da sua conta. Tente novamente.");
+        setCreatingAccount(false);
+        return;
       }
 
-      if (newUserId) {
-        await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
+      const { error: claimError } = await supabase.rpc("claim_form_submission", {
+        _submission_id: submissionId,
+        _old_user_id: tempUserId,
+      });
+
+      if (claimError) {
+        console.error("Error claiming submission and protocols:", claimError);
+        setRegError("Conta criada, mas não foi possível vincular seus dados automaticamente. Fale com o suporte.");
+        setCreatingAccount(false);
+        return;
       }
+
+      await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
 
       // Auto-redirect to client area
       window.location.href = "/area-do-cliente";
