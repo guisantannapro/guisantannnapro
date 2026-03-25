@@ -131,7 +131,7 @@ const Dashboard = () => {
       if (userIds.length > 0) {
         const { data: profiles, error: profileError } = await supabase
           .from("profiles")
-          .select("id, full_name, plan, plan_expires_at, plan_duration")
+          .select("id, full_name, plan, plan_expires_at, plan_duration, renewal_starts_at")
           .in("id", userIds);
         if (!profileError && profiles) {
           profileMap = new Map(profiles.map((p) => [p.id, p]));
