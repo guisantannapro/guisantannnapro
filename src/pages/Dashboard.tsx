@@ -38,6 +38,7 @@ interface Profile {
   plan: string | null;
   plan_expires_at: string | null;
   plan_duration: string | null;
+  renewal_starts_at: string | null;
 }
 
 const getClientStatus = (profile?: Profile) => {
