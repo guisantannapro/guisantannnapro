@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
+import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList, AlertTriangle, Clock, CheckCircle } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import EvolutionManager from "@/components/dashboard/EvolutionManager";
 import ClientViewTab from "@/components/dashboard/ClientViewTab";
@@ -36,7 +36,19 @@ interface Profile {
   id: string;
   full_name: string | null;
   plan: string | null;
+  plan_expires_at: string | null;
+  plan_duration: string | null;
 }
+
+const getClientStatus = (profile?: Profile) => {
+  if (!profile?.plan_expires_at) return null;
+  const expiry = new Date(profile.plan_expires_at);
+  const now = new Date();
+  const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  if (daysRemaining <= 0) return "expired" as const;
+  if (daysRemaining <= 7) return "expiring" as const;
+  return "active" as const;
+};
 
 interface ClientData extends FormSubmission {
   profile?: Profile;
@@ -55,6 +67,7 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [clientProtocols, setClientProtocols] = useState<any[]>([]);
   const [protocolPreviewOpen, setProtocolPreviewOpen] = useState(false);
@@ -70,6 +83,12 @@ const Dashboard = () => {
         if (!name.includes(term) && !email.includes(term)) return false;
       }
       if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
+      if (statusFilter !== "all") {
+        const status = getClientStatus(client.profile);
+        if (statusFilter === "expired" && status !== "expired") return false;
+        if (statusFilter === "expiring" && status !== "expiring") return false;
+        if (statusFilter === "active" && status !== "active") return false;
+      }
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
         const cutoff = new Date();
@@ -78,12 +97,12 @@ const Dashboard = () => {
       }
       return true;
     });
-  }, [clients, searchTerm, planFilter, periodFilter]);
+  }, [clients, searchTerm, planFilter, periodFilter, statusFilter]);
 
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, planFilter, periodFilter]);
+  }, [searchTerm, planFilter, periodFilter, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredClients.length / ITEMS_PER_PAGE));
   const paginatedClients = filteredClients.slice(
@@ -109,7 +128,7 @@ const Dashboard = () => {
       const userIds = [...new Set((submissions || []).map((s) => s.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name, plan")
+        .select("id, full_name, plan, plan_expires_at, plan_duration")
         .in("id", userIds);
 
       const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
@@ -249,7 +268,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <DashboardStats clients={clients} />
+            <DashboardStats clients={clients} getClientStatus={getClientStatus} />
             <ClientFilters
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
@@ -257,6 +276,8 @@ const Dashboard = () => {
               onPlanFilterChange={setPlanFilter}
               periodFilter={periodFilter}
               onPeriodFilterChange={setPeriodFilter}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
               totalResults={filteredClients.length}
             />
             {/* Desktop Table */}
@@ -267,8 +288,8 @@ const Dashboard = () => {
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Nome</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Email</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Plano</TableHead>
+                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Status</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Objetivo</TableHead>
-                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Data</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -289,11 +310,35 @@ const Dashboard = () => {
                           {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        {(() => {
+                          const status = getClientStatus(client.profile);
+                          if (status === "expired") return (
+                            <Badge className="bg-destructive/15 text-destructive border-destructive/30 text-xs gap-1">
+                              <AlertTriangle size={10} />
+                              Vencido
+                            </Badge>
+                          );
+                          if (status === "expiring") {
+                            const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                            return (
+                              <Badge className="bg-yellow-500/15 text-yellow-600 border-yellow-500/30 text-xs gap-1">
+                                <Clock size={10} />
+                                Vence em {days}d
+                              </Badge>
+                            );
+                          }
+                          if (status === "active") return (
+                            <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-xs gap-1">
+                              <CheckCircle size={10} />
+                              Ativo
+                            </Badge>
+                          );
+                          return <span className="text-muted-foreground text-xs">—</span>;
+                        })()}
+                      </TableCell>
                       <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
                         {getGoals(client)}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {formatDate(client.created_at)}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
@@ -330,6 +375,25 @@ const Dashboard = () => {
                       {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                     </Badge>
                   </div>
+                  {(() => {
+                    const status = getClientStatus(client.profile);
+                    if (status === "expired") return (
+                      <div className="flex items-center gap-1.5 text-destructive text-xs">
+                        <AlertTriangle size={12} />
+                        <span>Plano vencido</span>
+                      </div>
+                    );
+                    if (status === "expiring") {
+                      const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                      return (
+                        <div className="flex items-center gap-1.5 text-yellow-600 text-xs">
+                          <Clock size={12} />
+                          <span>Vence em {days} dias</span>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{getGoals(client)}</span>
                     <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
