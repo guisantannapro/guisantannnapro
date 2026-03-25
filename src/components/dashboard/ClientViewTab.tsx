@@ -43,6 +43,8 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
   const [protocoloAtual, setProtocoloAtual] = useState<any>(null);
   const [protocolosHistorico, setProtocolosHistorico] = useState<any[]>([]);
   const [evolutions, setEvolutions] = useState<any[]>([]);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
