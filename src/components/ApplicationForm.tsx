@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import CityStateField from "./CityStateField";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type FormSubmissionInsert = Database["public"]["Tables"]["form_submissions"]["Insert"];
 
 interface FormData {
   fullName: string;
@@ -307,7 +310,7 @@ const ApplicationForm = () => {
         rawInsertPayload.user_id = userId;
       }
 
-      const insertPayload = sanitizeUndefined(rawInsertPayload) as Record<string, unknown>;
+      const insertPayload = sanitizeUndefined(rawInsertPayload) as FormSubmissionInsert;
 
       const undefinedPaths = findUndefinedPaths(rawInsertPayload, "payload");
       if (undefinedPaths.length > 0) {
