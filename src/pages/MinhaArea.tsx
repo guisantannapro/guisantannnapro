@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
+import EvolutionSection from "@/components/minha-area/EvolutionSection";
 
 const planLabels: Record<string, string> = {
   base: "Base",
@@ -35,6 +36,7 @@ const MinhaArea = () => {
   const [protocolosHistorico, setProtocolosHistorico] = useState<any[]>([]);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
+  const [evolutions, setEvolutions] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,11 +80,12 @@ const MinhaArea = () => {
   const fetchData = async (userId: string) => {
     setLoading(true);
     try {
-      const [profileRes, submissionsRes, protocolsRes, protocoloRes] = await Promise.all([
+      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("client_evolutions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
@@ -95,6 +98,7 @@ const MinhaArea = () => {
         setProtocoloAtual(null);
         setProtocolosHistorico([]);
       }
+      if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -326,6 +330,8 @@ const MinhaArea = () => {
             <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
           )}
         </motion.div>
+
+        <EvolutionSection evolutions={evolutions} />
 
         {protocolosHistorico.length > 0 && (
           <motion.div
