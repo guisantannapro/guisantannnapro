@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList, AlertTriangle, Clock, CheckCircle } from "lucide-react";
+import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList, AlertTriangle, Clock, CheckCircle, RefreshCw } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import EvolutionManager from "@/components/dashboard/EvolutionManager";
 import ClientViewTab from "@/components/dashboard/ClientViewTab";
@@ -38,6 +38,7 @@ interface Profile {
   plan: string | null;
   plan_expires_at: string | null;
   plan_duration: string | null;
+  renewal_starts_at: string | null;
 }
 
 const getClientStatus = (profile?: Profile) => {
@@ -48,6 +49,11 @@ const getClientStatus = (profile?: Profile) => {
   if (daysRemaining <= 0) return "expired" as const;
   if (daysRemaining <= 7) return "expiring" as const;
   return "active" as const;
+};
+
+const hasRenewalPending = (profile?: Profile) => {
+  if (!profile?.renewal_starts_at) return false;
+  return new Date(profile.renewal_starts_at) > new Date();
 };
 
 interface ClientData extends FormSubmission {
@@ -130,7 +136,7 @@ const Dashboard = () => {
       if (userIds.length > 0) {
         const { data: profiles, error: profileError } = await supabase
           .from("profiles")
-          .select("id, full_name, plan, plan_expires_at, plan_duration")
+          .select("id, full_name, plan, plan_expires_at, plan_duration, renewal_starts_at")
           .in("id", userIds);
         if (!profileError && profiles) {
           profileMap = new Map(profiles.map((p) => [p.id, p]));
@@ -302,10 +308,13 @@ const Dashboard = () => {
                 <TableBody>
                   {paginatedClients.map((client) => {
                     const status = getClientStatus(client.profile);
+                    const renewalPending = hasRenewalPending(client.profile);
                     const borderClass = status === "expired"
                       ? "border-l-4 border-l-destructive bg-destructive/10"
                       : status === "expiring"
                       ? "border-l-4 border-l-accent bg-accent/10"
+                      : renewalPending
+                      ? "border-l-4 border-l-green-500 bg-green-500/10"
                       : "";
                     return (
                       <TableRow key={client.id} className={`border-border ${borderClass}`}>
@@ -317,6 +326,9 @@ const Dashboard = () => {
                             )}
                             {status === "expiring" && (
                               <Clock size={14} className="text-accent shrink-0" />
+                            )}
+                            {renewalPending && (
+                              <RefreshCw size={14} className="text-green-500 shrink-0" />
                             )}
                           </div>
                         </TableCell>
@@ -356,10 +368,13 @@ const Dashboard = () => {
             <div className="md:hidden space-y-4">
               {paginatedClients.map((client) => {
                 const status = getClientStatus(client.profile);
+                const renewalPending = hasRenewalPending(client.profile);
                 const borderClass = status === "expired"
                   ? "border-l-4 border-l-destructive bg-destructive/10"
                   : status === "expiring"
                   ? "border-l-4 border-l-accent bg-accent/10"
+                  : renewalPending
+                  ? "border-l-4 border-l-green-500 bg-green-500/10"
                   : "";
                 return (
                   <motion.div
@@ -376,6 +391,9 @@ const Dashboard = () => {
                         )}
                         {status === "expiring" && (
                           <Clock size={14} className="text-accent shrink-0" />
+                        )}
+                        {renewalPending && (
+                          <RefreshCw size={14} className="text-green-500 shrink-0" />
                         )}
                       </div>
                       <Badge variant="outline" className="border-primary/30 text-primary text-xs">
@@ -448,18 +466,23 @@ const Dashboard = () => {
             <>
               {(() => {
                 const status = getClientStatus(selectedClient.profile);
-                if (status === "expired") return (
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-                    <span className="text-sm text-destructive font-medium">
-                      Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
-                    </span>
-                  </div>
-                );
+                const renewalPending = hasRenewalPending(selectedClient.profile);
+                const alerts: JSX.Element[] = [];
+
+                if (status === "expired") {
+                  alerts.push(
+                    <div key="expired" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
+                      <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                      <span className="text-sm text-destructive font-medium">
+                        Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
                 if (status === "expiring") {
                   const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                  return (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
+                  alerts.push(
+                    <div key="expiring" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
                       <Clock className="w-4 h-4 text-accent shrink-0" />
                       <span className="text-sm text-accent font-medium">
                         Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
@@ -467,7 +490,19 @@ const Dashboard = () => {
                     </div>
                   );
                 }
-                return null;
+                if (renewalPending) {
+                  const renewalDate = new Date(selectedClient.profile!.renewal_starts_at!);
+                  const daysUntil = Math.ceil((renewalDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  alerts.push(
+                    <div key="renewal" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-green-500/30 bg-green-500/10 mt-2">
+                      <RefreshCw className="w-4 h-4 text-green-500 shrink-0" />
+                      <span className="text-sm text-green-500 font-medium">
+                        Renovação ativa em {daysUntil} dia{daysUntil > 1 ? "s" : ""} — {renewalDate.toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
+                return alerts.length > 0 ? <>{alerts}</> : null;
               })()}
               <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">

@@ -89,6 +89,7 @@ serve(async (req) => {
       plan: plan,
       plan_activated_at: now.toISOString(),
       plan_expires_at: expiresAt.toISOString(),
+      renewal_starts_at: renewalStartsAt,
       updated_at: now.toISOString(),
     };
 
