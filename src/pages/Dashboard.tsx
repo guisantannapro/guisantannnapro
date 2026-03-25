@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import EvolutionManager from "@/components/dashboard/EvolutionManager";
+import ClientViewTab from "@/components/dashboard/ClientViewTab";
 import ProtocolPreviewModal from "@/components/dashboard/ProtocolPreviewModal";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
@@ -14,6 +15,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -396,214 +398,228 @@ const Dashboard = () => {
           </DialogHeader>
 
           {selectedClient && (
-            <div className="space-y-6 mt-4">
-              {/* Info Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
-                <InfoItem label="Email" value={getField(selectedClient, "email")} />
-                <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
-                <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
-                <InfoItem label="Período" value={
-                  { mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" }[selectedClient.form_data?.billingPeriod] || "—"
-                } />
-                {(selectedClient.plan === "base" || selectedClient.profile?.plan === "base") && (
-                  <InfoItem label="Modalidade" value={
-                    { dieta: "Dieta", treino: "Treino", ambos: "Dieta + Treino" }[selectedClient.form_data?.billingModality] || "—"
-                  } />
-                )}
-                <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
-                {selectedClient.form_data?.mainGoalOther && (
-                  <InfoItem label="Objetivo (outro)" value={getField(selectedClient, "mainGoalOther")} />
-                )}
-                <InfoItem label="Tempo para objetivo" value={getField(selectedClient, "timeline")} />
-                <InfoItem label="Comprometimento" value={`${getField(selectedClient, "commitment")}/10`} />
-                <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
-                <InfoItem label="Altura" value={getField(selectedClient, "height")} />
-                <InfoItem label="Idade" value={getField(selectedClient, "age")} />
-                <InfoItem label="Cidade/UF" value={
-                  `${getField(selectedClient, "city")}${selectedClient.form_data?.state ? ` - ${selectedClient.form_data.state}` : ""}`
-                } />
-                <InfoItem label="Instagram" value={getField(selectedClient, "instagram")} />
-              </div>
+            <Tabs defaultValue="details" className="mt-4">
+              <TabsList className="w-full grid grid-cols-2">
+                <TabsTrigger value="details">Dados / Gestão</TabsTrigger>
+                <TabsTrigger value="client-view">Visão do Cliente</TabsTrigger>
+              </TabsList>
 
-              {/* Training Info */}
-              <div className="border-t border-border pt-4">
-                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h4>
+              <TabsContent value="details" className="space-y-6 mt-4">
+                {/* Info Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InfoItem label="Modalidades" value={
-                    Array.isArray(selectedClient.form_data?.trainingModalities)
-                      ? selectedClient.form_data.trainingModalities.join(", ")
-                      : "—"
+                  <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
+                  <InfoItem label="Email" value={getField(selectedClient, "email")} />
+                  <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
+                  <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
+                  <InfoItem label="Período" value={
+                    { mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" }[selectedClient.form_data?.billingPeriod] || "—"
                   } />
-                   {selectedClient.form_data?.musculacaoFrequency && (
-                    <InfoItem label="Freq. Musculação" value={getField(selectedClient, "musculacaoFrequency")} />
-                   )}
-                   {selectedClient.form_data?.ciclismoFrequency && (
-                    <InfoItem label="Freq. Ciclismo" value={getField(selectedClient, "ciclismoFrequency")} />
+                  {(selectedClient.plan === "base" || selectedClient.profile?.plan === "base") && (
+                    <InfoItem label="Modalidade" value={
+                      { dieta: "Dieta", treino: "Treino", ambos: "Dieta + Treino" }[selectedClient.form_data?.billingModality] || "—"
+                    } />
                   )}
-                  {selectedClient.form_data?.caminhadaFrequency && (
-                    <InfoItem label="Freq. Caminhada" value={getField(selectedClient, "caminhadaFrequency")} />
+                  <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
+                  {selectedClient.form_data?.mainGoalOther && (
+                    <InfoItem label="Objetivo (outro)" value={getField(selectedClient, "mainGoalOther")} />
                   )}
-                  {selectedClient.form_data?.corridaFrequency && (
-                    <InfoItem label="Freq. Corrida" value={getField(selectedClient, "corridaFrequency")} />
-                  )}
-                  {selectedClient.form_data?.sportFrequency && (
-                    <InfoItem label="Freq. Esporte coletivo" value={getField(selectedClient, "sportFrequency")} />
-                  )}
-                  {selectedClient.form_data?.trainingModalitiesOther && (
-                    <InfoItem label="Modalidade (outro)" value={getField(selectedClient, "trainingModalitiesOther")} />
-                  )}
-                  <InfoItem label="Frequência" value={getField(selectedClient, "trainingFrequency")} />
-                  <InfoItem label="Duração" value={getField(selectedClient, "trainingDuration")} />
-                  <InfoItem label="Experiência" value={getField(selectedClient, "trainingExperience")} />
-                  <InfoItem label="Esforço no trabalho" value={getField(selectedClient, "workEffort")} />
-                  <InfoItem label="Horário disponível" value={getField(selectedClient, "availableSchedule")} />
-                  <InfoItem label="Já teve acompanhamento profissional" value={getField(selectedClient, "hadProfessionalCoaching")} />
-                </div>
-              </div>
-
-              {/* Health Info */}
-              <div className="border-t border-border pt-4">
-                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Saúde</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InfoItem label="Condições de saúde" value={
-                    Array.isArray(selectedClient.form_data?.healthConditions)
-                      ? selectedClient.form_data.healthConditions.join(", ")
-                      : "—"
+                  <InfoItem label="Tempo para objetivo" value={getField(selectedClient, "timeline")} />
+                  <InfoItem label="Comprometimento" value={`${getField(selectedClient, "commitment")}/10`} />
+                  <InfoItem label="Peso" value={getField(selectedClient, "weight")} />
+                  <InfoItem label="Altura" value={getField(selectedClient, "height")} />
+                  <InfoItem label="Idade" value={getField(selectedClient, "age")} />
+                  <InfoItem label="Cidade/UF" value={
+                    `${getField(selectedClient, "city")}${selectedClient.form_data?.state ? ` - ${selectedClient.form_data.state}` : ""}`
                   } />
-                  {selectedClient.form_data?.healthConditionsOther && (
-                    <InfoItem label="Condição (outro)" value={getField(selectedClient, "healthConditionsOther")} />
-                  )}
-                  <InfoItem label="Medicação" value={getField(selectedClient, "usesMedication")} />
-                  {selectedClient.form_data?.medicationDetails && (
-                    <InfoItem label="Detalhes da medicação" value={getField(selectedClient, "medicationDetails")} />
-                  )}
-                  <InfoItem label="Hormônios" value={getField(selectedClient, "usesHormones")} />
-                  {selectedClient.form_data?.hormoneDetails && (
-                    <InfoItem label="Detalhes dos hormônios" value={getField(selectedClient, "hormoneDetails")} />
-                  )}
-                  <InfoItem label="Restrições alimentares" value={
-                    Array.isArray(selectedClient.form_data?.foodRestrictions)
-                      ? selectedClient.form_data.foodRestrictions.join(", ")
-                      : getField(selectedClient, "foodRestrictions")
-                  } />
-                  {selectedClient.form_data?.allergyDetails && (
-                    <InfoItem label="Alergia alimentar" value={getField(selectedClient, "allergyDetails")} />
-                  )}
-                  {selectedClient.form_data?.foodRestrictionsOther && (
-                    <InfoItem label="Restrição (outro)" value={getField(selectedClient, "foodRestrictionsOther")} />
-                  )}
-                  <InfoItem label="Suplementos" value={getField(selectedClient, "usesSupplements")} />
-                  {selectedClient.form_data?.supplementDetails && (
-                    <InfoItem label="Detalhes dos suplementos" value={getField(selectedClient, "supplementDetails")} />
-                  )}
-                  <InfoItem label="Sono" value={`${getField(selectedClient, "sleepHours")} horas`} />
-                  <InfoItem label="Qualidade do sono" value={`${getField(selectedClient, "sleepQuality")}/10`} />
-                  <InfoItem label="Nível de estresse" value={getField(selectedClient, "stressLevel")} />
+                  <InfoItem label="Instagram" value={getField(selectedClient, "instagram")} />
                 </div>
-              </div>
 
-              {/* Nutrition */}
-              <div className="border-t border-border pt-4">
-                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Alimentação</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InfoItem label="Refeições/dia" value={getField(selectedClient, "mealsPerDay")} />
-                  <InfoItem label="Horários fixos" value={getField(selectedClient, "fixedMealTimes")} />
-                  <InfoItem label="Água/dia" value={getField(selectedClient, "waterIntake")} />
-                  <InfoItem label="Compulsão alimentar" value={getField(selectedClient, "bingEating")} />
-                </div>
-                <div className="mt-3">
-                  <InfoItem label="Dieta diária" value={getField(selectedClient, "dailyDiet")} />
-                </div>
-              </div>
-
-              {/* Hábitos */}
-              <div className="border-t border-border pt-4">
-                <h4 className="text-sm font-semibold uppercase text-primary mb-3">Hábitos</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InfoItem label="Tabagismo" value={getField(selectedClient, "smoking")} />
-                  {selectedClient.form_data?.smokingAmount && (
-                    <InfoItem label="Quantidade (cigarro)" value={getField(selectedClient, "smokingAmount")} />
-                  )}
-                  <InfoItem label="Álcool" value={getField(selectedClient, "alcohol")} />
-                  {selectedClient.form_data?.alcoholFrequency && (
-                    <InfoItem label="Frequência (álcool)" value={getField(selectedClient, "alcoholFrequency")} />
-                  )}
-                  <InfoItem label="Outras substâncias" value={getField(selectedClient, "otherSubstances")} />
-                  {selectedClient.form_data?.otherSubstancesDetails && (
-                    <InfoItem label="Detalhes (substâncias)" value={getField(selectedClient, "otherSubstancesDetails")} />
-                  )}
-                </div>
-              </div>
-
-              {/* Photos */}
-              {(selectedClient.photo_front || selectedClient.photo_side || selectedClient.photo_back || selectedClient.photo_assessment) && (
+                {/* Training Info */}
                 <div className="border-t border-border pt-4">
-                  <h4 className="text-sm font-semibold uppercase text-primary mb-3">Fotos</h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {selectedClient.photo_front && (
-                      <PhotoThumb label="Frente" path={selectedClient.photo_front} />
+                  <h4 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <InfoItem label="Modalidades" value={
+                      Array.isArray(selectedClient.form_data?.trainingModalities)
+                        ? selectedClient.form_data.trainingModalities.join(", ")
+                        : "—"
+                    } />
+                     {selectedClient.form_data?.musculacaoFrequency && (
+                      <InfoItem label="Freq. Musculação" value={getField(selectedClient, "musculacaoFrequency")} />
+                     )}
+                     {selectedClient.form_data?.ciclismoFrequency && (
+                      <InfoItem label="Freq. Ciclismo" value={getField(selectedClient, "ciclismoFrequency")} />
                     )}
-                    {selectedClient.photo_side && (
-                      <PhotoThumb label="Lado" path={selectedClient.photo_side} />
+                    {selectedClient.form_data?.caminhadaFrequency && (
+                      <InfoItem label="Freq. Caminhada" value={getField(selectedClient, "caminhadaFrequency")} />
                     )}
-                    {selectedClient.photo_back && (
-                      <PhotoThumb label="Costas" path={selectedClient.photo_back} />
+                    {selectedClient.form_data?.corridaFrequency && (
+                      <InfoItem label="Freq. Corrida" value={getField(selectedClient, "corridaFrequency")} />
                     )}
-                    {selectedClient.photo_assessment && (
-                      <PhotoThumb label="Avaliação" path={selectedClient.photo_assessment} />
+                    {selectedClient.form_data?.sportFrequency && (
+                      <InfoItem label="Freq. Esporte coletivo" value={getField(selectedClient, "sportFrequency")} />
+                    )}
+                    {selectedClient.form_data?.trainingModalitiesOther && (
+                      <InfoItem label="Modalidade (outro)" value={getField(selectedClient, "trainingModalitiesOther")} />
+                    )}
+                    <InfoItem label="Frequência" value={getField(selectedClient, "trainingFrequency")} />
+                    <InfoItem label="Duração" value={getField(selectedClient, "trainingDuration")} />
+                    <InfoItem label="Experiência" value={getField(selectedClient, "trainingExperience")} />
+                    <InfoItem label="Esforço no trabalho" value={getField(selectedClient, "workEffort")} />
+                    <InfoItem label="Horário disponível" value={getField(selectedClient, "availableSchedule")} />
+                    <InfoItem label="Já teve acompanhamento profissional" value={getField(selectedClient, "hadProfessionalCoaching")} />
+                  </div>
+                </div>
+
+                {/* Health Info */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-semibold uppercase text-primary mb-3">Saúde</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <InfoItem label="Condições de saúde" value={
+                      Array.isArray(selectedClient.form_data?.healthConditions)
+                        ? selectedClient.form_data.healthConditions.join(", ")
+                        : "—"
+                    } />
+                    {selectedClient.form_data?.healthConditionsOther && (
+                      <InfoItem label="Condição (outro)" value={getField(selectedClient, "healthConditionsOther")} />
+                    )}
+                    <InfoItem label="Medicação" value={getField(selectedClient, "usesMedication")} />
+                    {selectedClient.form_data?.medicationDetails && (
+                      <InfoItem label="Detalhes da medicação" value={getField(selectedClient, "medicationDetails")} />
+                    )}
+                    <InfoItem label="Hormônios" value={getField(selectedClient, "usesHormones")} />
+                    {selectedClient.form_data?.hormoneDetails && (
+                      <InfoItem label="Detalhes dos hormônios" value={getField(selectedClient, "hormoneDetails")} />
+                    )}
+                    <InfoItem label="Restrições alimentares" value={
+                      Array.isArray(selectedClient.form_data?.foodRestrictions)
+                        ? selectedClient.form_data.foodRestrictions.join(", ")
+                        : getField(selectedClient, "foodRestrictions")
+                    } />
+                    {selectedClient.form_data?.allergyDetails && (
+                      <InfoItem label="Alergia alimentar" value={getField(selectedClient, "allergyDetails")} />
+                    )}
+                    {selectedClient.form_data?.foodRestrictionsOther && (
+                      <InfoItem label="Restrição (outro)" value={getField(selectedClient, "foodRestrictionsOther")} />
+                    )}
+                    <InfoItem label="Suplementos" value={getField(selectedClient, "usesSupplements")} />
+                    {selectedClient.form_data?.supplementDetails && (
+                      <InfoItem label="Detalhes dos suplementos" value={getField(selectedClient, "supplementDetails")} />
+                    )}
+                    <InfoItem label="Sono" value={`${getField(selectedClient, "sleepHours")} horas`} />
+                    <InfoItem label="Qualidade do sono" value={`${getField(selectedClient, "sleepQuality")}/10`} />
+                    <InfoItem label="Nível de estresse" value={getField(selectedClient, "stressLevel")} />
+                  </div>
+                </div>
+
+                {/* Nutrition */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-semibold uppercase text-primary mb-3">Alimentação</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <InfoItem label="Refeições/dia" value={getField(selectedClient, "mealsPerDay")} />
+                    <InfoItem label="Horários fixos" value={getField(selectedClient, "fixedMealTimes")} />
+                    <InfoItem label="Água/dia" value={getField(selectedClient, "waterIntake")} />
+                    <InfoItem label="Compulsão alimentar" value={getField(selectedClient, "bingEating")} />
+                  </div>
+                  <div className="mt-3">
+                    <InfoItem label="Dieta diária" value={getField(selectedClient, "dailyDiet")} />
+                  </div>
+                </div>
+
+                {/* Hábitos */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-semibold uppercase text-primary mb-3">Hábitos</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <InfoItem label="Tabagismo" value={getField(selectedClient, "smoking")} />
+                    {selectedClient.form_data?.smokingAmount && (
+                      <InfoItem label="Quantidade (cigarro)" value={getField(selectedClient, "smokingAmount")} />
+                    )}
+                    <InfoItem label="Álcool" value={getField(selectedClient, "alcohol")} />
+                    {selectedClient.form_data?.alcoholFrequency && (
+                      <InfoItem label="Frequência (álcool)" value={getField(selectedClient, "alcoholFrequency")} />
+                    )}
+                    <InfoItem label="Outras substâncias" value={getField(selectedClient, "otherSubstances")} />
+                    {selectedClient.form_data?.otherSubstancesDetails && (
+                      <InfoItem label="Detalhes (substâncias)" value={getField(selectedClient, "otherSubstancesDetails")} />
                     )}
                   </div>
                 </div>
-              )}
 
-              {/* Protocol Upload */}
-              <ProtocolUpload
-                clientUserId={selectedClient.user_id}
-                protocols={clientProtocols}
-                onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
-              />
+                {/* Photos */}
+                {(selectedClient.photo_front || selectedClient.photo_side || selectedClient.photo_back || selectedClient.photo_assessment) && (
+                  <div className="border-t border-border pt-4">
+                    <h4 className="text-sm font-semibold uppercase text-primary mb-3">Fotos</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {selectedClient.photo_front && (
+                        <PhotoThumb label="Frente" path={selectedClient.photo_front} />
+                      )}
+                      {selectedClient.photo_side && (
+                        <PhotoThumb label="Lado" path={selectedClient.photo_side} />
+                      )}
+                      {selectedClient.photo_back && (
+                        <PhotoThumb label="Costas" path={selectedClient.photo_back} />
+                      )}
+                      {selectedClient.photo_assessment && (
+                        <PhotoThumb label="Avaliação" path={selectedClient.photo_assessment} />
+                      )}
+                    </div>
+                  </div>
+                )}
 
-              {/* Evolution Manager */}
-              <EvolutionManager clientUserId={selectedClient.user_id} />
+                {/* Protocol Upload */}
+                <ProtocolUpload
+                  clientUserId={selectedClient.user_id}
+                  protocols={clientProtocols}
+                  onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
+                />
 
-              {/* Generate Protocol Preview */}
-              <div className="border-t border-border pt-4">
-                <Button
-                  onClick={() => setProtocolPreviewOpen(true)}
-                  className="w-full gap-2"
-                  variant="outline"
-                >
-                  <ClipboardList size={16} />
-                  Gerar Protocolo
-                </Button>
-              </div>
+                {/* Evolution Manager */}
+                <EvolutionManager clientUserId={selectedClient.user_id} />
 
-              <ProtocolPreviewModal
-                open={protocolPreviewOpen}
-                onOpenChange={setProtocolPreviewOpen}
-                client={selectedClient}
-              />
+                {/* Generate Protocol Preview */}
+                <div className="border-t border-border pt-4">
+                  <Button
+                    onClick={() => setProtocolPreviewOpen(true)}
+                    className="w-full gap-2"
+                    variant="outline"
+                  >
+                    <ClipboardList size={16} />
+                    Gerar Protocolo
+                  </Button>
+                </div>
 
-              {/* Actions */}
-              <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={() => openWhatsApp(selectedClient)}
-                  className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white gap-2"
-                >
-                  <MessageCircle size={16} />
-                  Enviar WhatsApp
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => sendEmail(selectedClient)}
-                  className="flex-1 border-primary/30 text-primary hover:bg-primary/10 gap-2"
-                >
-                  <Mail size={16} />
-                  Enviar Email
-                </Button>
-              </div>
-            </div>
+                <ProtocolPreviewModal
+                  open={protocolPreviewOpen}
+                  onOpenChange={setProtocolPreviewOpen}
+                  client={selectedClient}
+                />
+
+                {/* Actions */}
+                <div className="border-t border-border pt-4 flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => openWhatsApp(selectedClient)}
+                    className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white gap-2"
+                  >
+                    <MessageCircle size={16} />
+                    Enviar WhatsApp
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => sendEmail(selectedClient)}
+                    className="flex-1 border-primary/30 text-primary hover:bg-primary/10 gap-2"
+                  >
+                    <Mail size={16} />
+                    Enviar Email
+                  </Button>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="client-view" className="mt-4">
+                <ClientViewTab
+                  userId={selectedClient.user_id}
+                  clientName={getField(selectedClient, "fullName")}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>
