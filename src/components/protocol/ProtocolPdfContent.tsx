@@ -74,32 +74,34 @@ export function ProtocolPdfContent({
           <div className="pdf-cover-info-left">
             <span className="pdf-cover-label">PROTOCOLO</span>
             <span className="pdf-cover-title">{clientName}</span>
+            <div style={{ display: "flex", gap: "20px", marginTop: "8px", flexWrap: "wrap" }}>
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">TIPO</span>
+                <span className="pdf-cover-value">
+                  {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                </span>
+              </div>
+              {clientInfo?.idade && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">IDADE</span>
+                  <span className="pdf-cover-value">{clientInfo.idade}</span>
+                </div>
+              )}
+              {clientInfo?.peso && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">PESO</span>
+                  <span className="pdf-cover-value">{clientInfo.peso}</span>
+                </div>
+              )}
+              {clientInfo?.altura && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">ALTURA</span>
+                  <span className="pdf-cover-value">{clientInfo.altura}</span>
+                </div>
+              )}
+            </div>
           </div>
           <div className="pdf-cover-info-right">
-            {clientInfo?.idade && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">IDADE</span>
-                <span className="pdf-cover-value">{clientInfo.idade}</span>
-              </div>
-            )}
-            {clientInfo?.peso && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">PESO</span>
-                <span className="pdf-cover-value">{clientInfo.peso}</span>
-              </div>
-            )}
-            {clientInfo?.altura && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">ALTURA</span>
-                <span className="pdf-cover-value">{clientInfo.altura}</span>
-              </div>
-            )}
-            <div className="pdf-cover-meta">
-              <span className="pdf-cover-label">TIPO</span>
-              <span className="pdf-cover-value">
-                {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
-              </span>
-            </div>
             <div className="pdf-cover-meta">
               <span className="pdf-cover-label">DATA</span>
               <span className="pdf-cover-value">{formattedDate}</span>
