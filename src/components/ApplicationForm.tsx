@@ -206,19 +206,19 @@ const ApplicationForm = () => {
     setUploading(true);
 
     try {
-      // Use auth.uid() if logged in, otherwise generate a temp UUID for anonymous submissions
       const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id || crypto.randomUUID();
+      const userId = session?.user?.id || null;
+      const folderKey = userId || `anon-${Date.now()}`;
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
       let photoBackPath: string | null = null;
       let photoAssessmentPath: string | null = null;
 
-      if (photos.front) photoFrontPath = await uploadPhoto(photos.front, userId, "frente");
-      if (photos.side) photoSidePath = await uploadPhoto(photos.side, userId, "lado");
-      if (photos.back) photoBackPath = await uploadPhoto(photos.back, userId, "costas");
-      if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, userId, "avaliacao");
+      if (photos.front) photoFrontPath = await uploadPhoto(photos.front, folderKey, "frente");
+      if (photos.side) photoSidePath = await uploadPhoto(photos.side, folderKey, "lado");
+      if (photos.back) photoBackPath = await uploadPhoto(photos.back, folderKey, "costas");
+      if (photos.assessment) photoAssessmentPath = await uploadPhoto(photos.assessment, folderKey, "avaliacao");
 
       const purchasedPlan = localStorage.getItem("purchased_plan");
       const purchasedPeriod = localStorage.getItem("purchased_period");
@@ -230,8 +230,7 @@ const ApplicationForm = () => {
         billingModality: purchasedModality || null,
       };
 
-      const { data: insertedData, error } = await supabase.from("form_submissions").insert({
-        user_id: userId,
+      const insertPayload: any = {
         form_data: enrichedFormData as any,
         photo_front: photoFrontPath,
         photo_side: photoSidePath,
@@ -239,7 +238,13 @@ const ApplicationForm = () => {
         photo_assessment: photoAssessmentPath,
         selected_equipment: [],
         plan: purchasedPlan,
-      }).select("id").single();
+      };
+
+      if (userId) {
+        insertPayload.user_id = userId;
+      }
+
+      const { data: insertedData, error } = await supabase.from("form_submissions").insert(insertPayload).select("id").single();
 
       if (error) {
         console.error("Submit error:", error);
@@ -252,7 +257,7 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
       setSubmissionId(insertedData?.id || null);
-      setTempUserId(userId);
+      setTempUserId(null);
       setRegEmail(form.email);
       setRegName(form.fullName);
       setSubmitted(true);
