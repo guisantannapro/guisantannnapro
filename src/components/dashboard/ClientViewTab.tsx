@@ -71,6 +71,8 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         setProtocolosHistorico(protocoloRes.data.slice(1));
       }
       if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
+      if (checkinsRes.data) setCheckins(checkinsRes.data as any[]);
+      if (feedbacksRes.data) setFeedbacks(feedbacksRes.data as any[]);
     } catch (err) {
       console.error("Error fetching client view data:", err);
     } finally {
