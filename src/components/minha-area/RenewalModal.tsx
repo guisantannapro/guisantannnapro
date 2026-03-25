@@ -191,7 +191,18 @@ const RenewalModal = ({ open, onOpenChange, currentPlan, currentPeriod, currentM
             </div>
           </div>
 
-          {/* Checkout Button */}
+          {/* Price + Checkout */}
+          {currentPrice && (
+            <div className="text-center py-2">
+              <span className="text-2xl font-bold text-foreground">{formatPrice(currentPrice)}</span>
+              {selectedPeriod !== "mensal" && (
+                <span className="text-xs text-muted-foreground ml-2">
+                  ({formatPrice(currentPrice / (selectedPeriod === "trimestral" ? 3 : 6))}/mês)
+                </span>
+              )}
+            </div>
+          )}
+
           <Button
             onClick={handleCheckout}
             disabled={loading}
