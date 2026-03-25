@@ -436,4 +436,44 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
   );
 };
 
+const CheckinPhotos = ({ checkin }: { checkin: any }) => {
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const photoLabels: Record<string, string> = { photo_front: "Frente", photo_side: "Lado", photo_back: "Costas" };
+
+  useEffect(() => {
+    const load = async () => {
+      const result: Record<string, string> = {};
+      for (const field of ["photo_front", "photo_side", "photo_back"]) {
+        if (checkin[field]) {
+          const { data } = await supabase.storage.from("client-photos").createSignedUrl(checkin[field], 3600);
+          if (data?.signedUrl) result[field] = data.signedUrl;
+        }
+      }
+      setUrls(result);
+    };
+    load();
+  }, [checkin]);
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {["photo_front", "photo_side", "photo_back"].map((field) => {
+        if (!checkin[field]) return null;
+        const url = urls[field];
+        return (
+          <div key={field} className="space-y-1">
+            <span className="text-xs text-muted-foreground">{photoLabels[field]}</span>
+            {url ? (
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                <img src={url} alt={photoLabels[field]} className="w-full aspect-[3/4] object-cover rounded-md border border-border" />
+              </a>
+            ) : (
+              <div className="w-full aspect-[3/4] rounded-md border border-border bg-muted animate-pulse" />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export default ClientViewTab;
