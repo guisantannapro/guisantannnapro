@@ -411,6 +411,8 @@ const MinhaArea = () => {
         )}
 
         <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
+
+        <EvolutionSection evolutions={evolutions} />
       </main>
 
       {pdfProtocol && (
