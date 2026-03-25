@@ -313,10 +313,10 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             {getField(client, "fullName")}
                             {status === "expired" && (
-                              <AlertTriangle size={14} className="text-destructive shrink-0" title="Plano vencido" />
+                              <AlertTriangle size={14} className="text-destructive shrink-0" />
                             )}
                             {status === "expiring" && (
-                              <Clock size={14} className="text-accent shrink-0" title="Vence em breve" />
+                              <Clock size={14} className="text-accent shrink-0" />
                             )}
                           </div>
                         </TableCell>
