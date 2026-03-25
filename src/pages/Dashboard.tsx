@@ -308,10 +308,13 @@ const Dashboard = () => {
                 <TableBody>
                   {paginatedClients.map((client) => {
                     const status = getClientStatus(client.profile);
+                    const renewalPending = hasRenewalPending(client.profile);
                     const borderClass = status === "expired"
                       ? "border-l-4 border-l-destructive bg-destructive/10"
                       : status === "expiring"
                       ? "border-l-4 border-l-accent bg-accent/10"
+                      : renewalPending
+                      ? "border-l-4 border-l-green-500 bg-green-500/10"
                       : "";
                     return (
                       <TableRow key={client.id} className={`border-border ${borderClass}`}>
@@ -323,6 +326,9 @@ const Dashboard = () => {
                             )}
                             {status === "expiring" && (
                               <Clock size={14} className="text-accent shrink-0" />
+                            )}
+                            {renewalPending && (
+                              <RefreshCw size={14} className="text-green-500 shrink-0" />
                             )}
                           </div>
                         </TableCell>
