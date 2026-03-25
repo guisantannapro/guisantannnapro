@@ -14,6 +14,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_evolutions: {
+        Row: {
+          body_fat_after: number | null
+          body_fat_before: number | null
+          created_at: string
+          description: string | null
+          id: string
+          photo_after: string | null
+          photo_before: string | null
+          title: string
+          user_id: string
+          weight_after: number | null
+          weight_before: number | null
+        }
+        Insert: {
+          body_fat_after?: number | null
+          body_fat_before?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_after?: string | null
+          photo_before?: string | null
+          title?: string
+          user_id: string
+          weight_after?: number | null
+          weight_before?: number | null
+        }
+        Update: {
+          body_fat_after?: number | null
+          body_fat_before?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_after?: string | null
+          photo_before?: string | null
+          title?: string
+          user_id?: string
+          weight_after?: number | null
+          weight_before?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_evolutions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_protocols: {
         Row: {
           created_at: string
