@@ -310,11 +310,35 @@ const Dashboard = () => {
                           {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        {(() => {
+                          const status = getClientStatus(client.profile);
+                          if (status === "expired") return (
+                            <Badge className="bg-destructive/15 text-destructive border-destructive/30 text-xs gap-1">
+                              <AlertTriangle size={10} />
+                              Vencido
+                            </Badge>
+                          );
+                          if (status === "expiring") {
+                            const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                            return (
+                              <Badge className="bg-yellow-500/15 text-yellow-600 border-yellow-500/30 text-xs gap-1">
+                                <Clock size={10} />
+                                Vence em {days}d
+                              </Badge>
+                            );
+                          }
+                          if (status === "active") return (
+                            <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-xs gap-1">
+                              <CheckCircle size={10} />
+                              Ativo
+                            </Badge>
+                          );
+                          return <span className="text-muted-foreground text-xs">—</span>;
+                        })()}
+                      </TableCell>
                       <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
                         {getGoals(client)}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {formatDate(client.created_at)}
                       </TableCell>
                       <TableCell className="text-right">
                         <Button
