@@ -51,6 +51,11 @@ const getClientStatus = (profile?: Profile) => {
   return "active" as const;
 };
 
+const hasRenewalPending = (profile?: Profile) => {
+  if (!profile?.renewal_starts_at) return false;
+  return new Date(profile.renewal_starts_at) > new Date();
+};
+
 interface ClientData extends FormSubmission {
   profile?: Profile;
 }
