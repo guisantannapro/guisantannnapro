@@ -400,7 +400,7 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
-      setSubmissionId((data && data[0]?.id) || null);
+      setSubmissionId(null);
       setTempUserId(null);
       setRegEmail(form.email);
       setRegName(form.fullName);
