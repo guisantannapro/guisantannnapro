@@ -98,6 +98,7 @@ const MinhaArea = () => {
         setProtocoloAtual(null);
         setProtocolosHistorico([]);
       }
+      if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
