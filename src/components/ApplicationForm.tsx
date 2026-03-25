@@ -206,7 +206,9 @@ const ApplicationForm = () => {
     setUploading(true);
 
     try {
-      const userId = crypto.randomUUID();
+      // Use auth.uid() if logged in, otherwise generate a temp UUID for anonymous submissions
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id || crypto.randomUUID();
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
