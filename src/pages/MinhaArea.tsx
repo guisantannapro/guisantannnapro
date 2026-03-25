@@ -12,6 +12,7 @@ import type { Session } from "@supabase/supabase-js";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
+import RenewalModal from "@/components/minha-area/RenewalModal";
 
 const planLabels: Record<string, string> = {
   base: "Base",
@@ -207,46 +208,12 @@ const MinhaArea = () => {
   };
 
   const daysRemaining = getDaysRemainingResolved();
-  // TODO: TEMPORÁRIO - forçar banner de renovação para visualização. Remover depois!
-  const isExpired = true; // daysRemaining !== null && daysRemaining <= 0;
-  const isExpiringSoon = false; // daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
+  const isExpired = daysRemaining !== null && daysRemaining <= 0;
+  const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
-  const [renewLoading, setRenewLoading] = useState(false);
+  const [renewModalOpen, setRenewModalOpen] = useState(false);
 
-  const buildPriceKey = () => {
-    const plan = resolvedPlan;
-    const period = (resolvedPeriod || "mensal").toLowerCase();
-    const normalizedPeriod = period === "monthly" ? "mensal" : period === "quarterly" ? "trimestral" : period === "semiannual" ? "semestral" : period;
-
-    if (plan === "base") {
-      const modality = submissions?.[0]?.form_data?.billingModality || "dieta";
-      const mod = modality === "ambos" ? "dieta+treino" : modality;
-      return `base-${mod}-${normalizedPeriod}`;
-    }
-    const planName = plan === "transformacao" ? "transformação" : plan;
-    return `${planName}-${normalizedPeriod}`;
-  };
-
-  const handleRenewPlan = async () => {
-    setRenewLoading(true);
-    try {
-      const priceKey = buildPriceKey();
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceKey },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      } else {
-        toast.error("Erro ao gerar link de pagamento.");
-      }
-    } catch (err) {
-      console.error("Renewal error:", err);
-      toast.error("Erro ao iniciar renovação.");
-    } finally {
-      setRenewLoading(false);
-    }
-  };
+  const currentModality = submissions?.[0]?.form_data?.billingModality || "dieta";
 
   if (loading) {
     return (
@@ -320,13 +287,12 @@ const MinhaArea = () => {
                       : "Seu plano está prestes a vencer. Renove agora para não perder o acesso."}
                   </p>
                   <Button
-                    onClick={handleRenewPlan}
-                    disabled={renewLoading}
+                    onClick={() => setRenewModalOpen(true)}
                     size="sm"
                     className="gap-1.5"
                   >
-                    {renewLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-                    {renewLoading ? "Processando..." : "Renovar Plano"}
+                    <RefreshCw size={14} />
+                    Renovar Plano
                   </Button>
                 </div>
               )}
@@ -482,6 +448,14 @@ const MinhaArea = () => {
           />
         </div>
       )}
+
+      <RenewalModal
+        open={renewModalOpen}
+        onOpenChange={setRenewModalOpen}
+        currentPlan={resolvedPlan}
+        currentPeriod={resolvedPeriod}
+        currentModality={currentModality}
+      />
     </div>
   );
 };
