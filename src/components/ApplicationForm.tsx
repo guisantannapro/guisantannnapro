@@ -310,7 +310,7 @@ const ApplicationForm = () => {
 
       const newUserId = signUpData.user?.id;
 
-      if (!newUserId || !submissionId || !tempUserId) {
+      if (!newUserId || !submissionId) {
         setRegError("Não foi possível concluir a vinculação da sua conta. Tente novamente.");
         setCreatingAccount(false);
         return;
@@ -336,7 +336,7 @@ const ApplicationForm = () => {
 
       const { error: claimError } = await supabase.rpc("claim_form_submission", {
         _submission_id: submissionId,
-        _old_user_id: tempUserId,
+        _old_user_id: tempUserId as any,
       });
 
       if (claimError) {
