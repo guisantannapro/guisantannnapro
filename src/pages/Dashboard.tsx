@@ -97,7 +97,7 @@ const Dashboard = () => {
       }
       return true;
     });
-  }, [clients, searchTerm, planFilter, periodFilter]);
+  }, [clients, searchTerm, planFilter, periodFilter, statusFilter]);
 
   // Reset page when filters change
   useEffect(() => {
