@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,8 @@ const MinhaArea = () => {
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [protocols, setProtocols] = useState<any[]>([]);
-  const [protocolo, setProtocolo] = useState<any>(null);
+  const [protocoloAtual, setProtocoloAtual] = useState<any>(null);
+  const [protocolosHistorico, setProtocolosHistorico] = useState<any[]>([]);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const navigate = useNavigate();
@@ -42,8 +43,9 @@ const MinhaArea = () => {
       if (!nextSession) {
         setProfile(null);
         setSubmissions([]);
-        setProtocols([]);
-        setProtocolo(null);
+      setProtocols([]);
+      setProtocoloAtual(null);
+      setProtocolosHistorico([]);
       }
       setAuthReady(true);
     };
@@ -80,14 +82,19 @@ const MinhaArea = () => {
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
-        supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(1),
+        supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
-      if (protocoloRes.data && protocoloRes.data.length > 0) setProtocolo(protocoloRes.data[0]);
-      if (!protocoloRes.data || protocoloRes.data.length === 0) setProtocolo(null);
+      if (protocoloRes.data && protocoloRes.data.length > 0) {
+        setProtocoloAtual(protocoloRes.data[0]);
+        setProtocolosHistorico(protocoloRes.data.slice(1));
+      } else {
+        setProtocoloAtual(null);
+        setProtocolosHistorico([]);
+      }
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -279,17 +286,17 @@ const MinhaArea = () => {
             <h2 className="text-lg font-bold uppercase text-foreground">Meu Protocolo</h2>
           </div>
 
-          {protocolo ? (
+          {protocoloAtual ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
-                    {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                    {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
                   </Badge>
-                  <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
+                  <span className="text-sm font-medium text-foreground">{protocoloAtual.nome}</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  Atualizado em: {new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR")}
+                  Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
                 </span>
               </div>
 
@@ -297,7 +304,7 @@ const MinhaArea = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/protocolo/${protocolo.id}`)}
+                  onClick={() => navigate(`/protocolo/${protocoloAtual.id}`)}
                   className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                 >
                   <FileText size={14} />
@@ -306,7 +313,7 @@ const MinhaArea = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDownloadPdf(protocolo)}
+                  onClick={() => handleDownloadPdf(protocoloAtual)}
                   disabled={isDownloadingPdf}
                   className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
                 >
@@ -320,18 +327,60 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <FileText className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold uppercase text-foreground">Meus Protocolos</h2>
-          </div>
+        {protocolosHistorico.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <History className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Histórico de Protocolos</h2>
+            </div>
 
-          {protocols.length > 0 ? (
+            <div className="space-y-3">
+              {protocolosHistorico.map((proto) => (
+                <div
+                  key={proto.id}
+                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 w-fit">
+                      {tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}
+                    </Badge>
+                    <span className="text-sm font-medium text-foreground">{proto.nome}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/protocolo/${proto.id}`)}
+                    className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                  >
+                    <Eye size={14} />
+                    Ver
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {protocols.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <FileText className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Arquivos Enviados</h2>
+            </div>
+
             <div className="space-y-3">
               {protocols.map((protocol) => (
                 <div
@@ -354,10 +403,8 @@ const MinhaArea = () => {
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-muted-foreground text-sm">Nenhum protocolo disponível ainda.</p>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
 
         <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
       </main>
