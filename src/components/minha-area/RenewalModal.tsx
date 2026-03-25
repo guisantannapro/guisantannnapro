@@ -43,12 +43,12 @@ const prices: Record<string, number> = {
   "base-dieta-mensal": 129.90,
   "base-treino-mensal": 129.90,
   "base-dieta+treino-mensal": 259.80,
-  "transformação-mensal": 199.90,
-  "transformação-trimestral": 549.90,
-  "transformação-semestral": 999.90,
-  "elite-mensal": 299.90,
-  "elite-trimestral": 849.90,
-  "elite-semestral": 1499.90,
+  "transformação-mensal": 329.90,
+  "transformação-trimestral": 867.90,
+  "transformação-semestral": 1679.90,
+  "elite-mensal": 449.90,
+  "elite-trimestral": 1169.90,
+  "elite-semestral": 2249.90,
 };
 
 const normalizePeriod = (p: string) => {
