@@ -375,7 +375,9 @@ const ApplicationForm = () => {
 
       localStorage.setItem(currentFlowStorageKey, JSON.stringify(insertPayload));
 
-      const { data, error } = await supabase.from("form_submissions").insert([insertPayload]);
+      // Gerar ID client-side para poder vincular depois sem precisar de SELECT
+      const generatedId = crypto.randomUUID();
+      const { data, error } = await supabase.from("form_submissions").insert([{ ...insertPayload, id: generatedId }]);
 
       console.log("[FORM DEBUG] resposta completa do insert (data):", data);
       console.log("[FORM DEBUG] resposta completa do insert (error):", error);
