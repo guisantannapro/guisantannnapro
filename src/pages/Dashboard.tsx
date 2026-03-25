@@ -288,127 +288,102 @@ const Dashboard = () => {
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Nome</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Email</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Plano</TableHead>
-                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Status</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Objetivo</TableHead>
+                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Data</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedClients.map((client) => (
-                    <TableRow key={client.id} className="border-border">
-                      <TableCell className="font-medium text-foreground">
-                        {getField(client, "fullName")}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {getField(client, "email")}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className="border-primary/30 text-primary text-xs"
-                        >
-                          {planLabels[client.plan || client.profile?.plan || ""] || "—"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {(() => {
-                          const status = getClientStatus(client.profile);
-                          if (status === "expired") return (
-                            <Badge className="bg-destructive/15 text-destructive border-destructive/30 text-xs gap-1">
-                              <AlertTriangle size={10} />
-                              Vencido
-                            </Badge>
-                          );
-                          if (status === "expiring") {
-                            const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                            return (
-                              <Badge className="bg-yellow-500/15 text-yellow-600 border-yellow-500/30 text-xs gap-1">
-                                <Clock size={10} />
-                                Vence em {days}d
-                              </Badge>
-                            );
-                          }
-                          if (status === "active") return (
-                            <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-xs gap-1">
-                              <CheckCircle size={10} />
-                              Ativo
-                            </Badge>
-                          );
-                          return <span className="text-muted-foreground text-xs">—</span>;
-                        })()}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
-                        {getGoals(client)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSelectClient(client)}
-                          className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
-                        >
-                          <Eye size={14} />
-                          Ver detalhes
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {paginatedClients.map((client) => {
+                    const status = getClientStatus(client.profile);
+                    const borderClass = status === "expired"
+                      ? "border-l-4 border-l-destructive bg-destructive/5"
+                      : status === "expiring"
+                      ? "border-l-4 border-l-yellow-500 bg-yellow-500/5"
+                      : "";
+                    return (
+                      <TableRow key={client.id} className={`border-border ${borderClass}`}>
+                        <TableCell className="font-medium text-foreground">
+                          <div className="flex items-center gap-2">
+                            {getField(client, "fullName")}
+                            {status === "expired" && <AlertTriangle size={14} className="text-destructive shrink-0" />}
+                            {status === "expiring" && <Clock size={14} className="text-yellow-500 shrink-0" />}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {getField(client, "email")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                            {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
+                          {getGoals(client)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {formatDate(client.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSelectClient(client)}
+                            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                          >
+                            <Eye size={14} />
+                            Ver detalhes
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {paginatedClients.map((client) => (
-                <motion.div
-                  key={client.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-card border border-border rounded-lg p-5 space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{getField(client, "fullName")}</h3>
-                      <p className="text-muted-foreground text-sm">{getField(client, "email")}</p>
-                    </div>
-                    <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                      {planLabels[client.plan || client.profile?.plan || ""] || "—"}
-                    </Badge>
-                  </div>
-                  {(() => {
-                    const status = getClientStatus(client.profile);
-                    if (status === "expired") return (
-                      <div className="flex items-center gap-1.5 text-destructive text-xs">
-                        <AlertTriangle size={12} />
-                        <span>Plano vencido</span>
-                      </div>
-                    );
-                    if (status === "expiring") {
-                      const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                      return (
-                        <div className="flex items-center gap-1.5 text-yellow-600 text-xs">
-                          <Clock size={12} />
-                          <span>Vence em {days} dias</span>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{getGoals(client)}</span>
-                    <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSelectClient(client)}
-                    className="w-full border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+              {paginatedClients.map((client) => {
+                const status = getClientStatus(client.profile);
+                const borderClass = status === "expired"
+                  ? "border-l-4 border-l-destructive"
+                  : status === "expiring"
+                  ? "border-l-4 border-l-yellow-500"
+                  : "";
+                return (
+                  <motion.div
+                    key={client.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`bg-card border border-border rounded-lg p-5 space-y-3 ${borderClass}`}
                   >
-                    <Eye size={14} />
-                    Ver detalhes
-                  </Button>
-                </motion.div>
-              ))}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-foreground">{getField(client, "fullName")}</h3>
+                        {status === "expired" && <AlertTriangle size={14} className="text-destructive" />}
+                        {status === "expiring" && <Clock size={14} className="text-yellow-500" />}
+                      </div>
+                      <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                        {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">{getGoals(client)}</span>
+                      <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSelectClient(client)}
+                      className="w-full border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                    >
+                      <Eye size={14} />
+                      Ver detalhes
+                    </Button>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Pagination */}
@@ -462,6 +437,30 @@ const Dashboard = () => {
           </DialogHeader>
 
           {selectedClient && (
+            <>
+              {(() => {
+                const status = getClientStatus(selectedClient.profile);
+                if (status === "expired") return (
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
+                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                    <span className="text-sm text-destructive font-medium">
+                      Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                );
+                if (status === "expiring") {
+                  const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  return (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 mt-2">
+                      <Clock className="w-4 h-4 text-yellow-600 shrink-0" />
+                      <span className="text-sm text-yellow-600 font-medium">
+                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Dados / Gestão</TabsTrigger>
@@ -684,6 +683,7 @@ const Dashboard = () => {
                 />
               </TabsContent>
             </Tabs>
+            </>
           )}
         </DialogContent>
       </Dialog>
