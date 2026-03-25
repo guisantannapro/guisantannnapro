@@ -286,17 +286,17 @@ const MinhaArea = () => {
             <h2 className="text-lg font-bold uppercase text-foreground">Meu Protocolo</h2>
           </div>
 
-          {protocolo ? (
+          {protocoloAtual ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
-                    {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                    {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
                   </Badge>
-                  <span className="text-sm font-medium text-foreground">{protocolo.nome}</span>
+                  <span className="text-sm font-medium text-foreground">{protocoloAtual.nome}</span>
                 </div>
                 <span className="text-xs text-muted-foreground">
-                  Atualizado em: {new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR")}
+                  Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
                 </span>
               </div>
 
@@ -304,7 +304,7 @@ const MinhaArea = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => navigate(`/protocolo/${protocolo.id}`)}
+                  onClick={() => navigate(`/protocolo/${protocoloAtual.id}`)}
                   className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                 >
                   <FileText size={14} />
@@ -313,7 +313,7 @@ const MinhaArea = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDownloadPdf(protocolo)}
+                  onClick={() => handleDownloadPdf(protocoloAtual)}
                   disabled={isDownloadingPdf}
                   className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
                 >
@@ -327,18 +327,60 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <FileText className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold uppercase text-foreground">Meus Protocolos</h2>
-          </div>
+        {protocolosHistorico.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <History className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Histórico de Protocolos</h2>
+            </div>
 
-          {protocols.length > 0 ? (
+            <div className="space-y-3">
+              {protocolosHistorico.map((proto) => (
+                <div
+                  key={proto.id}
+                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <Badge variant="outline" className="text-xs px-2 py-0.5 w-fit">
+                      {tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}
+                    </Badge>
+                    <span className="text-sm font-medium text-foreground">{proto.nome}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/protocolo/${proto.id}`)}
+                    className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                  >
+                    <Eye size={14} />
+                    Ver
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {protocols.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <FileText className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Arquivos Enviados</h2>
+            </div>
+
             <div className="space-y-3">
               {protocols.map((protocol) => (
                 <div
@@ -361,10 +403,8 @@ const MinhaArea = () => {
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-muted-foreground text-sm">Nenhum protocolo disponível ainda.</p>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
 
         <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
       </main>
