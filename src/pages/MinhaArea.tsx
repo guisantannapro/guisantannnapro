@@ -154,6 +154,9 @@ const MinhaArea = () => {
     return diff;
   };
 
+  // Resolve o plano: prioriza profiles, fallback para form_submissions
+  const resolvedPlan = profile?.plan || submissions?.[0]?.plan || null;
+
   const daysRemaining = getDaysRemaining();
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
@@ -196,11 +199,11 @@ const MinhaArea = () => {
             <h2 className="text-lg font-bold uppercase text-foreground">Meu Plano</h2>
           </div>
 
-          {profile?.plan ? (
+          {resolvedPlan ? (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">{planLabels[profile.plan] || profile.plan}</Badge>
-                {profile.plan_duration && <span className="text-muted-foreground text-sm">Período: {profile.plan_duration}</span>}
+                <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">{planLabels[resolvedPlan] || resolvedPlan}</Badge>
+                {profile?.plan_duration && <span className="text-muted-foreground text-sm">Período: {profile.plan_duration}</span>}
               </div>
 
               {daysRemaining !== null && (
