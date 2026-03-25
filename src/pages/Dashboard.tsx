@@ -344,56 +344,46 @@ const Dashboard = () => {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {paginatedClients.map((client) => (
-                <motion.div
-                  key={client.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-card border border-border rounded-lg p-5 space-y-3"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{getField(client, "fullName")}</h3>
-                      <p className="text-muted-foreground text-sm">{getField(client, "email")}</p>
-                    </div>
-                    <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                      {planLabels[client.plan || client.profile?.plan || ""] || "—"}
-                    </Badge>
-                  </div>
-                  {(() => {
-                    const status = getClientStatus(client.profile);
-                    if (status === "expired") return (
-                      <div className="flex items-center gap-1.5 text-destructive text-xs">
-                        <AlertTriangle size={12} />
-                        <span>Plano vencido</span>
-                      </div>
-                    );
-                    if (status === "expiring") {
-                      const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                      return (
-                        <div className="flex items-center gap-1.5 text-yellow-600 text-xs">
-                          <Clock size={12} />
-                          <span>Vence em {days} dias</span>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{getGoals(client)}</span>
-                    <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSelectClient(client)}
-                    className="w-full border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+              {paginatedClients.map((client) => {
+                const status = getClientStatus(client.profile);
+                const borderClass = status === "expired"
+                  ? "border-l-4 border-l-destructive"
+                  : status === "expiring"
+                  ? "border-l-4 border-l-yellow-500"
+                  : "";
+                return (
+                  <motion.div
+                    key={client.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`bg-card border border-border rounded-lg p-5 space-y-3 ${borderClass}`}
                   >
-                    <Eye size={14} />
-                    Ver detalhes
-                  </Button>
-                </motion.div>
-              ))}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-foreground">{getField(client, "fullName")}</h3>
+                        {status === "expired" && <AlertTriangle size={14} className="text-destructive" />}
+                        {status === "expiring" && <Clock size={14} className="text-yellow-500" />}
+                      </div>
+                      <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                        {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">{getGoals(client)}</span>
+                      <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSelectClient(client)}
+                      className="w-full border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                    >
+                      <Eye size={14} />
+                      Ver detalhes
+                    </Button>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Pagination */}
