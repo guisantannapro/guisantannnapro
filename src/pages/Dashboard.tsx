@@ -372,10 +372,10 @@ const Dashboard = () => {
                       <div className="flex items-center gap-2 min-w-0">
                         <h3 className="font-semibold text-foreground truncate">{getField(client, "fullName")}</h3>
                         {status === "expired" && (
-                          <AlertTriangle size={14} className="text-destructive shrink-0" title="Plano vencido" />
+                          <AlertTriangle size={14} className="text-destructive shrink-0" />
                         )}
                         {status === "expiring" && (
-                          <Clock size={14} className="text-accent shrink-0" title="Vence em breve" />
+                          <Clock size={14} className="text-accent shrink-0" />
                         )}
                       </div>
                       <Badge variant="outline" className="border-primary/30 text-primary text-xs">
