@@ -14,6 +14,7 @@ const Protocolo = () => {
   const [protocolo, setProtocolo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("Cliente");
+  const [clientInfo, setClientInfo] = useState<{ idade?: string; peso?: string; altura?: string }>({});
   const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
@@ -26,17 +27,31 @@ const Protocolo = () => {
         return;
       }
 
-      const [{ data, error }, { data: profile }] = await Promise.all([
-        supabase.from("protocolos").select("*").eq("id", id!).single(),
-        supabase.from("profiles").select("full_name").eq("id", session.user.id).single(),
-      ]);
+      const { data, error } = await supabase.from("protocolos").select("*").eq("id", id!).single();
 
       if (error || !data) {
         navigate("/area-do-cliente");
         return;
       }
 
+      const protocolUserId = data.user_id;
+
+      const [{ data: profile }, { data: formSub }] = await Promise.all([
+        supabase.from("profiles").select("full_name").eq("id", protocolUserId).single(),
+        supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
+      ]);
+
       setClientName(profile?.full_name || session.user.email || "Cliente");
+      
+      const fd = formSub?.form_data as any;
+      if (fd) {
+        setClientInfo({
+          idade: fd.age || undefined,
+          peso: fd.weight || undefined,
+          altura: fd.height || undefined,
+        });
+      }
+      
       setProtocolo(data);
       setLoading(false);
     };
@@ -104,7 +119,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} />
+      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} />
     </div>
   );
 };

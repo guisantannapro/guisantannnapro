@@ -10,10 +10,17 @@ type ProtocolPdfData = {
   cardio?: string | null;
 };
 
+type ClientInfo = {
+  idade?: string;
+  peso?: string;
+  altura?: string;
+};
+
 type ProtocolPdfContentProps = {
   protocolo: ProtocolPdfData;
   clientName: string;
   formattedDate: string;
+  clientInfo?: ClientInfo;
   wrapperId?: string;
 };
 
@@ -49,6 +56,7 @@ export function ProtocolPdfContent({
   protocolo,
   clientName,
   formattedDate,
+  clientInfo,
   wrapperId = "protocolo-content",
 }: ProtocolPdfContentProps) {
   return (
@@ -65,13 +73,27 @@ export function ProtocolPdfContent({
         <div className="pdf-cover-info">
           <div className="pdf-cover-info-left">
             <span className="pdf-cover-label">PROTOCOLO</span>
-            <span className="pdf-cover-title">{protocolo.nome}</span>
+            <span className="pdf-cover-title">{clientName}</span>
           </div>
           <div className="pdf-cover-info-right">
-            <div className="pdf-cover-meta">
-              <span className="pdf-cover-label">CLIENTE</span>
-              <span className="pdf-cover-value">{clientName}</span>
-            </div>
+            {clientInfo?.idade && (
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">IDADE</span>
+                <span className="pdf-cover-value">{clientInfo.idade}</span>
+              </div>
+            )}
+            {clientInfo?.peso && (
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">PESO</span>
+                <span className="pdf-cover-value">{clientInfo.peso}</span>
+              </div>
+            )}
+            {clientInfo?.altura && (
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">ALTURA</span>
+                <span className="pdf-cover-value">{clientInfo.altura}</span>
+              </div>
+            )}
             <div className="pdf-cover-meta">
               <span className="pdf-cover-label">TIPO</span>
               <span className="pdf-cover-value">
