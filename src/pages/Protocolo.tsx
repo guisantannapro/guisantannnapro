@@ -14,6 +14,7 @@ const Protocolo = () => {
   const [protocolo, setProtocolo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("Cliente");
+  const [clientInfo, setClientInfo] = useState<{ idade?: string; peso?: string; altura?: string }>({});
   const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
