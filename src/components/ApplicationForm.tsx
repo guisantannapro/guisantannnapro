@@ -163,19 +163,7 @@ const ApplicationForm = () => {
     front: "", side: "", back: "", assessment: "",
   });
 
-  useEffect(() => {
-    const clearStaleSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (session) {
-        await supabase.auth.signOut();
-      }
-    };
-
-    clearStaleSession();
-  }, []);
+  // Session is preserved — no forced signOut on form load
 
   const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
     setPhotos((prev) => ({ ...prev, [type]: file }));
