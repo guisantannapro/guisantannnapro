@@ -88,8 +88,13 @@ const MinhaArea = () => {
       if (profileRes.data) setProfile(profileRes.data);
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
-      if (protocoloRes.data && protocoloRes.data.length > 0) setProtocolo(protocoloRes.data[0]);
-      if (!protocoloRes.data || protocoloRes.data.length === 0) setProtocolo(null);
+      if (protocoloRes.data && protocoloRes.data.length > 0) {
+        setProtocoloAtual(protocoloRes.data[0]);
+        setProtocolosHistorico(protocoloRes.data.slice(1));
+      } else {
+        setProtocoloAtual(null);
+        setProtocolosHistorico([]);
+      }
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
