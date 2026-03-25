@@ -17,6 +17,8 @@ interface ClientFiltersProps {
   onPlanFilterChange: (value: string) => void;
   periodFilter: string;
   onPeriodFilterChange: (value: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
   totalResults: number;
 }
 
@@ -27,14 +29,17 @@ const ClientFilters = ({
   onPlanFilterChange,
   periodFilter,
   onPeriodFilterChange,
+  statusFilter,
+  onStatusFilterChange,
   totalResults,
 }: ClientFiltersProps) => {
-  const hasActiveFilters = searchTerm || planFilter !== "all" || periodFilter !== "all";
+  const hasActiveFilters = searchTerm || planFilter !== "all" || periodFilter !== "all" || statusFilter !== "all";
 
   const clearFilters = () => {
     onSearchChange("");
     onPlanFilterChange("all");
     onPeriodFilterChange("all");
+    onStatusFilterChange("all");
   };
 
   return (
@@ -61,6 +66,19 @@ const ClientFilters = ({
             <SelectItem value="base">Base</SelectItem>
             <SelectItem value="transformacao">Transformação</SelectItem>
             <SelectItem value="elite">Elite</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Status Filter */}
+        <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+          <SelectTrigger className="w-full sm:w-[180px] border-border bg-background">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            <SelectItem value="active">Ativo</SelectItem>
+            <SelectItem value="expiring">Vence em 7 dias</SelectItem>
+            <SelectItem value="expired">Vencido</SelectItem>
           </SelectContent>
         </Select>
 

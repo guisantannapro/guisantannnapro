@@ -375,6 +375,25 @@ const Dashboard = () => {
                       {planLabels[client.plan || client.profile?.plan || ""] || "—"}
                     </Badge>
                   </div>
+                  {(() => {
+                    const status = getClientStatus(client.profile);
+                    if (status === "expired") return (
+                      <div className="flex items-center gap-1.5 text-destructive text-xs">
+                        <AlertTriangle size={12} />
+                        <span>Plano vencido</span>
+                      </div>
+                    );
+                    if (status === "expiring") {
+                      const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                      return (
+                        <div className="flex items-center gap-1.5 text-yellow-600 text-xs">
+                          <Clock size={12} />
+                          <span>Vence em {days} dias</span>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">{getGoals(client)}</span>
                     <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
