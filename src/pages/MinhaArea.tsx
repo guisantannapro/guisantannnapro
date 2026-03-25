@@ -26,6 +26,7 @@ const tipoProtocoloLabels: Record<string, string> = {
 
 const MinhaArea = () => {
   const [session, setSession] = useState<Session | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -36,30 +37,41 @@ const MinhaArea = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const applySession = (nextSession: Session | null) => {
+      setSession(nextSession);
+      if (!nextSession) {
+        setProfile(null);
+        setSubmissions([]);
+        setProtocols([]);
+        setProtocolo(null);
+      }
+      setAuthReady(true);
+    };
+
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) {
-        navigate("/login");
-      }
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      applySession(nextSession);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (!session) {
-        navigate("/login");
-      }
+      applySession(session);
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
-    if (session?.user) {
-      fetchData(session.user.id);
+    if (!authReady) return;
+
+    if (!session?.user) {
+      setLoading(false);
+      navigate("/login", { replace: true });
+      return;
     }
-  }, [session]);
+
+    fetchData(session.user.id);
+  }, [authReady, session?.user?.id, navigate]);
 
   const fetchData = async (userId: string) => {
     setLoading(true);
@@ -75,6 +87,7 @@ const MinhaArea = () => {
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
       if (protocoloRes.data && protocoloRes.data.length > 0) setProtocolo(protocoloRes.data[0]);
+      if (!protocoloRes.data || protocoloRes.data.length === 0) setProtocolo(null);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
