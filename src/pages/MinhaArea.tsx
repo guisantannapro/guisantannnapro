@@ -207,8 +207,9 @@ const MinhaArea = () => {
   };
 
   const daysRemaining = getDaysRemainingResolved();
-  const isExpired = daysRemaining !== null && daysRemaining <= 0;
-  const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
+  // TODO: TEMPORÁRIO - forçar banner de renovação para visualização. Remover depois!
+  const isExpired = true; // daysRemaining !== null && daysRemaining <= 0;
+  const isExpiringSoon = false; // daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
   const [renewLoading, setRenewLoading] = useState(false);
 
