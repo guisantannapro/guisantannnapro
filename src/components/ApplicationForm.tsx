@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { CheckCircle, Upload, ImageIcon, X, Loader2 } from "lucide-react";
 import CityStateField from "./CityStateField";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type FormSubmissionInsert = Database["public"]["Tables"]["form_submissions"]["Insert"];
 
 interface FormData {
   fullName: string;
@@ -95,6 +98,62 @@ const Field = ({ label, required, children }: { label: string; required?: boolea
 
 const inputClass = "w-full bg-muted border border-border rounded-md px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors text-sm";
 
+const findUndefinedPaths = (value: unknown, path: string): string[] => {
+  if (value === undefined) return [path];
+  if (value === null) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => findUndefinedPaths(item, `${path}[${index}]`));
+  }
+
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).flatMap(([key, item]) =>
+      findUndefinedPaths(item, `${path}.${key}`),
+    );
+  }
+
+  return [];
+};
+
+const sanitizeUndefined = (value: unknown): unknown => {
+  if (value === undefined) return null;
+  if (Array.isArray(value)) return value.map((item) => sanitizeUndefined(item));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, sanitizeUndefined(item)]),
+    );
+  }
+
+  return value;
+};
+
+const comparePayloads = (current: unknown, previous: unknown, path = "payload"): string[] => {
+  if (JSON.stringify(current) === JSON.stringify(previous)) {
+    return [];
+  }
+
+  if (
+    current === null ||
+    previous === null ||
+    current === undefined ||
+    previous === undefined ||
+    typeof current !== "object" ||
+    typeof previous !== "object"
+  ) {
+    return [`${path}: ${JSON.stringify(previous)} -> ${JSON.stringify(current)}`];
+  }
+
+  if (Array.isArray(current) || Array.isArray(previous)) {
+    return [`${path}: ${JSON.stringify(previous)} -> ${JSON.stringify(current)}`];
+  }
+
+  const currentObj = current as Record<string, unknown>;
+  const previousObj = previous as Record<string, unknown>;
+  const keys = new Set([...Object.keys(currentObj), ...Object.keys(previousObj)]);
+
+  return [...keys].flatMap((key) => comparePayloads(currentObj[key], previousObj[key], `${path}.${key}`));
+};
+
 const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
   <div className="flex flex-col gap-2">
     {options.map((opt) => (
@@ -154,6 +213,7 @@ const ApplicationForm = () => {
   const [regConfirmPassword, setRegConfirmPassword] = useState("");
   const [regName, setRegName] = useState("");
   const [regError, setRegError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   const [uploading, setUploading] = useState(false);
   const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null; assessment: File | null }>({
@@ -204,11 +264,17 @@ const ApplicationForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
+    setSubmitError("");
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const session = sessionData?.session ?? null;
       const userId = session?.user?.id || null;
       const folderKey = userId || `anon-${Date.now()}`;
+
+      console.log("[FORM DEBUG] session:", session);
+      console.log("[FORM DEBUG] sessionError:", sessionError);
+      console.log("[FORM DEBUG] userId:", userId);
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
@@ -230,7 +296,7 @@ const ApplicationForm = () => {
         billingModality: purchasedModality || null,
       };
 
-      const insertPayload: any = {
+      const rawInsertPayload: Record<string, unknown> = {
         form_data: enrichedFormData as any,
         photo_front: photoFrontPath,
         photo_side: photoSidePath,
@@ -241,14 +307,67 @@ const ApplicationForm = () => {
       };
 
       if (userId) {
-        insertPayload.user_id = userId;
+        rawInsertPayload.user_id = userId;
       }
 
-      const { data: insertedData, error } = await supabase.from("form_submissions").insert(insertPayload).select("id").single();
+      const insertPayload = sanitizeUndefined(rawInsertPayload) as FormSubmissionInsert;
+
+      const undefinedPaths = findUndefinedPaths(rawInsertPayload, "payload");
+      if (undefinedPaths.length > 0) {
+        console.warn("[FORM DEBUG] Campos undefined encontrados no payload bruto:", undefinedPaths);
+      }
+
+      const requiredIssues = [
+        insertPayload.form_data == null ? "payload.form_data está null/undefined" : null,
+        insertPayload.selected_equipment == null ? "payload.selected_equipment está null/undefined" : null,
+      ].filter(Boolean);
+
+      if (requiredIssues.length > 0) {
+        console.warn("[FORM DEBUG] Campos obrigatórios com problema:", requiredIssues);
+      }
+
+      const flowType = purchasedPlan ? "post-checkout" : "direct";
+      const currentFlowStorageKey = flowType === "post-checkout" ? "debug_payload_post_checkout" : "debug_payload_direct";
+      const oppositeFlowStorageKey = flowType === "post-checkout" ? "debug_payload_direct" : "debug_payload_post_checkout";
+      console.log(`[FORM DEBUG] fluxo detectado: ${flowType}`);
+      console.log("[FORM DEBUG] payload completo:", insertPayload);
+
+      const oppositePayloadRaw = localStorage.getItem(oppositeFlowStorageKey);
+      if (oppositePayloadRaw) {
+        try {
+          const oppositePayload = JSON.parse(oppositePayloadRaw);
+          const differences = comparePayloads(insertPayload, oppositePayload);
+          console.log(
+            `[FORM DEBUG] Diferenças entre fluxo ${flowType} e ${flowType === "post-checkout" ? "direct" : "post-checkout"}:`,
+            differences.length > 0 ? differences.slice(0, 200) : "Nenhuma diferença",
+          );
+        } catch (parseError) {
+          console.error("[FORM DEBUG] Erro ao parsear payload salvo para comparação:", parseError);
+        }
+      } else {
+        console.log("[FORM DEBUG] Ainda não existe payload do fluxo oposto para comparação.");
+      }
+
+      localStorage.setItem(currentFlowStorageKey, JSON.stringify(insertPayload));
+
+      const { data, error } = await supabase.from("form_submissions").insert([insertPayload]).select("*");
+
+      console.log("[FORM DEBUG] resposta completa do insert (data):", data);
+      console.log("[FORM DEBUG] resposta completa do insert (error):", error);
 
       if (error) {
-        console.error("Submit error:", error);
-        alert("Erro ao enviar formulário. Tente novamente.");
+        console.error("ERRO INSERT:", error);
+        const detailedErrorMessage = [
+          `Erro ao enviar formulário: ${error.message}`,
+          error.details ? `Detalhes: ${error.details}` : null,
+          error.hint ? `Hint: ${error.hint}` : null,
+          error.code ? `Code: ${error.code}` : null,
+        ]
+          .filter(Boolean)
+          .join(" | ");
+
+        setSubmitError(detailedErrorMessage);
+        alert(detailedErrorMessage);
         setUploading(false);
         return;
       }
@@ -256,14 +375,16 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
-      setSubmissionId(insertedData?.id || null);
+      setSubmissionId((data && data[0]?.id) || null);
       setTempUserId(null);
       setRegEmail(form.email);
       setRegName(form.fullName);
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
-      alert("Erro ao enviar formulário. Tente novamente.");
+      const fallbackError = err instanceof Error ? err.message : "Erro inesperado no envio.";
+      setSubmitError(`Erro inesperado ao enviar formulário: ${fallbackError}`);
+      alert(`Erro inesperado ao enviar formulário: ${fallbackError}`);
     } finally {
       setUploading(false);
     }
@@ -814,6 +935,10 @@ const ApplicationForm = () => {
               "Salvar Inscrição"
             )}
           </motion.button>
+
+          {submitError && (
+            <p className="mt-4 text-sm text-destructive break-words">{submitError}</p>
+          )}
         </motion.form>
       </div>
     </section>
