@@ -375,7 +375,7 @@ const ApplicationForm = () => {
 
       localStorage.setItem(currentFlowStorageKey, JSON.stringify(insertPayload));
 
-      const { data, error } = await supabase.from("form_submissions").insert([insertPayload]).select("*");
+      const { data, error } = await supabase.from("form_submissions").insert([insertPayload]);
 
       console.log("[FORM DEBUG] resposta completa do insert (data):", data);
       console.log("[FORM DEBUG] resposta completa do insert (error):", error);
@@ -400,7 +400,7 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
-      setSubmissionId((data && data[0]?.id) || null);
+      setSubmissionId(null);
       setTempUserId(null);
       setRegEmail(form.email);
       setRegName(form.fullName);
