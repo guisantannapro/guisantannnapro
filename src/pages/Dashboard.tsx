@@ -36,7 +36,19 @@ interface Profile {
   id: string;
   full_name: string | null;
   plan: string | null;
+  plan_expires_at: string | null;
+  plan_duration: string | null;
 }
+
+const getClientStatus = (profile?: Profile) => {
+  if (!profile?.plan_expires_at) return null;
+  const expiry = new Date(profile.plan_expires_at);
+  const now = new Date();
+  const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  if (daysRemaining <= 0) return "expired" as const;
+  if (daysRemaining <= 7) return "expiring" as const;
+  return "active" as const;
+};
 
 interface ClientData extends FormSubmission {
   profile?: Profile;
