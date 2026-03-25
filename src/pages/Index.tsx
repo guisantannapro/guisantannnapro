@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import HeroSection from "@/components/landing/HeroSection";
 import AuthoritySection from "@/components/landing/AuthoritySection";
 import AboutSection from "@/components/landing/AboutSection";
@@ -18,6 +19,11 @@ const Index = () => {
       <ResultsSection />
       <PricingSection />
       <FinalCTA />
+      <footer className="py-4 text-center">
+        <Link to="/login" className="text-xs text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+          Área administrativa
+        </Link>
+      </footer>
     </div>
   );
 };
