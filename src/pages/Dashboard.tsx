@@ -288,8 +288,8 @@ const Dashboard = () => {
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Nome</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Email</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Plano</TableHead>
+                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Status</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Objetivo</TableHead>
-                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Data</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
