@@ -297,17 +297,27 @@ const Dashboard = () => {
                   {paginatedClients.map((client) => {
                     const status = getClientStatus(client.profile);
                     const borderClass = status === "expired"
-                      ? "border-l-4 border-l-destructive bg-destructive/5"
+                      ? "border-l-4 border-l-destructive bg-destructive/10"
                       : status === "expiring"
-                      ? "border-l-4 border-l-yellow-500 bg-yellow-500/5"
+                      ? "border-l-4 border-l-accent bg-accent/10"
                       : "";
                     return (
                       <TableRow key={client.id} className={`border-border ${borderClass}`}>
                         <TableCell className="font-medium text-foreground">
                           <div className="flex items-center gap-2">
                             {getField(client, "fullName")}
-                            {status === "expired" && <AlertTriangle size={14} className="text-destructive shrink-0" />}
-                            {status === "expiring" && <Clock size={14} className="text-yellow-500 shrink-0" />}
+                            {status === "expired" && (
+                              <span className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
+                                <AlertTriangle size={12} className="shrink-0" />
+                                Vencido
+                              </span>
+                            )}
+                            {status === "expiring" && (
+                              <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                                <Clock size={12} className="shrink-0" />
+                                Vence em breve
+                              </span>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm">
@@ -347,9 +357,9 @@ const Dashboard = () => {
               {paginatedClients.map((client) => {
                 const status = getClientStatus(client.profile);
                 const borderClass = status === "expired"
-                  ? "border-l-4 border-l-destructive"
+                  ? "border-l-4 border-l-destructive bg-destructive/10"
                   : status === "expiring"
-                  ? "border-l-4 border-l-yellow-500"
+                  ? "border-l-4 border-l-accent bg-accent/10"
                   : "";
                 return (
                   <motion.div
@@ -358,11 +368,21 @@ const Dashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className={`bg-card border border-border rounded-lg p-5 space-y-3 ${borderClass}`}
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-foreground">{getField(client, "fullName")}</h3>
-                        {status === "expired" && <AlertTriangle size={14} className="text-destructive" />}
-                        {status === "expiring" && <Clock size={14} className="text-yellow-500" />}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <h3 className="font-semibold text-foreground truncate">{getField(client, "fullName")}</h3>
+                        {status === "expired" && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
+                            <AlertTriangle size={12} className="shrink-0" />
+                            Vencido
+                          </span>
+                        )}
+                        {status === "expiring" && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                            <Clock size={12} className="shrink-0" />
+                            Vence
+                          </span>
+                        )}
                       </div>
                       <Badge variant="outline" className="border-primary/30 text-primary text-xs">
                         {planLabels[client.plan || client.profile?.plan || ""] || "—"}
@@ -385,38 +405,32 @@ const Dashboard = () => {
                 );
               })}
             </div>
-
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
-                <span className="text-sm text-muted-foreground">
-                  Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, filteredClients.length)} de {filteredClients.length}
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1"
+                >
+                  <ChevronLeft size={14} />
+                  Anterior
+                </Button>
+                <span className="text-sm text-muted-foreground px-2">
+                  Página {currentPage} de {totalPages}
                 </span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="border-border gap-1"
-                  >
-                    <ChevronLeft size={14} />
-                    Anterior
-                  </Button>
-                  <span className="text-sm text-muted-foreground px-2">
-                    {currentPage} / {totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="border-border gap-1"
-                  >
-                    Próxima
-                    <ChevronRight size={14} />
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1"
+                >
+                  Próxima
+                  <ChevronRight size={14} />
+                </Button>
               </div>
             )}
           </motion.div>
@@ -451,9 +465,9 @@ const Dashboard = () => {
                 if (status === "expiring") {
                   const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
                   return (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 mt-2">
-                      <Clock className="w-4 h-4 text-yellow-600 shrink-0" />
-                      <span className="text-sm text-yellow-600 font-medium">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
+                      <Clock className="w-4 h-4 text-accent shrink-0" />
+                      <span className="text-sm text-accent font-medium">
                         Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
@@ -461,7 +475,7 @@ const Dashboard = () => {
                 }
                 return null;
               })()}
-            <Tabs defaultValue="details" className="mt-4">
+              <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Dados / Gestão</TabsTrigger>
                 <TabsTrigger value="client-view">Visão do Cliente</TabsTrigger>

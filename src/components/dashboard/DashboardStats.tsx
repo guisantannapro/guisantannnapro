@@ -63,9 +63,9 @@ const DashboardStats = ({ clients, getClientStatus }: DashboardStatsProps) => {
       {(stats.expiring > 0 || stats.expired > 0) && (
         <div className="flex flex-col sm:flex-row gap-3">
           {stats.expiring > 0 && (
-            <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 flex-1">
-              <Clock className="w-4 h-4 text-yellow-600 shrink-0" />
-              <span className="text-sm text-yellow-600 font-medium">
+            <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 flex-1">
+              <Clock className="w-4 h-4 text-accent shrink-0" />
+              <span className="text-sm text-accent font-medium">
                 {stats.expiring} cliente{stats.expiring > 1 ? "s" : ""} com plano vencendo em até 7 dias
               </span>
             </div>
