@@ -102,7 +102,7 @@ const Dashboard = () => {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, planFilter, periodFilter]);
+  }, [searchTerm, planFilter, periodFilter, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredClients.length / ITEMS_PER_PAGE));
   const paginatedClients = filteredClients.slice(
