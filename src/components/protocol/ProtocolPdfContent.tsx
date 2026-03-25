@@ -56,6 +56,7 @@ export function ProtocolPdfContent({
   protocolo,
   clientName,
   formattedDate,
+  clientInfo,
   wrapperId = "protocolo-content",
 }: ProtocolPdfContentProps) {
   return (
