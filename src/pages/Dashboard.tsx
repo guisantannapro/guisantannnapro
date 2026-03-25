@@ -292,6 +292,43 @@ const Dashboard = () => {
               onStatusFilterChange={setStatusFilter}
               totalResults={filteredClients.length}
             />
+
+            {/* Alert banners — between filters and table */}
+            {(() => {
+              const expiring = clients.filter(c => getClientStatus(c.profile) === "expiring").length;
+              const expired = clients.filter(c => getClientStatus(c.profile) === "expired").length;
+              const renewals = clients.filter(c => hasRenewalPending(c.profile)).length;
+              if (expiring === 0 && expired === 0 && renewals === 0) return null;
+              return (
+                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                  {expired > 0 && (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 flex-1">
+                      <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                      <span className="text-sm text-destructive font-medium">
+                        {expired} cliente{expired > 1 ? "s" : ""} com plano vencido
+                      </span>
+                    </div>
+                  )}
+                  {expiring > 0 && (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 flex-1">
+                      <Clock className="w-4 h-4 text-accent shrink-0" />
+                      <span className="text-sm text-accent font-medium">
+                        {expiring} cliente{expiring > 1 ? "s" : ""} com plano vencendo em até 7 dias
+                      </span>
+                    </div>
+                  )}
+                  {renewals > 0 && (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-green-500/30 bg-green-500/10 flex-1">
+                      <RefreshCw className="w-4 h-4 text-green-500 shrink-0" />
+                      <span className="text-sm text-green-500 font-medium">
+                        {renewals} cliente{renewals > 1 ? "s" : ""} com renovação pendente
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* Desktop Table */}
             <div className="hidden md:block bg-card border border-border rounded-lg overflow-hidden">
               <Table>
