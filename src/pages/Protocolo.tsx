@@ -116,7 +116,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} />
+      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} />
     </div>
   );
 };
