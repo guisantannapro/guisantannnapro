@@ -182,14 +182,19 @@ const ApplicationForm = () => {
   };
 
   const uploadPhoto = async (file: File, userId: string, label: string): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
-    const path = `${userId}/${label}-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("client-photos").upload(path, file);
-    if (error) {
-      console.error(`Upload error (${label}):`, error);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `${userId}/${label}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("client-photos").upload(path, file);
+      if (error) {
+        console.error(`Upload error (${label}):`, error);
+        return null;
+      }
+      return path;
+    } catch (err) {
+      console.error(`Upload exception (${label}):`, err);
       return null;
     }
-    return path;
   };
 
   const update = (field: keyof FormData, value: string | boolean | string[]) => {
