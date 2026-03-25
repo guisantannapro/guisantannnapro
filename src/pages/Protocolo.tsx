@@ -27,16 +27,19 @@ const Protocolo = () => {
         return;
       }
 
-      const [{ data, error }, { data: profile }, { data: formSub }] = await Promise.all([
-        supabase.from("protocolos").select("*").eq("id", id!).single(),
-        supabase.from("profiles").select("full_name").eq("id", session.user.id).single(),
-        supabase.from("form_submissions").select("form_data").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1).single(),
-      ]);
+      const { data, error } = await supabase.from("protocolos").select("*").eq("id", id!).single();
 
       if (error || !data) {
         navigate("/area-do-cliente");
         return;
       }
+
+      const protocolUserId = data.user_id;
+
+      const [{ data: profile }, { data: formSub }] = await Promise.all([
+        supabase.from("profiles").select("full_name").eq("id", protocolUserId).single(),
+        supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
+      ]);
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
       
