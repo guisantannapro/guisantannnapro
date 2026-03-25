@@ -331,6 +331,8 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
+        <EvolutionSection evolutions={evolutions} />
+
         {protocolosHistorico.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
