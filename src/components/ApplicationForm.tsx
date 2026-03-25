@@ -316,6 +316,24 @@ const ApplicationForm = () => {
         return;
       }
 
+      // Aguardar sessão estar ativa antes de chamar o RPC
+      let sessionReady = false;
+      for (let i = 0; i < 10; i++) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id === newUserId) {
+          sessionReady = true;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 500));
+      }
+
+      if (!sessionReady) {
+        console.error("Session not ready after signup");
+        setRegError("Conta criada, mas a sessão não foi iniciada. Faça login na Área do Cliente.");
+        setCreatingAccount(false);
+        return;
+      }
+
       const { error: claimError } = await supabase.rpc("claim_form_submission", {
         _submission_id: submissionId,
         _old_user_id: tempUserId,
