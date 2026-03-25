@@ -437,6 +437,30 @@ const Dashboard = () => {
           </DialogHeader>
 
           {selectedClient && (
+            <>
+              {(() => {
+                const status = getClientStatus(selectedClient.profile);
+                if (status === "expired") return (
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
+                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                    <span className="text-sm text-destructive font-medium">
+                      Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                );
+                if (status === "expiring") {
+                  const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  return (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 mt-2">
+                      <Clock className="w-4 h-4 text-yellow-600 shrink-0" />
+                      <span className="text-sm text-yellow-600 font-medium">
+                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Dados / Gestão</TabsTrigger>
