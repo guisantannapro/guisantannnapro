@@ -313,16 +313,10 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             {getField(client, "fullName")}
                             {status === "expired" && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
-                                <AlertTriangle size={12} className="shrink-0" />
-                                Vencido
-                              </span>
+                              <AlertTriangle size={14} className="text-destructive shrink-0" title="Plano vencido" />
                             )}
                             {status === "expiring" && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
-                                <Clock size={12} className="shrink-0" />
-                                Vence em breve
-                              </span>
+                              <Clock size={14} className="text-accent shrink-0" title="Vence em breve" />
                             )}
                           </div>
                         </TableCell>
