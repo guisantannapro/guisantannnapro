@@ -53,12 +53,14 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes] = await Promise.all([
+      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_evolutions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("client_checkins" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("client_feedbacks" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
