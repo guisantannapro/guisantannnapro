@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, CalendarClock } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ const PaymentSuccess = () => {
   const isRenewal = searchParams.get("renewal") === "true";
   const [activating, setActivating] = useState(false);
   const [activated, setActivated] = useState(false);
+  const [renewalStartsAt, setRenewalStartsAt] = useState<string | null>(null);
 
   useEffect(() => {
     if (plan) localStorage.setItem("purchased_plan", plan);
@@ -36,7 +37,10 @@ const PaymentSuccess = () => {
           toast.error("Erro ao atualizar o plano. Entre em contato com o suporte.");
         } else {
           setActivated(true);
-          toast.success("Plano atualizado com sucesso!");
+          if (data?.renewal_starts_at) {
+            setRenewalStartsAt(data.renewal_starts_at);
+          }
+          toast.success("Renovação registrada com sucesso!");
         }
       } catch (err) {
         console.error("Activate plan error:", err);
@@ -48,6 +52,17 @@ const PaymentSuccess = () => {
 
     activatePlan();
   }, [isRenewal, plan, period, activated, activating]);
+
+  const formatDate = (iso: string) => new Date(iso).toLocaleDateString("pt-BR");
+
+  const getDaysUntilRenewal = () => {
+    if (!renewalStartsAt) return null;
+    const now = new Date();
+    const start = new Date(renewalStartsAt);
+    return Math.ceil((start.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysUntil = getDaysUntilRenewal();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -66,13 +81,47 @@ const PaymentSuccess = () => {
         <h1 className="text-3xl font-bold font-display mb-4">
           Pagamento <span className="text-gradient-gold">Confirmado!</span>
         </h1>
-        <p className="text-muted-foreground font-body normal-case mb-8">
+        <p className="text-muted-foreground font-body normal-case mb-4">
           {isRenewal
             ? activating
-              ? "Atualizando seu plano..."
-              : "Sua renovação foi processada com sucesso. Seu plano foi atualizado!"
+              ? "Processando sua renovação..."
+              : "Sua renovação foi registrada com sucesso!"
             : "Seu pagamento foi processado com sucesso. Entraremos em contato em breve para iniciar sua consultoria personalizada."}
         </p>
+
+        {/* Renewal starts in the future notice */}
+        {isRenewal && renewalStartsAt && daysUntil && daysUntil > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6 flex items-start gap-3 text-left"
+          >
+            <CalendarClock className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                Sua renovação entra em vigor em {daysUntil} {daysUntil === 1 ? "dia" : "dias"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Seu plano atual continua ativo até {formatDate(renewalStartsAt)}. A partir dessa data, o novo período será iniciado automaticamente.
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {isRenewal && activated && !renewalStartsAt && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6"
+          >
+            <p className="text-sm text-foreground">
+              ✅ Seu plano foi renovado e já está ativo!
+            </p>
+          </motion.div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           {isRenewal ? (
             <a
