@@ -29,7 +29,7 @@ serve(async (req) => {
   }
 
   try {
-    const { priceKey } = await req.json();
+    const { priceKey, renewal } = await req.json();
 
     if (!priceKey || !PRICE_MAP[priceKey]) {
       return new Response(
