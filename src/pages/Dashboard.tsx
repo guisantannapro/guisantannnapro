@@ -564,6 +564,9 @@ const Dashboard = () => {
                 onProtocolsChange={() => fetchClientProtocols(selectedClient.user_id)}
               />
 
+              {/* Evolution Manager */}
+              <EvolutionManager clientUserId={selectedClient.user_id} />
+
               {/* Generate Protocol Preview */}
               <div className="border-t border-border pt-4">
                 <Button
