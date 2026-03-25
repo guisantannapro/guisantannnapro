@@ -210,6 +210,43 @@ const MinhaArea = () => {
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
+  const [renewLoading, setRenewLoading] = useState(false);
+
+  const buildPriceKey = () => {
+    const plan = resolvedPlan;
+    const period = (resolvedPeriod || "mensal").toLowerCase();
+    const normalizedPeriod = period === "monthly" ? "mensal" : period === "quarterly" ? "trimestral" : period === "semiannual" ? "semestral" : period;
+
+    if (plan === "base") {
+      const modality = submissions?.[0]?.form_data?.billingModality || "dieta";
+      const mod = modality === "ambos" ? "dieta+treino" : modality;
+      return `base-${mod}-${normalizedPeriod}`;
+    }
+    const planName = plan === "transformacao" ? "transformação" : plan;
+    return `${planName}-${normalizedPeriod}`;
+  };
+
+  const handleRenewPlan = async () => {
+    setRenewLoading(true);
+    try {
+      const priceKey = buildPriceKey();
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceKey },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        toast.error("Erro ao gerar link de pagamento.");
+      }
+    } catch (err) {
+      console.error("Renewal error:", err);
+      toast.error("Erro ao iniciar renovação.");
+    } finally {
+      setRenewLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
