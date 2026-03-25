@@ -466,18 +466,23 @@ const Dashboard = () => {
             <>
               {(() => {
                 const status = getClientStatus(selectedClient.profile);
-                if (status === "expired") return (
-                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
-                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-                    <span className="text-sm text-destructive font-medium">
-                      Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
-                    </span>
-                  </div>
-                );
+                const renewalPending = hasRenewalPending(selectedClient.profile);
+                const alerts: JSX.Element[] = [];
+
+                if (status === "expired") {
+                  alerts.push(
+                    <div key="expired" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
+                      <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                      <span className="text-sm text-destructive font-medium">
+                        Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
                 if (status === "expiring") {
                   const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                  return (
-                    <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
+                  alerts.push(
+                    <div key="expiring" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
                       <Clock className="w-4 h-4 text-accent shrink-0" />
                       <span className="text-sm text-accent font-medium">
                         Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
@@ -485,7 +490,19 @@ const Dashboard = () => {
                     </div>
                   );
                 }
-                return null;
+                if (renewalPending) {
+                  const renewalDate = new Date(selectedClient.profile!.renewal_starts_at!);
+                  const daysUntil = Math.ceil((renewalDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  alerts.push(
+                    <div key="renewal" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-green-500/30 bg-green-500/10 mt-2">
+                      <RefreshCw className="w-4 h-4 text-green-500 shrink-0" />
+                      <span className="text-sm text-green-500 font-medium">
+                        Renovação ativa em {daysUntil} dia{daysUntil > 1 ? "s" : ""} — {renewalDate.toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                  );
+                }
+                return alerts.length > 0 ? <>{alerts}</> : null;
               })()}
               <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">
