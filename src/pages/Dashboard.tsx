@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Eye, MessageCircle, Mail, X, Users, FileText, ArrowLeft, LogOut, ChevronLeft, ChevronRight, ClipboardList } from "lucide-react";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import EvolutionManager from "@/components/dashboard/EvolutionManager";
+import ClientViewTab from "@/components/dashboard/ClientViewTab";
 import ProtocolPreviewModal from "@/components/dashboard/ProtocolPreviewModal";
 import ClientFilters from "@/components/dashboard/ClientFilters";
 import DashboardStats from "@/components/dashboard/DashboardStats";
@@ -14,6 +15,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
