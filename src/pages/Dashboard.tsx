@@ -128,7 +128,7 @@ const Dashboard = () => {
       const userIds = [...new Set((submissions || []).map((s) => s.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name, plan")
+        .select("id, full_name, plan, plan_expires_at, plan_duration")
         .in("id", userIds);
 
       const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
