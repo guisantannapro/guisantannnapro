@@ -10,10 +10,17 @@ type ProtocolPdfData = {
   cardio?: string | null;
 };
 
+type ClientInfo = {
+  idade?: string;
+  peso?: string;
+  altura?: string;
+};
+
 type ProtocolPdfContentProps = {
   protocolo: ProtocolPdfData;
   clientName: string;
   formattedDate: string;
+  clientInfo?: ClientInfo;
   wrapperId?: string;
 };
 
