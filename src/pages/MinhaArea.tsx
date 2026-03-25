@@ -443,6 +443,68 @@ const MinhaArea = () => {
           </motion.div>
         )}
 
+        {/* Check-in de Fotos e Peso */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="bg-card border border-border rounded-lg p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Scale className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold uppercase text-foreground">Check-in de Progresso</h2>
+          </div>
+          <p className="text-muted-foreground text-sm mb-4">
+            Envie suas fotos e peso atual para acompanhamento periódico.
+          </p>
+          {session?.user?.id && (
+            <CheckinForm userId={session.user.id} onSuccess={() => fetchData(session.user.id)} />
+          )}
+          {checkins.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-border">
+              <h3 className="text-sm font-bold uppercase text-foreground mb-3">Histórico de Check-ins</h3>
+              <CheckinHistory checkins={checkins} />
+            </div>
+          )}
+        </motion.div>
+
+        {/* Feedback */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.14 }}
+          className="bg-card border border-border rounded-lg p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <MessageSquare className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold uppercase text-foreground">Feedback</h2>
+          </div>
+          <p className="text-muted-foreground text-sm mb-4">
+            Compartilhe como está se sentindo, dificuldades ou sugestões.
+          </p>
+          {session?.user?.id && (
+            <FeedbackForm userId={session.user.id} onSuccess={() => fetchData(session.user.id)} />
+          )}
+          {feedbacks.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-border space-y-3">
+              <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks Anteriores</h3>
+              {feedbacks.map((fb: any) => (
+                <div key={fb.id} className="border border-border rounded-lg p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(fb.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                    <span className={`text-sm font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
+                      {fb.rating}/10
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground">{fb.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+
         <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
 
         <EvolutionSection evolutions={evolutions} />
