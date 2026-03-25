@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
+import EvolutionSection from "@/components/minha-area/EvolutionSection";
 
 const planLabels: Record<string, string> = {
   base: "Base",
