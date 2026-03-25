@@ -38,6 +38,19 @@ const modalities = [
   { value: "ambos", label: "Dieta + Treino" },
 ];
 
+// Preços em R$ por combinação
+const prices: Record<string, number> = {
+  "base-dieta-mensal": 129.90,
+  "base-treino-mensal": 129.90,
+  "base-dieta+treino-mensal": 259.80,
+  "transformação-mensal": 199.90,
+  "transformação-trimestral": 549.90,
+  "transformação-semestral": 999.90,
+  "elite-mensal": 299.90,
+  "elite-trimestral": 849.90,
+  "elite-semestral": 1499.90,
+};
+
 const normalizePeriod = (p: string) => {
   const lower = p.toLowerCase();
   if (lower === "monthly") return "mensal";
@@ -71,6 +84,11 @@ const RenewalModal = ({ open, onOpenChange, currentPlan, currentPeriod, currentM
     const planName = selectedPlan === "transformacao" ? "transformação" : selectedPlan;
     return `${planName}-${selectedPeriod}`;
   };
+
+  const currentPrice = prices[buildPriceKey()] || null;
+
+  const formatPrice = (value: number) =>
+    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -173,7 +191,18 @@ const RenewalModal = ({ open, onOpenChange, currentPlan, currentPeriod, currentM
             </div>
           </div>
 
-          {/* Checkout Button */}
+          {/* Price + Checkout */}
+          {currentPrice && (
+            <div className="text-center py-2">
+              <span className="text-2xl font-bold text-foreground">{formatPrice(currentPrice)}</span>
+              {selectedPeriod !== "mensal" && (
+                <span className="text-xs text-muted-foreground ml-2">
+                  ({formatPrice(currentPrice / (selectedPeriod === "trimestral" ? 3 : 6))}/mês)
+                </span>
+              )}
+            </div>
+          )}
+
           <Button
             onClick={handleCheckout}
             disabled={loading}
