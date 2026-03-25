@@ -313,16 +313,10 @@ const Dashboard = () => {
                           <div className="flex items-center gap-2">
                             {getField(client, "fullName")}
                             {status === "expired" && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
-                                <AlertTriangle size={12} className="shrink-0" />
-                                Vencido
-                              </span>
+                              <AlertTriangle size={14} className="text-destructive shrink-0" />
                             )}
                             {status === "expiring" && (
-                              <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
-                                <Clock size={12} className="shrink-0" />
-                                Vence em breve
-                              </span>
+                              <Clock size={14} className="text-accent shrink-0" />
                             )}
                           </div>
                         </TableCell>
@@ -378,16 +372,10 @@ const Dashboard = () => {
                       <div className="flex items-center gap-2 min-w-0">
                         <h3 className="font-semibold text-foreground truncate">{getField(client, "fullName")}</h3>
                         {status === "expired" && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-destructive">
-                            <AlertTriangle size={12} className="shrink-0" />
-                            Vencido
-                          </span>
+                          <AlertTriangle size={14} className="text-destructive shrink-0" />
                         )}
                         {status === "expiring" && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
-                            <Clock size={12} className="shrink-0" />
-                            Vence
-                          </span>
+                          <Clock size={14} className="text-accent shrink-0" />
                         )}
                       </div>
                       <Badge variant="outline" className="border-primary/30 text-primary text-xs">
