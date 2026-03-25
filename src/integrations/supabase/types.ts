@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_checkins: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          photo_back: string | null
+          photo_front: string | null
+          photo_side: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_back?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_back?: string | null
+          photo_front?: string | null
+          photo_side?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
       client_evolutions: {
         Row: {
           body_fat_after: number | null
@@ -63,6 +96,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      client_feedbacks: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          rating?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       client_protocols: {
         Row: {
