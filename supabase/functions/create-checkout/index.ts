@@ -29,7 +29,7 @@ serve(async (req) => {
   }
 
   try {
-    const { priceKey } = await req.json();
+    const { priceKey, renewal } = await req.json();
 
     if (!priceKey || !PRICE_MAP[priceKey]) {
       return new Response(
@@ -59,6 +59,7 @@ serve(async (req) => {
 
     const successParams = new URLSearchParams({ plan: planType, period });
     if (modality) successParams.set("modality", modality);
+    if (renewal) successParams.set("renewal", "true");
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
