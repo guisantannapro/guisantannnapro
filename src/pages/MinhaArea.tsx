@@ -41,6 +41,8 @@ const MinhaArea = () => {
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const [evolutions, setEvolutions] = useState<any[]>([]);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
