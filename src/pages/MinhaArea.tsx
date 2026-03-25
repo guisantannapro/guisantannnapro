@@ -448,6 +448,14 @@ const MinhaArea = () => {
           />
         </div>
       )}
+
+      <RenewalModal
+        open={renewModalOpen}
+        onOpenChange={setRenewModalOpen}
+        currentPlan={resolvedPlan}
+        currentPeriod={resolvedPeriod}
+        currentModality={currentModality}
+      />
     </div>
   );
 };
