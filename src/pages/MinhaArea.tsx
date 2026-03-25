@@ -31,7 +31,8 @@ const MinhaArea = () => {
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [protocols, setProtocols] = useState<any[]>([]);
-  const [protocolo, setProtocolo] = useState<any>(null);
+  const [protocoloAtual, setProtocoloAtual] = useState<any>(null);
+  const [protocolosHistorico, setProtocolosHistorico] = useState<any[]>([]);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const navigate = useNavigate();
