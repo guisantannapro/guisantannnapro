@@ -268,7 +268,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <DashboardStats clients={clients} />
+            <DashboardStats clients={clients} getClientStatus={getClientStatus} />
             <ClientFilters
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
@@ -276,6 +276,8 @@ const Dashboard = () => {
               onPlanFilterChange={setPlanFilter}
               periodFilter={periodFilter}
               onPeriodFilterChange={setPeriodFilter}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
               totalResults={filteredClients.length}
             />
             {/* Desktop Table */}
