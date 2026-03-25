@@ -359,7 +359,69 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         </div>
       )}
 
-      {/* PDF off-screen render */}
+      {/* Check-ins de Progresso */}
+      {checkins.length > 0 && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Scale className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
+          </div>
+          <div className="space-y-3">
+            {checkins.map((checkin: any) => {
+              const hasPhotos = checkin.photo_front || checkin.photo_side || checkin.photo_back;
+              return (
+                <div key={checkin.id} className="border border-border rounded-md p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(checkin.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    </span>
+                    {checkin.weight && (
+                      <div className="flex items-center gap-1 text-xs font-medium text-foreground">
+                        <Scale size={12} className="text-primary" />
+                        {checkin.weight} kg
+                      </div>
+                    )}
+                  </div>
+                  {checkin.notes && <p className="text-xs text-muted-foreground">{checkin.notes}</p>}
+                  {hasPhotos && (
+                    <CheckinPhotos checkin={checkin} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Feedbacks */}
+      {feedbacks.length > 0 && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageSquare className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
+          </div>
+          <div className="space-y-3">
+            {feedbacks.map((fb: any) => (
+              <div key={fb.id} className="border border-border rounded-md p-3 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(fb.created_at).toLocaleDateString("pt-BR")}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Star size={12} className={fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"} />
+                    <span className={`text-xs font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
+                      {fb.rating}/10
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-foreground">{fb.message}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
       {pdfProtocol && (
         <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
           <ProtocolPdfContent
