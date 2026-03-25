@@ -59,28 +59,6 @@ const DashboardStats = ({ clients, getClientStatus }: DashboardStatsProps) => {
 
   return (
     <div className="space-y-4 mb-8">
-      {/* Alert banners */}
-      {(stats.expiring > 0 || stats.expired > 0) && (
-        <div className="flex flex-col sm:flex-row gap-3">
-          {stats.expiring > 0 && (
-            <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 flex-1">
-              <Clock className="w-4 h-4 text-accent shrink-0" />
-              <span className="text-sm text-accent font-medium">
-                {stats.expiring} cliente{stats.expiring > 1 ? "s" : ""} com plano vencendo em até 7 dias
-              </span>
-            </div>
-          )}
-          {stats.expired > 0 && (
-            <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 flex-1">
-              <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-              <span className="text-sm text-destructive font-medium">
-                {stats.expired} cliente{stats.expired > 1 ? "s" : ""} com plano vencido
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Cards */}
         <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-4">
