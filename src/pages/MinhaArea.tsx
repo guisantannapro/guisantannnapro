@@ -239,21 +239,25 @@ const MinhaArea = () => {
 
           {resolvedPlan ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">{planLabels[resolvedPlan] || resolvedPlan}</Badge>
-                {profile?.plan_duration && <span className="text-muted-foreground text-sm">Período: {profile.plan_duration}</span>}
+                {resolvedPeriod && (
+                  <Badge variant="outline" className="text-sm px-3 py-1">
+                    {periodLabels[resolvedPeriod.toLowerCase()] || resolvedPeriod}
+                  </Badge>
+                )}
               </div>
 
-              {daysRemaining !== null && (
+              {estimatedExpiry && (
                 <div className={`flex items-center gap-2 text-sm ${isExpired ? "text-destructive" : isExpiringSoon ? "text-yellow-500" : "text-muted-foreground"}`}>
                   {(isExpired || isExpiringSoon) && <AlertTriangle size={16} />}
                   <Calendar size={16} />
                   {isExpired ? (
-                    <span>Seu plano expirou. Entre em contato para renovar.</span>
+                    <span>Seu plano expirou em {estimatedExpiry.toLocaleDateString("pt-BR")}. Entre em contato para renovar.</span>
                   ) : (
                     <span>
-                      {daysRemaining} {daysRemaining === 1 ? "dia restante" : "dias restantes"} — expira em{" "}
-                      {new Date(profile.plan_expires_at).toLocaleDateString("pt-BR")}
+                      {daysRemaining} {daysRemaining === 1 ? "dia restante" : "dias restantes"} — vence em{" "}
+                      {estimatedExpiry.toLocaleDateString("pt-BR")}
                     </span>
                   )}
                 </div>
