@@ -288,71 +288,56 @@ const Dashboard = () => {
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Nome</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Email</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Plano</TableHead>
-                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Status</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Objetivo</TableHead>
+                    <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider">Data</TableHead>
                     <TableHead className="text-primary font-semibold uppercase text-xs tracking-wider text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedClients.map((client) => (
-                    <TableRow key={client.id} className="border-border">
-                      <TableCell className="font-medium text-foreground">
-                        {getField(client, "fullName")}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
-                        {getField(client, "email")}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className="border-primary/30 text-primary text-xs"
-                        >
-                          {planLabels[client.plan || client.profile?.plan || ""] || "—"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {(() => {
-                          const status = getClientStatus(client.profile);
-                          if (status === "expired") return (
-                            <Badge className="bg-destructive/15 text-destructive border-destructive/30 text-xs gap-1">
-                              <AlertTriangle size={10} />
-                              Vencido
-                            </Badge>
-                          );
-                          if (status === "expiring") {
-                            const days = Math.ceil((new Date(client.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-                            return (
-                              <Badge className="bg-yellow-500/15 text-yellow-600 border-yellow-500/30 text-xs gap-1">
-                                <Clock size={10} />
-                                Vence em {days}d
-                              </Badge>
-                            );
-                          }
-                          if (status === "active") return (
-                            <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 text-xs gap-1">
-                              <CheckCircle size={10} />
-                              Ativo
-                            </Badge>
-                          );
-                          return <span className="text-muted-foreground text-xs">—</span>;
-                        })()}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
-                        {getGoals(client)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleSelectClient(client)}
-                          className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
-                        >
-                          <Eye size={14} />
-                          Ver detalhes
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {paginatedClients.map((client) => {
+                    const status = getClientStatus(client.profile);
+                    const borderClass = status === "expired"
+                      ? "border-l-4 border-l-destructive bg-destructive/5"
+                      : status === "expiring"
+                      ? "border-l-4 border-l-yellow-500 bg-yellow-500/5"
+                      : "";
+                    return (
+                      <TableRow key={client.id} className={`border-border ${borderClass}`}>
+                        <TableCell className="font-medium text-foreground">
+                          <div className="flex items-center gap-2">
+                            {getField(client, "fullName")}
+                            {status === "expired" && <AlertTriangle size={14} className="text-destructive shrink-0" />}
+                            {status === "expiring" && <Clock size={14} className="text-yellow-500 shrink-0" />}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {getField(client, "email")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                            {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
+                          {getGoals(client)}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {formatDate(client.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleSelectClient(client)}
+                            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                          >
+                            <Eye size={14} />
+                            Ver detalhes
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
