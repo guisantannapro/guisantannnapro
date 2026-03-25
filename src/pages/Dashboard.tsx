@@ -124,12 +124,18 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      // Fetch profiles for all unique user_ids
-      const userIds = [...new Set((submissions || []).map((s) => s.user_id))];
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, full_name, plan, plan_expires_at, plan_duration")
-        .in("id", userIds);
+      // Fetch profiles for all unique user_ids (filter out nulls)
+      const userIds = [...new Set((submissions || []).map((s) => s.user_id).filter(Boolean))] as string[];
+      let profileMap = new Map<string, Profile>();
+      if (userIds.length > 0) {
+        const { data: profiles, error: profileError } = await supabase
+          .from("profiles")
+          .select("id, full_name, plan, plan_expires_at, plan_duration")
+          .in("id", userIds);
+        if (!profileError && profiles) {
+          profileMap = new Map(profiles.map((p) => [p.id, p]));
+        }
+      }
 
       const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
 
