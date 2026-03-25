@@ -67,6 +67,7 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [planFilter, setPlanFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [clientProtocols, setClientProtocols] = useState<any[]>([]);
   const [protocolPreviewOpen, setProtocolPreviewOpen] = useState(false);
