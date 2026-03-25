@@ -83,6 +83,12 @@ const Dashboard = () => {
         if (!name.includes(term) && !email.includes(term)) return false;
       }
       if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
+      if (statusFilter !== "all") {
+        const status = getClientStatus(client.profile);
+        if (statusFilter === "expired" && status !== "expired") return false;
+        if (statusFilter === "expiring" && status !== "expiring") return false;
+        if (statusFilter === "active" && status !== "active") return false;
+      }
       if (periodFilter !== "all") {
         const days = parseInt(periodFilter);
         const cutoff = new Date();
