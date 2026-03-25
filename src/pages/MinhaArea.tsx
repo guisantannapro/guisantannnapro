@@ -287,13 +287,12 @@ const MinhaArea = () => {
                       : "Seu plano está prestes a vencer. Renove agora para não perder o acesso."}
                   </p>
                   <Button
-                    onClick={handleRenewPlan}
-                    disabled={renewLoading}
+                    onClick={() => setRenewModalOpen(true)}
                     size="sm"
                     className="gap-1.5"
                   >
-                    {renewLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
-                    {renewLoading ? "Processando..." : "Renovar Plano"}
+                    <RefreshCw size={14} />
+                    Renovar Plano
                   </Button>
                 </div>
               )}
