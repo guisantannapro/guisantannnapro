@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { plan } = await req.json();
+    const { plan, period } = await req.json();
 
     if (!plan || !["base", "transformacao", "elite"].includes(plan)) {
       return new Response(
@@ -50,13 +50,31 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    // Calculate expiration based on period
+    const now = new Date();
+    const periodMonths: Record<string, number> = {
+      mensal: 1,
+      trimestral: 3,
+      semestral: 6,
+    };
+    const months = periodMonths[period?.toLowerCase()] || 1;
+    const expiresAt = new Date(now);
+    expiresAt.setMonth(expiresAt.getMonth() + months);
+
+    const updateData: Record<string, unknown> = {
+      plan: plan,
+      plan_activated_at: now.toISOString(),
+      updated_at: now.toISOString(),
+    };
+
+    if (period) {
+      updateData.plan_duration = period.toLowerCase();
+      updateData.plan_expires_at = expiresAt.toISOString();
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from("profiles")
-      .update({
-        plan: plan,
-        plan_activated_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("id", user.id);
 
     if (updateError) {
