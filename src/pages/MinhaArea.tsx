@@ -154,6 +154,9 @@ const MinhaArea = () => {
     return diff;
   };
 
+  // Resolve o plano: prioriza profiles, fallback para form_submissions
+  const resolvedPlan = profile?.plan || submissions?.[0]?.plan || null;
+
   const daysRemaining = getDaysRemaining();
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
