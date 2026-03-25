@@ -44,13 +44,22 @@ serve(async (req) => {
       );
     }
 
-    // Use service role to update the profile
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Calculate expiration based on period
+    // Fetch current profile to check existing expiration
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("plan_expires_at")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Profile fetch error:", profileError);
+    }
+
     const now = new Date();
     const periodMonths: Record<string, number> = {
       mensal: 1,
@@ -58,18 +67,33 @@ serve(async (req) => {
       semestral: 6,
     };
     const months = periodMonths[period?.toLowerCase()] || 1;
-    const expiresAt = new Date(now);
+
+    // If current plan is still active (expires in the future), start from that expiry date
+    // Otherwise start from today
+    let startDate = now;
+    let renewalStartsAt: string | null = null;
+
+    if (profile?.plan_expires_at) {
+      const currentExpiry = new Date(profile.plan_expires_at);
+      if (currentExpiry > now) {
+        // Plan still active — new period starts after current expiry
+        startDate = currentExpiry;
+        renewalStartsAt = currentExpiry.toISOString();
+      }
+    }
+
+    const expiresAt = new Date(startDate);
     expiresAt.setMonth(expiresAt.getMonth() + months);
 
     const updateData: Record<string, unknown> = {
       plan: plan,
       plan_activated_at: now.toISOString(),
+      plan_expires_at: expiresAt.toISOString(),
       updated_at: now.toISOString(),
     };
 
     if (period) {
       updateData.plan_duration = period.toLowerCase();
-      updateData.plan_expires_at = expiresAt.toISOString();
     }
 
     const { error: updateError } = await supabaseAdmin
@@ -86,7 +110,11 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true }),
+      JSON.stringify({ 
+        success: true, 
+        renewal_starts_at: renewalStartsAt,
+        expires_at: expiresAt.toISOString(),
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
