@@ -406,6 +406,63 @@ const Dashboard = () => {
               })}
             </div>
 ...
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1"
+                >
+                  <ChevronLeft size={14} />
+                  Anterior
+                </Button>
+                <span className="text-sm text-muted-foreground px-2">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="border-primary/30 text-primary hover:bg-primary/10 gap-1"
+                >
+                  Próxima
+                  <ChevronRight size={14} />
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </main>
+
+      {/* Client Detail Modal */}
+      <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-gradient-gold uppercase">
+              {selectedClient && getField(selectedClient, "fullName")}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Detalhes do formulário enviado em{" "}
+              {selectedClient && formatDate(selectedClient.created_at)}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedClient && (
+            <>
+              {(() => {
+                const status = getClientStatus(selectedClient.profile);
+                if (status === "expired") return (
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
+                    <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                    <span className="text-sm text-destructive font-medium">
+                      Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                );
                 if (status === "expiring") {
                   const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
                   return (
@@ -419,7 +476,7 @@ const Dashboard = () => {
                 }
                 return null;
               })()}
-            <Tabs defaultValue="details" className="mt-4">
+              <Tabs defaultValue="details" className="mt-4">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Dados / Gestão</TabsTrigger>
                 <TabsTrigger value="client-view">Visão do Cliente</TabsTrigger>
