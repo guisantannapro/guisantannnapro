@@ -157,7 +157,45 @@ const MinhaArea = () => {
   // Resolve o plano: prioriza profiles, fallback para form_submissions
   const resolvedPlan = profile?.plan || submissions?.[0]?.plan || null;
 
-  const daysRemaining = getDaysRemaining();
+  // Resolve período: prioriza profiles, fallback para form_data.billingPeriod
+  const submissionPeriod = submissions?.[0]?.form_data?.billingPeriod || null;
+  const resolvedPeriod = profile?.plan_duration || submissionPeriod || null;
+
+  const periodLabels: Record<string, string> = {
+    monthly: "Mensal",
+    quarterly: "Trimestral",
+    semiannual: "Semestral",
+    mensal: "Mensal",
+    trimestral: "Trimestral",
+    semestral: "Semestral",
+  };
+
+  // Calcula data de vencimento estimada se não houver no profiles
+  const getEstimatedExpiry = () => {
+    if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
+    const baseDate = submissions?.[0]?.created_at ? new Date(submissions[0].created_at) : null;
+    if (!baseDate || !resolvedPeriod) return null;
+    const period = resolvedPeriod.toLowerCase();
+    const months = period === "monthly" || period === "mensal" ? 1
+      : period === "quarterly" || period === "trimestral" ? 3
+      : period === "semiannual" || period === "semestral" ? 6
+      : null;
+    if (!months) return null;
+    const expiry = new Date(baseDate);
+    expiry.setMonth(expiry.getMonth() + months);
+    return expiry;
+  };
+
+  const estimatedExpiry = getEstimatedExpiry();
+
+  const getDaysRemainingResolved = () => {
+    const expiryDate = estimatedExpiry;
+    if (!expiryDate) return null;
+    const now = new Date();
+    return Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysRemaining = getDaysRemainingResolved();
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
@@ -201,21 +239,25 @@ const MinhaArea = () => {
 
           {resolvedPlan ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">{planLabels[resolvedPlan] || resolvedPlan}</Badge>
-                {profile?.plan_duration && <span className="text-muted-foreground text-sm">Período: {profile.plan_duration}</span>}
+                {resolvedPeriod && (
+                  <Badge variant="outline" className="text-sm px-3 py-1">
+                    {periodLabels[resolvedPeriod.toLowerCase()] || resolvedPeriod}
+                  </Badge>
+                )}
               </div>
 
-              {daysRemaining !== null && (
+              {estimatedExpiry && (
                 <div className={`flex items-center gap-2 text-sm ${isExpired ? "text-destructive" : isExpiringSoon ? "text-yellow-500" : "text-muted-foreground"}`}>
                   {(isExpired || isExpiringSoon) && <AlertTriangle size={16} />}
                   <Calendar size={16} />
                   {isExpired ? (
-                    <span>Seu plano expirou. Entre em contato para renovar.</span>
+                    <span>Seu plano expirou em {estimatedExpiry.toLocaleDateString("pt-BR")}. Entre em contato para renovar.</span>
                   ) : (
                     <span>
-                      {daysRemaining} {daysRemaining === 1 ? "dia restante" : "dias restantes"} — expira em{" "}
-                      {new Date(profile.plan_expires_at).toLocaleDateString("pt-BR")}
+                      {daysRemaining} {daysRemaining === 1 ? "dia restante" : "dias restantes"} — vence em{" "}
+                      {estimatedExpiry.toLocaleDateString("pt-BR")}
                     </span>
                   )}
                 </div>
