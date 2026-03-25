@@ -288,9 +288,14 @@ const ApplicationForm = () => {
           : null;
       const folderKey = sessionUserId ?? `anon-${Date.now()}`;
 
-      console.log("[FORM DEBUG] session:", session);
-      console.log("[FORM DEBUG] sessionError:", sessionError);
-      console.log("[FORM DEBUG] userId:", sessionUserId);
+      console.log("[AUTH DEBUG] SESSION:", session);
+      console.log("[AUTH DEBUG] USER:", session?.user);
+      console.log("[AUTH DEBUG] AUTH UID:", session?.user?.id);
+      console.log("[AUTH DEBUG] sessionError:", sessionError);
+      console.log("[AUTH DEBUG] userId resolvido:", sessionUserId);
+      console.log("[AUTH DEBUG] role:", session ? "authenticated" : "anon");
+      console.log("[AUTH DEBUG] Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+      console.log("[AUTH DEBUG] Usando anon key:", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.slice(0, 20) + "...");
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
