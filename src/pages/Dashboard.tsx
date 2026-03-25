@@ -683,6 +683,7 @@ const Dashboard = () => {
                 />
               </TabsContent>
             </Tabs>
+            </>
           )}
         </DialogContent>
       </Dialog>
