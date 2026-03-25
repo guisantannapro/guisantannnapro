@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -210,6 +210,43 @@ const MinhaArea = () => {
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
+  const [renewLoading, setRenewLoading] = useState(false);
+
+  const buildPriceKey = () => {
+    const plan = resolvedPlan;
+    const period = (resolvedPeriod || "mensal").toLowerCase();
+    const normalizedPeriod = period === "monthly" ? "mensal" : period === "quarterly" ? "trimestral" : period === "semiannual" ? "semestral" : period;
+
+    if (plan === "base") {
+      const modality = submissions?.[0]?.form_data?.billingModality || "dieta";
+      const mod = modality === "ambos" ? "dieta+treino" : modality;
+      return `base-${mod}-${normalizedPeriod}`;
+    }
+    const planName = plan === "transformacao" ? "transformação" : plan;
+    return `${planName}-${normalizedPeriod}`;
+  };
+
+  const handleRenewPlan = async () => {
+    setRenewLoading(true);
+    try {
+      const priceKey = buildPriceKey();
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceKey },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      } else {
+        toast.error("Erro ao gerar link de pagamento.");
+      }
+    } catch (err) {
+      console.error("Renewal error:", err);
+      toast.error("Erro ao iniciar renovação.");
+    } finally {
+      setRenewLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -264,13 +301,32 @@ const MinhaArea = () => {
                   {(isExpired || isExpiringSoon) && <AlertTriangle size={16} />}
                   <Calendar size={16} />
                   {isExpired ? (
-                    <span>Seu plano expirou em {estimatedExpiry.toLocaleDateString("pt-BR")}. Entre em contato para renovar.</span>
+                    <span>Seu plano expirou em {estimatedExpiry.toLocaleDateString("pt-BR")}.</span>
                   ) : (
                     <span>
                       {daysRemaining} {daysRemaining === 1 ? "dia restante" : "dias restantes"} — vence em{" "}
                       {estimatedExpiry.toLocaleDateString("pt-BR")}
                     </span>
                   )}
+                </div>
+              )}
+
+              {(isExpired || isExpiringSoon) && (
+                <div className={`rounded-lg p-4 border ${isExpired ? "bg-destructive/5 border-destructive/20" : "bg-yellow-500/5 border-yellow-500/20"}`}>
+                  <p className={`text-sm font-medium mb-3 ${isExpired ? "text-destructive" : "text-yellow-500"}`}>
+                    {isExpired
+                      ? "Seu plano expirou. Renove para continuar com o acompanhamento."
+                      : "Seu plano está prestes a vencer. Renove agora para não perder o acesso."}
+                  </p>
+                  <Button
+                    onClick={handleRenewPlan}
+                    disabled={renewLoading}
+                    size="sm"
+                    className="gap-1.5"
+                  >
+                    {renewLoading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                    {renewLoading ? "Processando..." : "Renovar Plano"}
+                  </Button>
                 </div>
               )}
             </div>
