@@ -43,8 +43,9 @@ const MinhaArea = () => {
       if (!nextSession) {
         setProfile(null);
         setSubmissions([]);
-        setProtocols([]);
-        setProtocolo(null);
+      setProtocols([]);
+      setProtocoloAtual(null);
+      setProtocolosHistorico([]);
       }
       setAuthReady(true);
     };
