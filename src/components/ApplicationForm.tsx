@@ -98,29 +98,42 @@ const Field = ({ label, required, children }: { label: string; required?: boolea
 
 const inputClass = "w-full bg-muted border border-border rounded-md px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors text-sm";
 
-const findUndefinedPaths = (value: unknown, path: string): string[] => {
-  if (value === undefined) return [path];
+const findInvalidPaths = (value: unknown, path: string): string[] => {
+  if (value === undefined) return [`${path} (undefined)`];
+  if (typeof value === "string" && value.trim() === "") return [`${path} (string vazia)`];
   if (value === null) return [];
 
   if (Array.isArray(value)) {
-    return value.flatMap((item, index) => findUndefinedPaths(item, `${path}[${index}]`));
+    return value.flatMap((item, index) => findInvalidPaths(item, `${path}[${index}]`));
   }
 
   if (typeof value === "object") {
     return Object.entries(value as Record<string, unknown>).flatMap(([key, item]) =>
-      findUndefinedPaths(item, `${path}.${key}`),
+      findInvalidPaths(item, `${path}.${key}`),
     );
   }
 
   return [];
 };
 
-const sanitizeUndefined = (value: unknown): unknown => {
-  if (value === undefined) return null;
-  if (Array.isArray(value)) return value.map((item) => sanitizeUndefined(item));
+const sanitizePayloadValue = (value: unknown): unknown => {
+  if (value === undefined) return undefined;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed === "" ? undefined : trimmed;
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => sanitizePayloadValue(item))
+      .filter((item) => item !== undefined);
+  }
+
   if (value && typeof value === "object") {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, sanitizeUndefined(item)]),
+      Object.entries(value as Record<string, unknown>)
+        .map(([key, item]) => [key, sanitizePayloadValue(item)] as const)
+        .filter(([, item]) => item !== undefined),
     );
   }
 
@@ -269,12 +282,15 @@ const ApplicationForm = () => {
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       const session = sessionData?.session ?? null;
-      const userId = session?.user?.id || null;
-      const folderKey = userId || `anon-${Date.now()}`;
+      const sessionUserId =
+        session?.access_token && typeof session.user?.id === "string" && session.user.id.trim() !== ""
+          ? session.user.id
+          : null;
+      const folderKey = sessionUserId ?? `anon-${Date.now()}`;
 
       console.log("[FORM DEBUG] session:", session);
       console.log("[FORM DEBUG] sessionError:", sessionError);
-      console.log("[FORM DEBUG] userId:", userId);
+      console.log("[FORM DEBUG] userId:", sessionUserId);
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
@@ -306,15 +322,19 @@ const ApplicationForm = () => {
         plan: purchasedPlan,
       };
 
-      if (userId) {
-        rawInsertPayload.user_id = userId;
+      if (sessionUserId) {
+        rawInsertPayload.user_id = sessionUserId;
       }
 
-      const insertPayload = sanitizeUndefined(rawInsertPayload) as FormSubmissionInsert;
+      const sanitizedPayload = sanitizePayloadValue(rawInsertPayload) as Record<string, unknown>;
+      if (!sessionUserId) {
+        delete sanitizedPayload.user_id;
+      }
+      const insertPayload = sanitizedPayload as FormSubmissionInsert;
 
-      const undefinedPaths = findUndefinedPaths(rawInsertPayload, "payload");
-      if (undefinedPaths.length > 0) {
-        console.warn("[FORM DEBUG] Campos undefined encontrados no payload bruto:", undefinedPaths);
+      const invalidPaths = findInvalidPaths(rawInsertPayload, "payload");
+      if (invalidPaths.length > 0) {
+        console.warn("[FORM DEBUG] Campos inválidos encontrados no payload bruto:", invalidPaths);
       }
 
       const requiredIssues = [
