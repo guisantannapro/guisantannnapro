@@ -137,7 +137,7 @@ const Dashboard = () => {
         }
       }
 
-      const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
+      
 
       const enriched: ClientData[] = (submissions || []).map((s) => ({
         ...s,
