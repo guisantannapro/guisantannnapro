@@ -157,7 +157,45 @@ const MinhaArea = () => {
   // Resolve o plano: prioriza profiles, fallback para form_submissions
   const resolvedPlan = profile?.plan || submissions?.[0]?.plan || null;
 
-  const daysRemaining = getDaysRemaining();
+  // Resolve período: prioriza profiles, fallback para form_data.billingPeriod
+  const submissionPeriod = submissions?.[0]?.form_data?.billingPeriod || null;
+  const resolvedPeriod = profile?.plan_duration || submissionPeriod || null;
+
+  const periodLabels: Record<string, string> = {
+    monthly: "Mensal",
+    quarterly: "Trimestral",
+    semiannual: "Semestral",
+    mensal: "Mensal",
+    trimestral: "Trimestral",
+    semestral: "Semestral",
+  };
+
+  // Calcula data de vencimento estimada se não houver no profiles
+  const getEstimatedExpiry = () => {
+    if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
+    const baseDate = submissions?.[0]?.created_at ? new Date(submissions[0].created_at) : null;
+    if (!baseDate || !resolvedPeriod) return null;
+    const period = resolvedPeriod.toLowerCase();
+    const months = period === "monthly" || period === "mensal" ? 1
+      : period === "quarterly" || period === "trimestral" ? 3
+      : period === "semiannual" || period === "semestral" ? 6
+      : null;
+    if (!months) return null;
+    const expiry = new Date(baseDate);
+    expiry.setMonth(expiry.getMonth() + months);
+    return expiry;
+  };
+
+  const estimatedExpiry = getEstimatedExpiry();
+
+  const getDaysRemainingResolved = () => {
+    const expiryDate = estimatedExpiry;
+    if (!expiryDate) return null;
+    const now = new Date();
+    return Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const daysRemaining = getDaysRemainingResolved();
   const isExpired = daysRemaining !== null && daysRemaining <= 0;
   const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
