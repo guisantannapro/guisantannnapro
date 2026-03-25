@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -43,6 +43,8 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
   const [protocoloAtual, setProtocoloAtual] = useState<any>(null);
   const [protocolosHistorico, setProtocolosHistorico] = useState<any[]>([]);
   const [evolutions, setEvolutions] = useState<any[]>([]);
+  const [checkins, setCheckins] = useState<any[]>([]);
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
@@ -51,12 +53,14 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes] = await Promise.all([
+      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_evolutions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("client_checkins" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("client_feedbacks" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
@@ -67,6 +71,8 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         setProtocolosHistorico(protocoloRes.data.slice(1));
       }
       if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
+      if (checkinsRes.data) setCheckins(checkinsRes.data as any[]);
+      if (feedbacksRes.data) setFeedbacks(feedbacksRes.data as any[]);
     } catch (err) {
       console.error("Error fetching client view data:", err);
     } finally {
@@ -353,7 +359,69 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         </div>
       )}
 
-      {/* PDF off-screen render */}
+      {/* Check-ins de Progresso */}
+      {checkins.length > 0 && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Scale className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
+          </div>
+          <div className="space-y-3">
+            {checkins.map((checkin: any) => {
+              const hasPhotos = checkin.photo_front || checkin.photo_side || checkin.photo_back;
+              return (
+                <div key={checkin.id} className="border border-border rounded-md p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(checkin.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                    </span>
+                    {checkin.weight && (
+                      <div className="flex items-center gap-1 text-xs font-medium text-foreground">
+                        <Scale size={12} className="text-primary" />
+                        {checkin.weight} kg
+                      </div>
+                    )}
+                  </div>
+                  {checkin.notes && <p className="text-xs text-muted-foreground">{checkin.notes}</p>}
+                  {hasPhotos && (
+                    <CheckinPhotos checkin={checkin} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Feedbacks */}
+      {feedbacks.length > 0 && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <MessageSquare className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
+          </div>
+          <div className="space-y-3">
+            {feedbacks.map((fb: any) => (
+              <div key={fb.id} className="border border-border rounded-md p-3 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(fb.created_at).toLocaleDateString("pt-BR")}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Star size={12} className={fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"} />
+                    <span className={`text-xs font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
+                      {fb.rating}/10
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-foreground">{fb.message}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
       {pdfProtocol && (
         <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
           <ProtocolPdfContent
@@ -364,6 +432,46 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
           />
         </div>
       )}
+    </div>
+  );
+};
+
+const CheckinPhotos = ({ checkin }: { checkin: any }) => {
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const photoLabels: Record<string, string> = { photo_front: "Frente", photo_side: "Lado", photo_back: "Costas" };
+
+  useEffect(() => {
+    const load = async () => {
+      const result: Record<string, string> = {};
+      for (const field of ["photo_front", "photo_side", "photo_back"]) {
+        if (checkin[field]) {
+          const { data } = await supabase.storage.from("client-photos").createSignedUrl(checkin[field], 3600);
+          if (data?.signedUrl) result[field] = data.signedUrl;
+        }
+      }
+      setUrls(result);
+    };
+    load();
+  }, [checkin]);
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {["photo_front", "photo_side", "photo_back"].map((field) => {
+        if (!checkin[field]) return null;
+        const url = urls[field];
+        return (
+          <div key={field} className="space-y-1">
+            <span className="text-xs text-muted-foreground">{photoLabels[field]}</span>
+            {url ? (
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                <img src={url} alt={photoLabels[field]} className="w-full aspect-[3/4] object-cover rounded-md border border-border" />
+              </a>
+            ) : (
+              <div className="w-full aspect-[3/4] rounded-md border border-border bg-muted animate-pulse" />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
