@@ -181,10 +181,10 @@ const ApplicationForm = () => {
     setPhotoPreviews((prev) => ({ ...prev, [type]: "" }));
   };
 
-  const uploadPhoto = async (file: File, userId: string, label: string): Promise<string | null> => {
+  const uploadPhoto = async (file: File, folderKey: string, label: string): Promise<string | null> => {
     try {
       const ext = file.name.split(".").pop();
-      const path = `${userId}/${label}-${Date.now()}.${ext}`;
+      const path = `${folderKey}/${label}-${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("client-photos").upload(path, file);
       if (error) {
         console.error(`Upload error (${label}):`, error);
