@@ -8,6 +8,7 @@ const PaymentSuccess = () => {
   const plan = searchParams.get("plan");
   const period = searchParams.get("period");
   const modality = searchParams.get("modality");
+  const isRenewal = searchParams.get("renewal") === "true";
 
   useEffect(() => {
     if (plan) localStorage.setItem("purchased_plan", plan);
@@ -29,23 +30,35 @@ const PaymentSuccess = () => {
           Pagamento <span className="text-gradient-gold">Confirmado!</span>
         </h1>
         <p className="text-muted-foreground font-body normal-case mb-8">
-          Seu pagamento foi processado com sucesso. Entraremos em contato em breve
-          para iniciar sua consultoria personalizada.
+          {isRenewal
+            ? "Sua renovação foi processada com sucesso. Seu plano será atualizado em breve."
+            : "Seu pagamento foi processado com sucesso. Entraremos em contato em breve para iniciar sua consultoria personalizada."}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="/"
-            className="inline-block px-8 py-4 rounded-lg bg-gradient-gold text-primary-foreground font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all"
-          >
-            Voltar ao Início
-          </a>
-          {plan && (
+          {isRenewal ? (
             <a
-              href="/formulario"
-              className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
+              href="/area-do-cliente"
+              className="inline-block px-8 py-4 rounded-lg bg-gradient-gold text-primary-foreground font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all"
             >
-              Preencher Formulário
+              Voltar à Área do Cliente
             </a>
+          ) : (
+            <>
+              <a
+                href="/"
+                className="inline-block px-8 py-4 rounded-lg bg-gradient-gold text-primary-foreground font-display font-bold uppercase tracking-wider hover:opacity-90 transition-all"
+              >
+                Voltar ao Início
+              </a>
+              {plan && (
+                <a
+                  href="/formulario"
+                  className="inline-block px-8 py-4 rounded-lg border border-primary text-primary font-display font-bold uppercase tracking-wider hover:bg-primary/10 transition-all"
+                >
+                  Preencher Formulário
+                </a>
+              )}
+            </>
           )}
         </div>
       </motion.div>

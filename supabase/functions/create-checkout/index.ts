@@ -59,6 +59,7 @@ serve(async (req) => {
 
     const successParams = new URLSearchParams({ plan: planType, period });
     if (modality) successParams.set("modality", modality);
+    if (renewal) successParams.set("renewal", "true");
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
