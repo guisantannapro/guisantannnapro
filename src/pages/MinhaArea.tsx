@@ -13,6 +13,9 @@ import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import RenewalModal from "@/components/minha-area/RenewalModal";
+import CheckinForm from "@/components/minha-area/CheckinForm";
+import CheckinHistory from "@/components/minha-area/CheckinHistory";
+import FeedbackForm from "@/components/minha-area/FeedbackForm";
 
 const planLabels: Record<string, string> = {
   base: "Base",
