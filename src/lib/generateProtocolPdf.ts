@@ -28,7 +28,7 @@ export async function generateProtocolPdf(
   }
 
   const opt = {
-    margin: [10, 10, 10, 10] as [number, number, number, number],
+    margin: [10, 12, 10, 12] as [number, number, number, number],
     filename,
     image: { type: "jpeg" as const, quality: 0.98 },
     html2canvas: {
@@ -36,6 +36,8 @@ export async function generateProtocolPdf(
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
+      width: 700,
+      windowWidth: 700,
     },
     jsPDF: { unit: "mm" as const, format: "a4" as const, orientation: "portrait" as const },
     pagebreak: { mode: ["css", "legacy"] as string[] },
