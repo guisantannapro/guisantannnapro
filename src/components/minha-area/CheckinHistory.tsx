@@ -56,7 +56,7 @@ const CheckinHistory = ({ checkins }: CheckinHistoryProps) => {
               <p className="text-sm text-muted-foreground">{checkin.notes}</p>
             )}
             {hasPhotos && (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2 max-w-md">
                 {["photo_front", "photo_side", "photo_back"].map((field) => {
                   if (!checkin[field]) return null;
                   const url = photoUrls[`${checkin.id}-${field}`];

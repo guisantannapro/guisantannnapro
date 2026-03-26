@@ -208,7 +208,7 @@ const EvolutionCard = ({ evolution }: { evolution: Evolution }) => {
       </div>
 
       {hasPhotos && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 max-w-sm">
           <div className="space-y-1.5">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Antes</span>
             {evolution.photo_before ? (
