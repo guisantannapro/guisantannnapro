@@ -12,6 +12,7 @@ interface Profile {
 
 interface ClientData {
   plan?: string | null;
+  resolvedPlan?: string | null;
   profile?: Profile;
 }
 
@@ -33,7 +34,7 @@ const DashboardStats = ({ clients, getClientStatus }: DashboardStatsProps) => {
     let expired = 0;
 
     clients.forEach((c) => {
-      const plan = c.plan || c.profile?.plan;
+      const plan = c.resolvedPlan || c.profile?.plan || c.plan;
       if (plan && plan in planCounts) planCounts[plan]++;
       const status = getClientStatus(c.profile);
       if (status === "expiring") expiring++;
