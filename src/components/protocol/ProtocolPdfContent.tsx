@@ -93,9 +93,6 @@ export function ProtocolPdfContent({
           <div className="pdf-cover-brand">
             <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
             <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
-            {planDisplay && (
-              <span className="pdf-brand-plan">{planDisplay}</span>
-            )}
           </div>
         </div>
         <div className="pdf-cover-divider" />
@@ -137,7 +134,12 @@ export function ProtocolPdfContent({
         </div>
       </div>
 
-      {/* Plano Alimentar */}
+      {planDisplay && (
+        <div className="pdf-plan-banner">
+          <span className="pdf-plan-banner-text">{planDisplay}</span>
+        </div>
+      )}
+
       {protocolo.plano_alimentar && (
         <div className="pdf-section">
           <div className="pdf-section-header">
