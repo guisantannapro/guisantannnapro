@@ -76,12 +76,6 @@ export function ProtocolPdfContent({
             <span className="pdf-cover-title">{clientName}</span>
           </div>
           <div className="pdf-cover-info-right">
-            <div className="pdf-cover-meta">
-              <span className="pdf-cover-label">TIPO</span>
-              <span className="pdf-cover-value">
-                {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
-              </span>
-            </div>
             {clientInfo?.idade && (
               <div className="pdf-cover-meta">
                 <span className="pdf-cover-label">IDADE</span>
@@ -100,6 +94,12 @@ export function ProtocolPdfContent({
                 <span className="pdf-cover-value">{clientInfo.altura}</span>
               </div>
             )}
+            <div className="pdf-cover-meta">
+              <span className="pdf-cover-label">TIPO</span>
+              <span className="pdf-cover-value">
+                {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+              </span>
+            </div>
             <div className="pdf-cover-meta">
               <span className="pdf-cover-label">DATA</span>
               <span className="pdf-cover-value">{formattedDate}</span>
