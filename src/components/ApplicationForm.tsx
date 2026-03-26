@@ -236,7 +236,35 @@ const ApplicationForm = () => {
     front: "", side: "", back: "", assessment: "",
   });
 
-  // Session is preserved — no forced signOut on form load
+  const resetAllStates = () => {
+    setForm(initialForm);
+    setPhotos({ front: null, side: null, back: null, assessment: null });
+    setPhotoPreviews({ front: "", side: "", back: "", assessment: "" });
+    setSubmissionId(null);
+    setTempUserId(null);
+    setRegEmail("");
+    setRegPassword("");
+    setRegConfirmPassword("");
+    setRegName("");
+    setRegError("");
+    setSubmitError("");
+    // Limpar localStorage de debug
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("debug_payload_")) localStorage.removeItem(key);
+    });
+  };
+
+  // Cleanup ao desmontar componente (navegação/voltar)
+  useEffect(() => {
+    return () => {
+      setForm(initialForm);
+      setPhotos({ front: null, side: null, back: null, assessment: null });
+      setPhotoPreviews({ front: "", side: "", back: "", assessment: "" });
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("debug_payload_")) localStorage.removeItem(key);
+      });
+    };
+  }, []);
 
   const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
     setPhotos((prev) => ({ ...prev, [type]: file }));
@@ -402,10 +430,18 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
+
+      // Salvar dados necessários para criação de conta antes de resetar
+      const savedEmail = form.email;
+      const savedName = form.fullName;
+
+      // Resetar formulário e fotos para evitar vazamento de dados
+      resetAllStates();
+
       setSubmissionId(generatedId);
       setTempUserId(sessionUserId);
-      setRegEmail(form.email);
-      setRegName(form.fullName);
+      setRegEmail(savedEmail);
+      setRegName(savedName);
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
@@ -495,6 +531,10 @@ const ApplicationForm = () => {
       }
 
       await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
+
+      // Resetar todos os estados antes do redirect
+      resetAllStates();
+      setSubmitted(false);
 
       // Auto-redirect to client area
       window.location.href = "/area-do-cliente";
