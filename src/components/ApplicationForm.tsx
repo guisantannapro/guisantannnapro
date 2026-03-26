@@ -236,7 +236,35 @@ const ApplicationForm = () => {
     front: "", side: "", back: "", assessment: "",
   });
 
-  // Session is preserved — no forced signOut on form load
+  const resetAllStates = () => {
+    setForm(initialForm);
+    setPhotos({ front: null, side: null, back: null, assessment: null });
+    setPhotoPreviews({ front: "", side: "", back: "", assessment: "" });
+    setSubmissionId(null);
+    setTempUserId(null);
+    setRegEmail("");
+    setRegPassword("");
+    setRegConfirmPassword("");
+    setRegName("");
+    setRegError("");
+    setSubmitError("");
+    // Limpar localStorage de debug
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("debug_payload_")) localStorage.removeItem(key);
+    });
+  };
+
+  // Cleanup ao desmontar componente (navegação/voltar)
+  useEffect(() => {
+    return () => {
+      setForm(initialForm);
+      setPhotos({ front: null, side: null, back: null, assessment: null });
+      setPhotoPreviews({ front: "", side: "", back: "", assessment: "" });
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("debug_payload_")) localStorage.removeItem(key);
+      });
+    };
+  }, []);
 
   const handlePhotoChange = (type: "front" | "side" | "back" | "assessment", file: File | null) => {
     setPhotos((prev) => ({ ...prev, [type]: file }));
