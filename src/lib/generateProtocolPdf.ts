@@ -57,6 +57,8 @@ export async function generateProtocolPdf(
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
+        width: 700,
+        windowWidth: 700,
       });
 
       const renderedWidthPx = canvas.width / 2;
