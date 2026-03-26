@@ -15,6 +15,7 @@ const Protocolo = () => {
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("Cliente");
   const [clientInfo, setClientInfo] = useState<{ idade?: string; peso?: string; altura?: string }>({});
+  const [planInfo, setPlanInfo] = useState<{ plan?: string; duration?: string }>({});
   const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
@@ -37,11 +38,12 @@ const Protocolo = () => {
       const protocolUserId = data.user_id;
 
       const [{ data: profile }, { data: formSub }] = await Promise.all([
-        supabase.from("profiles").select("full_name").eq("id", protocolUserId).single(),
+        supabase.from("profiles").select("full_name, plan, plan_duration").eq("id", protocolUserId).single(),
         supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
+      setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
       
       const fd = formSub?.form_data as any;
       if (fd) {
@@ -119,7 +121,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} />
+      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
     </div>
   );
 };

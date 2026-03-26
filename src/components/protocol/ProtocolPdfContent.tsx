@@ -16,11 +16,17 @@ type ClientInfo = {
   altura?: string;
 };
 
+type PlanInfo = {
+  plan?: string;
+  duration?: string;
+};
+
 type ProtocolPdfContentProps = {
   protocolo: ProtocolPdfData;
   clientName: string;
   formattedDate: string;
   clientInfo?: ClientInfo;
+  planInfo?: PlanInfo;
   wrapperId?: string;
 };
 
@@ -28,6 +34,21 @@ const tipoProtocoloLabels: Record<string, string> = {
   bulking: "Bulking",
   cutting: "Cutting",
   recomp: "Recomposição Corporal",
+};
+
+const planLabels: Record<string, string> = {
+  base: "Base",
+  transformacao: "Transformação",
+  elite: "Elite",
+};
+
+const durationLabels: Record<string, string> = {
+  mensal: "Mensal",
+  monthly: "Mensal",
+  trimestral: "Trimestral",
+  quarterly: "Trimestral",
+  semestral: "Semestral",
+  semiannual: "Semestral",
 };
 
 const OBSERVACOES_FIXAS = `Alimentos pesados todos preparados
@@ -57,8 +78,13 @@ export function ProtocolPdfContent({
   clientName,
   formattedDate,
   clientInfo,
+  planInfo,
   wrapperId = "protocolo-content",
 }: ProtocolPdfContentProps) {
+  const planLabel = planInfo?.plan ? planLabels[planInfo.plan] || planInfo.plan : null;
+  const durationLabel = planInfo?.duration ? durationLabels[planInfo.duration.toLowerCase()] || planInfo.duration : null;
+  const planDisplay = planLabel ? `Plano ${planLabel}${durationLabel ? ` ${durationLabel}` : ""}` : null;
+
   return (
     <div id={wrapperId} className="pdf-protocol-wrapper">
       <div className="pdf-cover-header">
@@ -67,6 +93,9 @@ export function ProtocolPdfContent({
           <div className="pdf-cover-brand">
             <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
             <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
+            {planDisplay && (
+              <span className="pdf-brand-plan">{planDisplay}</span>
+            )}
           </div>
         </div>
         <div className="pdf-cover-divider" />
