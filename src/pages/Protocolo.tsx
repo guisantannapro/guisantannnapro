@@ -43,6 +43,7 @@ const Protocolo = () => {
       ]);
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
+      setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
       
       const fd = formSub?.form_data as any;
       if (fd) {
