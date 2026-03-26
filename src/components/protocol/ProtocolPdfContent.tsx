@@ -102,32 +102,26 @@ export function ProtocolPdfContent({
               <span className="pdf-cover-label">PROTOCOLO</span>
               <span className="pdf-cover-title">{clientName}</span>
             </div>
-            <div className="pdf-cover-info-right">
-              <div className="pdf-cover-meta">
+            <div className="pdf-cover-info-right" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">TIPO</span>
                 <span className="pdf-cover-value">
                   {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
                 </span>
               </div>
-              {clientInfo?.idade && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">IDADE</span>
-                  <span className="pdf-cover-value">{clientInfo.idade}</span>
-                </div>
-              )}
-              {clientInfo?.peso && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">PESO</span>
-                  <span className="pdf-cover-value">{clientInfo.peso}</span>
-                </div>
-              )}
-              {clientInfo?.altura && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">ALTURA</span>
-                  <span className="pdf-cover-value">{clientInfo.altura}</span>
-                </div>
-              )}
-              <div className="pdf-cover-meta">
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.idade ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">IDADE</span>
+                <span className="pdf-cover-value">{clientInfo?.idade || '--'}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.peso ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">PESO</span>
+                <span className="pdf-cover-value">{clientInfo?.peso ? `${clientInfo.peso} kg` : '--'}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.altura ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">ALTURA</span>
+                <span className="pdf-cover-value">{clientInfo?.altura ? `${clientInfo.altura} cm` : '--'}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">DATA</span>
                 <span className="pdf-cover-value">{formattedDate}</span>
               </div>
