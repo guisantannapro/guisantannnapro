@@ -52,7 +52,7 @@ const Protocolo = () => {
       const idade = fd?.age || undefined;
       const peso = fd?.weight || undefined;
       const altura = fd?.height || undefined;
-      console.log('[DEBUG PDF] Valores extraídos:', { idade, peso, altura });
+      
 
       if (fd) {
         setClientInfo({ idade, peso, altura });
