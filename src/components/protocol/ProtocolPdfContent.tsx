@@ -212,7 +212,7 @@ export function ProtocolPdfContent({
         </div>
       )}
 
-      <div className="pdf-footer">
+      <div className="pdf-footer" data-pdf-section>
         <div className="pdf-footer-divider" />
         <p className="pdf-footer-text">Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva</p>
         <p className="pdf-footer-text pdf-footer-disclaimer">
