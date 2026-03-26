@@ -42,16 +42,19 @@ const Protocolo = () => {
         supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
+      console.log('[DEBUG PDF] Dados brutos do formulário:', formSub);
+
       setClientName(profile?.full_name || session.user.email || "Cliente");
       setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
       
       const fd = formSub?.form_data as any;
+      const idade = fd?.age || undefined;
+      const peso = fd?.weight || undefined;
+      const altura = fd?.height || undefined;
+      console.log('[DEBUG PDF] Valores extraídos:', { idade, peso, altura });
+
       if (fd) {
-        setClientInfo({
-          idade: fd.age || undefined,
-          peso: fd.weight || undefined,
-          altura: fd.height || undefined,
-        });
+        setClientInfo({ idade, peso, altura });
       }
       
       setProtocolo(data);
@@ -121,6 +124,7 @@ const Protocolo = () => {
         </div>
       </header>
 
+      {(() => { console.log('[DEBUG PDF] Props enviadas ao componente:', { clientInfo, planInfo }); return null; })()}
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
     </div>
   );
