@@ -43,7 +43,7 @@ const Protocolo = () => {
         supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
-      console.log('[DEBUG PDF] Dados brutos do formulário:', formSub);
+      
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
       setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
