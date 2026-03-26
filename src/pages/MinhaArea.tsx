@@ -512,8 +512,6 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
-
         <EvolutionSection evolutions={evolutions} />
       </main>
 
