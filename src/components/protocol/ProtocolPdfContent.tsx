@@ -1,4 +1,5 @@
 import logoGS from "@/assets/logo-gs.png";
+import { MealPlanFormatter } from "./MealPlanFormatter";
 
 type ProtocolPdfData = {
   nome: string;
