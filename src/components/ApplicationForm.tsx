@@ -532,6 +532,10 @@ const ApplicationForm = () => {
 
       await supabase.from("profiles").update({ full_name: regName }).eq("id", newUserId);
 
+      // Resetar todos os estados antes do redirect
+      resetAllStates();
+      setSubmitted(false);
+
       // Auto-redirect to client area
       window.location.href = "/area-do-cliente";
     } catch (err) {
