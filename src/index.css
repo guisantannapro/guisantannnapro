@@ -163,13 +163,20 @@
   margin-top: 2px;
 }
 
-.pdf-brand-plan {
-  font-size: 11px;
-  letter-spacing: 0.15em;
+.pdf-plan-banner {
+  text-align: center;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  border-top: 1px solid hsl(43 74% 49% / 0.3);
+  border-bottom: 1px solid hsl(43 74% 49% / 0.3);
+}
+
+.pdf-plan-banner-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: hsl(43 74% 49%);
-  margin-top: 4px;
-  font-weight: 600;
 }
 
 .pdf-cover-divider {
