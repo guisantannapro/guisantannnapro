@@ -231,6 +231,7 @@ const Dashboard = () => {
 
       const enriched: ClientData[] = (submissions || []).map((s) => ({
         ...s,
+        form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
         profile: profileMap.get(s.user_id),
         resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
         resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
