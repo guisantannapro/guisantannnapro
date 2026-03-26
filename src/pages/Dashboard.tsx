@@ -153,17 +153,21 @@ const Dashboard = () => {
       (submissions || []).forEach((submission) => {
         const currentUserId = submission.user_id;
         if (!currentUserId) return;
+        const formData =
+          submission.form_data && typeof submission.form_data === "object" && !Array.isArray(submission.form_data)
+            ? (submission.form_data as Record<string, unknown>)
+            : {};
 
         if (!latestPlanByUser.has(currentUserId) && typeof submission.plan === "string" && submission.plan.trim() !== "") {
           latestPlanByUser.set(currentUserId, submission.plan);
         }
 
-        const period = submission.form_data?.billingPeriod;
+        const period = formData.billingPeriod;
         if (!latestPeriodByUser.has(currentUserId) && typeof period === "string" && period.trim() !== "") {
           latestPeriodByUser.set(currentUserId, period);
         }
 
-        const modality = submission.form_data?.billingModality;
+        const modality = formData.billingModality;
         if (!latestModalityByUser.has(currentUserId) && typeof modality === "string" && modality.trim() !== "") {
           latestModalityByUser.set(currentUserId, modality);
         }
