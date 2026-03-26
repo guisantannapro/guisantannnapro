@@ -637,7 +637,7 @@ const SubmissionPhotos = ({
   return (
     <div className="border-t border-border pt-4 first:border-t-0 first:pt-0">
       <p className="text-xs text-muted-foreground mb-3">Enviadas em {new Date(submission.created_at).toLocaleDateString("pt-BR")}</p>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-lg">
         {photoFields.map((field) =>
           submission[field.key] ? (
             <div key={field.key} className="space-y-1">

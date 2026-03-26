@@ -113,7 +113,7 @@ const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
           <Camera size={14} className="inline mr-1.5" />
           Fotos de acompanhamento
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 max-w-md">
           {photoTypes.map(({ key, label }) => (
             <div key={key} className="space-y-1">
               <span className="text-xs text-muted-foreground">{label}</span>
