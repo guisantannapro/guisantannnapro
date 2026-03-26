@@ -46,86 +46,81 @@ export async function generateProtocolPdf(
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     let currentY = MARGIN_TOP_MM;
 
-    const sections = Array.from(
-      element.querySelectorAll("[data-pdf-section]")
-    ) as HTMLElement[];
-
+    const sections = Array.from(element.querySelectorAll("[data-pdf-section]")) as HTMLElement[];
     if (sections.length === 0) {
-      // Fallback: render the whole element as one block
       sections.push(element);
     }
 
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-
+    for (const section of sections) {
       const canvas = await html2canvas(section, {
         scale: 2,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
-        width: 700,
-        windowWidth: 700,
       });
 
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
-      const widthPx = canvas.width / 2;
-      const heightPx = canvas.height / 2;
-      const scaleFactor = CONTENT_WIDTH_MM / widthPx;
-      const sectionHeightMM = heightPx * scaleFactor;
+      const renderedWidthPx = canvas.width / 2;
+      const renderedHeightPx = canvas.height / 2;
+      const sectionHeightMM = (renderedHeightPx * CONTENT_WIDTH_MM) / renderedWidthPx;
 
-      // If section fits in remaining space, place it; otherwise new page
-      const remainingSpace = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
-
-      if (sectionHeightMM > remainingSpace && currentY > MARGIN_TOP_MM) {
+      const remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
+      if (sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
         pdf.addPage();
         currentY = MARGIN_TOP_MM;
       }
 
-      // If the section is taller than a full page, we need to split it across pages
-      if (sectionHeightMM > CONTENT_HEIGHT_MM) {
-        // Split large section across multiple pages
-        const totalPxHeight = canvas.height;
-        const pxPerMM = totalPxHeight / sectionHeightMM;
-        let remainingPxHeight = totalPxHeight;
-        let srcY = 0;
-
-        while (remainingPxHeight > 0) {
-          const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
-          const availablePx = availableMM * pxPerMM;
-          const sliceHeight = Math.min(availablePx, remainingPxHeight);
-          const sliceMM = sliceHeight / pxPerMM;
-
-          // Create a temporary canvas for this slice
-          const sliceCanvas = document.createElement("canvas");
-          sliceCanvas.width = canvas.width;
-          sliceCanvas.height = Math.ceil(sliceHeight);
-          const ctx = sliceCanvas.getContext("2d");
-          if (ctx) {
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-            ctx.drawImage(
-              canvas,
-              0, srcY, canvas.width, Math.ceil(sliceHeight),
-              0, 0, canvas.width, Math.ceil(sliceHeight)
-            );
-          }
-
-          const sliceImg = sliceCanvas.toDataURL("image/jpeg", 0.95);
-          pdf.addImage(sliceImg, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceMM);
-
-          srcY += sliceHeight;
-          remainingPxHeight -= sliceHeight;
-          
-          if (remainingPxHeight > 0) {
-            pdf.addPage();
-            currentY = MARGIN_TOP_MM;
-          } else {
-            currentY += sliceMM + SECTION_GAP_MM;
-          }
-        }
-      } else {
-        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM) {
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
+        continue;
+      }
+
+      const pxPerMM = canvas.height / sectionHeightMM;
+      let remainingPxHeight = canvas.height;
+      let sourceY = 0;
+
+      while (remainingPxHeight > 0) {
+        const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
+        const availablePx = Math.max(1, Math.floor(availableMM * pxPerMM));
+        const sliceHeightPx = Math.min(availablePx, remainingPxHeight);
+        const sliceHeightMM = sliceHeightPx / pxPerMM;
+
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = sliceHeightPx;
+
+        const ctx = sliceCanvas.getContext("2d");
+        if (!ctx) {
+          throw new Error("Não foi possível processar o canvas do PDF");
+        }
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        ctx.drawImage(
+          canvas,
+          0,
+          sourceY,
+          canvas.width,
+          sliceHeightPx,
+          0,
+          0,
+          sliceCanvas.width,
+          sliceCanvas.height
+        );
+
+        const sliceImgData = sliceCanvas.toDataURL("image/png");
+        pdf.addImage(sliceImgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
+
+        sourceY += sliceHeightPx;
+        remainingPxHeight -= sliceHeightPx;
+
+        if (remainingPxHeight > 0) {
+          pdf.addPage();
+          currentY = MARGIN_TOP_MM;
+        } else {
+          currentY += sliceHeightMM + SECTION_GAP_MM;
+        }
       }
     }
 
