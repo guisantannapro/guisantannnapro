@@ -115,11 +115,11 @@ export function ProtocolPdfContent({
               </div>
               <div className="pdf-cover-meta" style={{ display: clientInfo?.peso ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">PESO</span>
-                <span className="pdf-cover-value">{clientInfo?.peso ? `${clientInfo.peso} kg` : '--'}</span>
+                <span className="pdf-cover-value">{clientInfo?.peso || '--'}</span>
               </div>
               <div className="pdf-cover-meta" style={{ display: clientInfo?.altura ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">ALTURA</span>
-                <span className="pdf-cover-value">{clientInfo?.altura ? `${clientInfo.altura} cm` : '--'}</span>
+                <span className="pdf-cover-value">{clientInfo?.altura || '--'}</span>
               </div>
               <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">DATA</span>
