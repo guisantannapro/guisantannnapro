@@ -98,37 +98,15 @@ const Field = ({ label, required, children }: { label: string; required?: boolea
 
 const inputClass = "w-full bg-muted border border-border rounded-md px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors text-sm";
 
-const findInvalidPaths = (value: unknown, path: string): string[] => {
-  if (value === undefined) return [`${path} (undefined)`];
-  if (typeof value === "string" && value.trim() === "") return [`${path} (string vazia)`];
-  if (value === null) return [];
-
-  if (Array.isArray(value)) {
-    return value.flatMap((item, index) => findInvalidPaths(item, `${path}[${index}]`));
-  }
-
-  if (typeof value === "object") {
-    return Object.entries(value as Record<string, unknown>).flatMap(([key, item]) =>
-      findInvalidPaths(item, `${path}.${key}`),
-    );
-  }
-
-  return [];
-};
-
 const sanitizePayloadValue = (value: unknown): unknown => {
   if (value === undefined) return undefined;
   if (typeof value === "string") {
     const trimmed = value.trim();
     return trimmed === "" ? undefined : trimmed;
   }
-
   if (Array.isArray(value)) {
-    return value
-      .map((item) => sanitizePayloadValue(item))
-      .filter((item) => item !== undefined);
+    return value.map((item) => sanitizePayloadValue(item)).filter((item) => item !== undefined);
   }
-
   if (value && typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
@@ -136,36 +114,9 @@ const sanitizePayloadValue = (value: unknown): unknown => {
         .filter(([, item]) => item !== undefined),
     );
   }
-
   return value;
 };
 
-const comparePayloads = (current: unknown, previous: unknown, path = "payload"): string[] => {
-  if (JSON.stringify(current) === JSON.stringify(previous)) {
-    return [];
-  }
-
-  if (
-    current === null ||
-    previous === null ||
-    current === undefined ||
-    previous === undefined ||
-    typeof current !== "object" ||
-    typeof previous !== "object"
-  ) {
-    return [`${path}: ${JSON.stringify(previous)} -> ${JSON.stringify(current)}`];
-  }
-
-  if (Array.isArray(current) || Array.isArray(previous)) {
-    return [`${path}: ${JSON.stringify(previous)} -> ${JSON.stringify(current)}`];
-  }
-
-  const currentObj = current as Record<string, unknown>;
-  const previousObj = previous as Record<string, unknown>;
-  const keys = new Set([...Object.keys(currentObj), ...Object.keys(previousObj)]);
-
-  return [...keys].flatMap((key) => comparePayloads(currentObj[key], previousObj[key], `${path}.${key}`));
-};
 
 const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
   <div className="flex flex-col gap-2">
@@ -329,14 +280,6 @@ const ApplicationForm = () => {
           : null;
       const folderKey = sessionUserId ?? `anon-${Date.now()}`;
 
-      console.log("[AUTH DEBUG] SESSION:", session);
-      console.log("[AUTH DEBUG] USER:", session?.user);
-      console.log("[AUTH DEBUG] AUTH UID:", session?.user?.id);
-      console.log("[AUTH DEBUG] sessionError:", sessionError);
-      console.log("[AUTH DEBUG] userId resolvido:", sessionUserId);
-      console.log("[AUTH DEBUG] role:", session ? "authenticated" : "anon");
-      console.log("[AUTH DEBUG] Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-      console.log("[AUTH DEBUG] Usando anon key:", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.slice(0, 20) + "...");
 
       let photoFrontPath: string | null = null;
       let photoSidePath: string | null = null;
@@ -378,50 +321,9 @@ const ApplicationForm = () => {
       }
       const insertPayload = sanitizedPayload as FormSubmissionInsert;
 
-      const invalidPaths = findInvalidPaths(rawInsertPayload, "payload");
-      if (invalidPaths.length > 0) {
-        console.warn("[FORM DEBUG] Campos inválidos encontrados no payload bruto:", invalidPaths);
-      }
-
-      const requiredIssues = [
-        insertPayload.form_data == null ? "payload.form_data está null/undefined" : null,
-        insertPayload.selected_equipment == null ? "payload.selected_equipment está null/undefined" : null,
-      ].filter(Boolean);
-
-      if (requiredIssues.length > 0) {
-        console.warn("[FORM DEBUG] Campos obrigatórios com problema:", requiredIssues);
-      }
-
-      const flowType = purchasedPlan ? "post-checkout" : "direct";
-      const currentFlowStorageKey = flowType === "post-checkout" ? "debug_payload_post_checkout" : "debug_payload_direct";
-      const oppositeFlowStorageKey = flowType === "post-checkout" ? "debug_payload_direct" : "debug_payload_post_checkout";
-      console.log(`[FORM DEBUG] fluxo detectado: ${flowType}`);
-      console.log("[FORM DEBUG] payload completo:", insertPayload);
-
-      const oppositePayloadRaw = localStorage.getItem(oppositeFlowStorageKey);
-      if (oppositePayloadRaw) {
-        try {
-          const oppositePayload = JSON.parse(oppositePayloadRaw);
-          const differences = comparePayloads(insertPayload, oppositePayload);
-          console.log(
-            `[FORM DEBUG] Diferenças entre fluxo ${flowType} e ${flowType === "post-checkout" ? "direct" : "post-checkout"}:`,
-            differences.length > 0 ? differences.slice(0, 200) : "Nenhuma diferença",
-          );
-        } catch (parseError) {
-          console.error("[FORM DEBUG] Erro ao parsear payload salvo para comparação:", parseError);
-        }
-      } else {
-        console.log("[FORM DEBUG] Ainda não existe payload do fluxo oposto para comparação.");
-      }
-
-      localStorage.setItem(currentFlowStorageKey, JSON.stringify(insertPayload));
-
       // Gerar ID client-side para poder vincular depois sem precisar de SELECT
       const generatedId = crypto.randomUUID();
-      const { data, error } = await supabase.from("form_submissions").insert([{ ...insertPayload, id: generatedId }]);
-
-      console.log("[FORM DEBUG] resposta completa do insert (data):", data);
-      console.log("[FORM DEBUG] resposta completa do insert (error):", error);
+      const { error } = await supabase.from("form_submissions").insert([{ ...insertPayload, id: generatedId }]);
 
       if (error) {
         console.error("ERRO INSERT:", error);
