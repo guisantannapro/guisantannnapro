@@ -109,24 +109,18 @@ export function ProtocolPdfContent({
                   {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
                 </span>
               </div>
-              {clientInfo?.idade && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">IDADE</span>
-                  <span className="pdf-cover-value">{clientInfo.idade}</span>
-                </div>
-              )}
-              {clientInfo?.peso && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">PESO</span>
-                  <span className="pdf-cover-value">{clientInfo.peso}</span>
-                </div>
-              )}
-              {clientInfo?.altura && (
-                <div className="pdf-cover-meta">
-                  <span className="pdf-cover-label">ALTURA</span>
-                  <span className="pdf-cover-value">{clientInfo.altura}</span>
-                </div>
-              )}
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.idade ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">IDADE</span>
+                <span className="pdf-cover-value">{clientInfo?.idade || '--'}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.peso ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">PESO</span>
+                <span className="pdf-cover-value">{clientInfo?.peso ? `${clientInfo.peso} kg` : '--'}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.altura ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">ALTURA</span>
+                <span className="pdf-cover-value">{clientInfo?.altura ? `${clientInfo.altura} cm` : '--'}</span>
+              </div>
               <div className="pdf-cover-meta">
                 <span className="pdf-cover-label">DATA</span>
                 <span className="pdf-cover-value">{formattedDate}</span>
