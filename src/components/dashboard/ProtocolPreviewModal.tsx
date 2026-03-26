@@ -36,23 +36,89 @@ interface ProtocolPreviewModalProps {
 }
 
 const dietTextTemplates: Record<ProtocolType, string> = {
-  bulking: `Refeição 1 — Café da manhã (07:00)
-• 4 ovos mexidos + 3 fatias de pão integral + 1 banana + pasta de amendoim
+  bulking: `Refeição 1
 
-Refeição 2 — Lanche da manhã (10:00)
-• Shake: whey + aveia + leite integral + banana
+1 - Mingau
+30g whey protein
+60g aveia
+200g iogurte desnatado
+40g pasta de amendoim integral
+200g frutas (mamão, melão, morango, melancia)
+Obs: escolher uma fruta ou misturar de sua preferencia
 
-Refeição 3 — Almoço (12:30)
-• 200g frango grelhado + 150g arroz + 100g feijão + salada + azeite
+1 OU 2
 
-Refeição 4 — Lanche da tarde (15:30)
-• Batata doce + frango desfiado + suco natural
+2 - 4 fatias de pão de forma tradicional
+3 ovos inteiros + 2 claras
+200ml leite desnatado s/lac
+200g frutas (mamão, melão, morango, melancia)
+Obs: escolher uma fruta ou misturar de sua preferencia
 
-Refeição 5 — Pré-treino (17:30)
-• Tapioca com queijo + café preto
 
-Refeição 6 — Jantar (20:00)
-• 200g carne vermelha + macarrão integral + legumes refogados`,
+Refeição 2
+
+120g frango, peixe branco ou carne magra (patinho)
+250g arroz, macarrão ou aipim ou 400g batata inglesa ou doce assada
+100g feijão
+10g azeite de oliva
+100g abacaxi ou 150g mamão
+100g vegetais
+Salada verde a vontade
+
+Pre treino
+
+30g palatinose
+1 banana
+
+
+Pós treino
+
+6 Pães de forma tradicional
+60g sucrilhos
+30g whey protein ou 4 claras 1 ovo inteiro
+200ml leite desnatado s/lac
+1 banana
+
+Refeição 3
+
+120g frango, peixe branco ou carne magra (patinho)
+250g arroz, macarrão ou aipim ou 400g batata inglesa ou doce assada
+Salada verde a vontade
+1 maçã
+
+Ou
+
+40g whey protein
+90g farinha de aveia
+200ml leite
+1 maçã
+
+Refeição 4
+
+150g peixe branco ou frango ou carne magra(patinho) ou 1 ovo inteiro +6 claras,
+250g arroz, macarrão ou aipim ou 400 batata inglesa ou doce assada
+100g vegetais
+10g azeite de oliva
+Salada verde a vontade
+200g frutas (mamão, melão, morango, melancia)
+Obs: escolher uma fruta ou misturar de sua preferencia
+
+OU
+
+120g tapioca
+3 ovos inteiros
+80g frango desfiado
+Salada verde a vontade
+200g frutas (mamão, melão, morango, melancia)
+Obs: escolher uma fruta ou misturar de sua preferencia
+
+
+Consumo de água: 4,5 a 5L dia
+
+
+Refeição livre
+
+Uma vez por semana trocar a refeição 4 por uma refeição livre`,
 
   cutting: `Refeição 1 — Café da manhã (07:00)
 • 3 claras + 1 ovo inteiro + 1 fatia pão integral + café sem açúcar
