@@ -102,8 +102,8 @@ export function ProtocolPdfContent({
               <span className="pdf-cover-label">PROTOCOLO</span>
               <span className="pdf-cover-title">{clientName}</span>
             </div>
-            <div className="pdf-cover-info-right">
-              <div className="pdf-cover-meta">
+            <div className="pdf-cover-info-right" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">TIPO</span>
                 <span className="pdf-cover-value">
                   {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
