@@ -517,6 +517,7 @@ const MinhaArea = () => {
             protocolo={pdfProtocol}
             clientName={profile?.full_name || session?.user?.email || "Cliente"}
             formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+            planInfo={{ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined }}
           />
         </div>
       )}
