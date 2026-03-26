@@ -124,6 +124,7 @@ const Protocolo = () => {
         </div>
       </header>
 
+      {console.log('[DEBUG PDF] Props enviadas ao componente:', { clientInfo, planInfo })}
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
     </div>
   );
