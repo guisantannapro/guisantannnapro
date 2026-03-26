@@ -107,7 +107,7 @@ const MinhaArea = () => {
       }
       if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
       if (checkinsRes.data) setCheckins(checkinsRes.data as any[]);
-      if (feedbacksRes.data) setFeedbacks(feedbacksRes.data as any[]);
+      
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
