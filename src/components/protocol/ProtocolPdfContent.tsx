@@ -121,7 +121,7 @@ export function ProtocolPdfContent({
                 <span className="pdf-cover-label">ALTURA</span>
                 <span className="pdf-cover-value">{clientInfo?.altura ? `${clientInfo.altura} cm` : '--'}</span>
               </div>
-              <div className="pdf-cover-meta">
+              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span className="pdf-cover-label">DATA</span>
                 <span className="pdf-cover-value">{formattedDate}</span>
               </div>
