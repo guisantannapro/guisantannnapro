@@ -131,12 +131,12 @@ export function ProtocolPdfContent({
               <span className="pdf-cover-value">{formattedDate}</span>
             </div>
           </div>
-          {planDisplay && (
-            <div className="pdf-plan-banner">
-              <span className="pdf-plan-banner-text">{planDisplay}</span>
-            </div>
-          )}
         </div>
+        {planDisplay && (
+          <div className="pdf-plan-banner">
+            <span className="pdf-plan-banner-text">{planDisplay}</span>
+          </div>
+        )}
       </div>
 
 
