@@ -370,50 +370,9 @@ const ApplicationForm = () => {
       }
       const insertPayload = sanitizedPayload as FormSubmissionInsert;
 
-      const invalidPaths = findInvalidPaths(rawInsertPayload, "payload");
-      if (invalidPaths.length > 0) {
-        console.warn("[FORM DEBUG] Campos inválidos encontrados no payload bruto:", invalidPaths);
-      }
-
-      const requiredIssues = [
-        insertPayload.form_data == null ? "payload.form_data está null/undefined" : null,
-        insertPayload.selected_equipment == null ? "payload.selected_equipment está null/undefined" : null,
-      ].filter(Boolean);
-
-      if (requiredIssues.length > 0) {
-        console.warn("[FORM DEBUG] Campos obrigatórios com problema:", requiredIssues);
-      }
-
-      const flowType = purchasedPlan ? "post-checkout" : "direct";
-      const currentFlowStorageKey = flowType === "post-checkout" ? "debug_payload_post_checkout" : "debug_payload_direct";
-      const oppositeFlowStorageKey = flowType === "post-checkout" ? "debug_payload_direct" : "debug_payload_post_checkout";
-      console.log(`[FORM DEBUG] fluxo detectado: ${flowType}`);
-      console.log("[FORM DEBUG] payload completo:", insertPayload);
-
-      const oppositePayloadRaw = localStorage.getItem(oppositeFlowStorageKey);
-      if (oppositePayloadRaw) {
-        try {
-          const oppositePayload = JSON.parse(oppositePayloadRaw);
-          const differences = comparePayloads(insertPayload, oppositePayload);
-          console.log(
-            `[FORM DEBUG] Diferenças entre fluxo ${flowType} e ${flowType === "post-checkout" ? "direct" : "post-checkout"}:`,
-            differences.length > 0 ? differences.slice(0, 200) : "Nenhuma diferença",
-          );
-        } catch (parseError) {
-          console.error("[FORM DEBUG] Erro ao parsear payload salvo para comparação:", parseError);
-        }
-      } else {
-        console.log("[FORM DEBUG] Ainda não existe payload do fluxo oposto para comparação.");
-      }
-
-      localStorage.setItem(currentFlowStorageKey, JSON.stringify(insertPayload));
-
       // Gerar ID client-side para poder vincular depois sem precisar de SELECT
       const generatedId = crypto.randomUUID();
-      const { data, error } = await supabase.from("form_submissions").insert([{ ...insertPayload, id: generatedId }]);
-
-      console.log("[FORM DEBUG] resposta completa do insert (data):", data);
-      console.log("[FORM DEBUG] resposta completa do insert (error):", error);
+      const { error } = await supabase.from("form_submissions").insert([{ ...insertPayload, id: generatedId }]);
 
       if (error) {
         console.error("ERRO INSERT:", error);
