@@ -36,7 +36,20 @@ const tipoProtocoloLabels: Record<string, string> = {
   recomp: "Recomposição Corporal",
 };
 
-const OBSERVACOES_FIXAS = `Alimentos pesados todos preparados
+const planLabels: Record<string, string> = {
+  base: "Base",
+  transformacao: "Transformação",
+  elite: "Elite",
+};
+
+const durationLabels: Record<string, string> = {
+  mensal: "Mensal",
+  monthly: "Mensal",
+  trimestral: "Trimestral",
+  quarterly: "Trimestral",
+  semestral: "Semestral",
+  semiannual: "Semestral",
+};
 
 Prepare os alimentos sem adição de temperos prontos, óleos, e conservantes/corantes
 
