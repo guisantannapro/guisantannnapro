@@ -130,10 +130,12 @@
   justify-content: center;
   gap: 16px;
   margin-bottom: 20px;
-  padding-left: 68px;
+  position: relative;
 }
 
 .pdf-cover-logo {
+  position: absolute;
+  left: 0;
   width: 52px;
   height: 52px;
   border-radius: 10px;
