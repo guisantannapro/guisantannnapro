@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale, MessageSquare } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import RenewalModal from "@/components/minha-area/RenewalModal";
 import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
-import FeedbackForm from "@/components/minha-area/FeedbackForm";
+
 
 const planLabels: Record<string, string> = {
   base: "Base",
@@ -42,7 +42,7 @@ const MinhaArea = () => {
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const [evolutions, setEvolutions] = useState<any[]>([]);
   const [checkins, setCheckins] = useState<any[]>([]);
-  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,14 +86,13 @@ const MinhaArea = () => {
   const fetchData = async (userId: string) => {
     setLoading(true);
     try {
-      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
+      const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_protocols").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("protocolos").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_evolutions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
         supabase.from("client_checkins" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
-        supabase.from("client_feedbacks" as any).select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data);
@@ -108,7 +107,7 @@ const MinhaArea = () => {
       }
       if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
       if (checkinsRes.data) setCheckins(checkinsRes.data as any[]);
-      if (feedbacksRes.data) setFeedbacks(feedbacksRes.data as any[]);
+      
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -477,42 +476,8 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
-        {/* Feedback */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.14 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <MessageSquare className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold uppercase text-foreground">Feedback</h2>
-          </div>
-          <p className="text-muted-foreground text-sm mb-4">
-            Compartilhe como está se sentindo, dificuldades ou sugestões.
-          </p>
-          {session?.user?.id && (
-            <FeedbackForm userId={session.user.id} onSuccess={() => fetchData(session.user.id)} />
-          )}
-          {feedbacks.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-border space-y-3">
-              <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks Anteriores</h3>
-              {feedbacks.map((fb: any) => (
-                <div key={fb.id} className="border border-border rounded-lg p-3 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(fb.created_at).toLocaleDateString("pt-BR")}
-                    </span>
-                    <span className={`text-sm font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
-                      {fb.rating}/10
-                    </span>
-                  </div>
-                  <p className="text-sm text-foreground">{fb.message}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </motion.div>
+
+
 
         <EvolutionSection evolutions={evolutions} />
       </main>

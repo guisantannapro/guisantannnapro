@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
-import { Loader2, Camera, Scale, Upload, CheckCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { Loader2, Camera, Scale, Upload, CheckCircle, Star } from "lucide-react";
 
 interface CheckinFormProps {
   userId: string;
@@ -15,6 +15,7 @@ interface CheckinFormProps {
 const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
   const [weight, setWeight] = useState("");
   const [notes, setNotes] = useState("");
+  const [rating, setRating] = useState(7);
   const [photos, setPhotos] = useState<{ front: File | null; side: File | null; back: File | null }>({
     front: null, side: null, back: null,
   });
@@ -71,9 +72,19 @@ const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
 
       if (error) throw error;
 
+      // Save satisfaction rating as feedback
+      if (notes.trim()) {
+        await supabase.from("client_feedbacks" as any).insert({
+          user_id: userId,
+          message: notes.trim(),
+          rating,
+        } as any);
+      }
+
       toast.success("Check-in enviado com sucesso!");
       setWeight("");
       setNotes("");
+      setRating(7);
       setPhotos({ front: null, side: null, back: null });
       setPreviews({ front: null, side: null, back: null });
       onSuccess();
@@ -83,6 +94,12 @@ const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const getRatingColor = () => {
+    if (rating <= 3) return "text-destructive";
+    if (rating <= 6) return "text-yellow-500";
+    return "text-green-500";
   };
 
   const photoTypes = [
@@ -148,12 +165,36 @@ const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-foreground mb-1.5 block">Observações (opcional)</label>
+        <label className="text-sm font-medium text-foreground mb-3 block">
+          <Star size={14} className="inline mr-1.5" />
+          Nota de satisfação
+        </label>
+        <div className="flex items-center gap-4 max-w-md">
+          <Slider
+            value={[rating]}
+            onValueChange={(v) => setRating(v[0])}
+            min={1}
+            max={10}
+            step={1}
+            className="flex-1"
+          />
+          <span className={`text-2xl font-bold min-w-[2ch] text-right ${getRatingColor()}`}>
+            {rating}
+          </span>
+        </div>
+        <div className="flex justify-between text-xs text-muted-foreground mt-1 max-w-md">
+          <span>Insatisfeito</span>
+          <span>Muito satisfeito</span>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-foreground mb-1.5 block">Feedback geral</label>
         <Textarea
-          placeholder="Como está se sentindo, mudanças percebidas..."
+          placeholder="Como está se sentindo, mudanças percebidas, dificuldades, sugestões..."
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          maxLength={500}
+          maxLength={1000}
           rows={3}
         />
       </div>
