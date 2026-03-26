@@ -51,6 +51,8 @@ const durationLabels: Record<string, string> = {
   semiannual: "Semestral",
 };
 
+const OBSERVACOES_FIXAS = `Alimentos pesados todos preparados
+
 Prepare os alimentos sem adição de temperos prontos, óleos, e conservantes/corantes
 
 Utilize no preparo dos alimentos temperos naturais (orégano, cominho, páprica, alho, curry, chimichuri…)
