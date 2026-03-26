@@ -134,7 +134,12 @@ export function ProtocolPdfContent({
         </div>
       </div>
 
-      {/* Plano Alimentar */}
+      {planDisplay && (
+        <div className="pdf-plan-banner">
+          <span className="pdf-plan-banner-text">{planDisplay}</span>
+        </div>
+      )}
+
       {protocolo.plano_alimentar && (
         <div className="pdf-section">
           <div className="pdf-section-header">
