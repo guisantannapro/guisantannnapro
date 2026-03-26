@@ -87,7 +87,7 @@ export function ProtocolPdfContent({
 
   return (
     <div id={wrapperId} className="pdf-protocol-wrapper">
-      <div className="pdf-cover-header">
+      <div className="pdf-cover-header" data-pdf-section>
         <div className="pdf-cover-logo-row">
           <img src={logoGS} alt="GS" className="pdf-cover-logo" crossOrigin="anonymous" />
           <div className="pdf-cover-brand">
