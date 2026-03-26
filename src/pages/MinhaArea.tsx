@@ -413,6 +413,8 @@ const MinhaArea = () => {
           </motion.div>
         )}
 
+        <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
+
         {protocols.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -511,8 +513,6 @@ const MinhaArea = () => {
             </div>
           )}
         </motion.div>
-
-        <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
 
         <EvolutionSection evolutions={evolutions} />
       </main>
