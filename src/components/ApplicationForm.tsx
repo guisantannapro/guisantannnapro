@@ -260,10 +260,7 @@ const ApplicationForm = () => {
       // Encerrar qualquer sessão anterior
       await supabase.auth.signOut();
 
-      // Limpar localStorage de compras e debug
-      localStorage.removeItem("purchased_plan");
-      localStorage.removeItem("purchased_period");
-      localStorage.removeItem("purchased_modality");
+      // Limpar apenas dados de debug (dados de compra são usados no pós-checkout)
       localStorage.removeItem("debug_payload_post_checkout");
       localStorage.removeItem("debug_payload_direct");
 
@@ -277,9 +274,6 @@ const ApplicationForm = () => {
     // Cleanup ao desmontar (navegação/voltar)
     return () => {
       supabase.auth.signOut();
-      localStorage.removeItem("purchased_plan");
-      localStorage.removeItem("purchased_period");
-      localStorage.removeItem("purchased_modality");
       localStorage.removeItem("debug_payload_post_checkout");
       localStorage.removeItem("debug_payload_direct");
     };
