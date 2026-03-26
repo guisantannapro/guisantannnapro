@@ -31,6 +31,7 @@ const Protocolo = () => {
       const { data, error } = await supabase.from("protocolos").select("*").eq("id", id!).single();
 
       if (error || !data) {
+        toast.error("Protocolo não encontrado ou você não tem permissão para acessá-lo.");
         navigate("/area-do-cliente");
         return;
       }
@@ -42,7 +43,7 @@ const Protocolo = () => {
         supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
-      console.log('[DEBUG PDF] Dados brutos do formulário:', formSub);
+      
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
       setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
@@ -51,7 +52,7 @@ const Protocolo = () => {
       const idade = fd?.age || undefined;
       const peso = fd?.weight || undefined;
       const altura = fd?.height || undefined;
-      console.log('[DEBUG PDF] Valores extraídos:', { idade, peso, altura });
+      
 
       if (fd) {
         setClientInfo({ idade, peso, altura });
@@ -124,7 +125,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      {(() => { console.log('[DEBUG PDF] Props enviadas ao componente:', { clientInfo, planInfo }); return null; })()}
+      
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
     </div>
   );
