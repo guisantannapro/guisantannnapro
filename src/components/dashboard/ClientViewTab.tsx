@@ -440,6 +440,11 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
             protocolo={pdfProtocol}
             clientName={clientName}
             formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+            clientInfo={{
+              idade: (submissions?.[0]?.form_data as any)?.age || undefined,
+              peso: (submissions?.[0]?.form_data as any)?.weight || undefined,
+              altura: (submissions?.[0]?.form_data as any)?.height || undefined,
+            }}
             planInfo={{ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined }}
           />
         </div>
