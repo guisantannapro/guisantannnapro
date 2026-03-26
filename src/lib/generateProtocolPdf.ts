@@ -66,7 +66,8 @@ export async function generateProtocolPdf(
       const sectionHeightMM = (renderedHeightPx * CONTENT_WIDTH_MM) / renderedWidthPx;
 
       const remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
-      if (sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
+      // Só pula página se a seção cabe inteira numa página (senão vai ser fatiada e pode começar aqui)
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
         pdf.addPage();
         currentY = MARGIN_TOP_MM;
       }
