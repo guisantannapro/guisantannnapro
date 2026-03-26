@@ -31,6 +31,7 @@ const Protocolo = () => {
       const { data, error } = await supabase.from("protocolos").select("*").eq("id", id!).single();
 
       if (error || !data) {
+        toast.error("Protocolo não encontrado ou você não tem permissão para acessá-lo.");
         navigate("/area-do-cliente");
         return;
       }
