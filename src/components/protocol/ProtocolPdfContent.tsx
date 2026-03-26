@@ -78,8 +78,13 @@ export function ProtocolPdfContent({
   clientName,
   formattedDate,
   clientInfo,
+  planInfo,
   wrapperId = "protocolo-content",
 }: ProtocolPdfContentProps) {
+  const planLabel = planInfo?.plan ? planLabels[planInfo.plan] || planInfo.plan : null;
+  const durationLabel = planInfo?.duration ? durationLabels[planInfo.duration.toLowerCase()] || planInfo.duration : null;
+  const planDisplay = planLabel ? `Plano ${planLabel}${durationLabel ? ` ${durationLabel}` : ""}` : null;
+
   return (
     <div id={wrapperId} className="pdf-protocol-wrapper">
       <div className="pdf-cover-header">
@@ -88,6 +93,9 @@ export function ProtocolPdfContent({
           <div className="pdf-cover-brand">
             <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
             <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
+            {planDisplay && (
+              <span className="pdf-brand-plan">{planDisplay}</span>
+            )}
           </div>
         </div>
         <div className="pdf-cover-divider" />
