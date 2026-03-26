@@ -175,12 +175,18 @@ const MinhaArea = () => {
     return diff;
   };
 
-  // Resolve o plano: prioriza profiles, fallback para form_submissions
-  const resolvedPlan = profile?.plan || submissions?.[0]?.plan || null;
+  const latestSubmissionWithPlan = submissions.find((sub) => typeof sub?.plan === "string" && sub.plan.trim() !== "");
+  const latestSubmissionWithPeriod = submissions.find((sub) => {
+    const period = sub?.form_data?.billingPeriod;
+    return typeof period === "string" && period.trim() !== "";
+  });
 
-  // Resolve período: prioriza profiles, fallback para form_data.billingPeriod
-  const submissionPeriod = submissions?.[0]?.form_data?.billingPeriod || null;
-  const resolvedPeriod = profile?.plan_duration || submissionPeriod || null;
+  // Resolve o plano: prioriza profiles, fallback para último plano válido em form_submissions
+  const resolvedPlan = profile?.plan || latestSubmissionWithPlan?.plan || null;
+
+  // Resolve período: prioriza profiles, fallback para último período válido em form_submissions
+  const resolvedPeriod = profile?.plan_duration || latestSubmissionWithPeriod?.form_data?.billingPeriod || null;
+  const referenceSubmissionForExpiry = latestSubmissionWithPeriod || latestSubmissionWithPlan || submissions?.[0] || null;
 
   const periodLabels: Record<string, string> = {
     monthly: "Mensal",
@@ -194,7 +200,9 @@ const MinhaArea = () => {
   // Calcula data de vencimento estimada se não houver no profiles
   const getEstimatedExpiry = () => {
     if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
-    const baseDate = submissions?.[0]?.created_at ? new Date(submissions[0].created_at) : null;
+    const baseDate = referenceSubmissionForExpiry?.created_at
+      ? new Date(referenceSubmissionForExpiry.created_at)
+      : null;
     if (!baseDate || !resolvedPeriod) return null;
     const period = resolvedPeriod.toLowerCase();
     const months = period === "monthly" || period === "mensal" ? 1
@@ -217,9 +225,8 @@ const MinhaArea = () => {
   };
 
   const daysRemaining = getDaysRemainingResolved();
-  // TODO: TEMPORÁRIO - forçar banner para visualização. Remover depois!
-  const isExpired = false;
-  const isExpiringSoon = true;
+  const isExpired = daysRemaining !== null && daysRemaining <= 0;
+  const isExpiringSoon = daysRemaining !== null && daysRemaining > 0 && daysRemaining <= 7;
 
   const [renewModalOpen, setRenewModalOpen] = useState(false);
 
