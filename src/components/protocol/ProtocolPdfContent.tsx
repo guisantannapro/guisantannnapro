@@ -87,7 +87,7 @@ export function ProtocolPdfContent({
 
   return (
     <div id={wrapperId} className="pdf-protocol-wrapper">
-      <div className="pdf-cover-header">
+      <div className="pdf-cover-header" data-pdf-section>
         <div className="pdf-cover-logo-row">
           <img src={logoGS} alt="GS" className="pdf-cover-logo" crossOrigin="anonymous" />
           <div className="pdf-cover-brand">
@@ -141,7 +141,7 @@ export function ProtocolPdfContent({
 
 
       {protocolo.plano_alimentar && (
-        <div className="pdf-section">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">🍽</span>
             <h3 className="pdf-section-title">Plano Alimentar</h3>
@@ -151,7 +151,7 @@ export function ProtocolPdfContent({
       )}
 
       {/* Observações Fixas */}
-      <div className="pdf-section pdf-page-break">
+      <div className="pdf-section" data-pdf-section>
         <div className="pdf-section-header">
           <span className="pdf-section-icon">📋</span>
           <h3 className="pdf-section-title">Observações</h3>
@@ -163,7 +163,7 @@ export function ProtocolPdfContent({
 
       {/* Suplementação */}
       {protocolo.suplementacao && (
-        <div className="pdf-section pdf-page-break">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">💊</span>
             <h3 className="pdf-section-title">Suplementação</h3>
@@ -176,7 +176,7 @@ export function ProtocolPdfContent({
 
       {/* Cardio */}
       {protocolo.cardio && (
-        <div className="pdf-section pdf-page-break">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">🏃</span>
             <h3 className="pdf-section-title">Cardio</h3>
@@ -189,7 +189,7 @@ export function ProtocolPdfContent({
 
       {/* Treino */}
       {protocolo.treino && (
-        <div className="pdf-section pdf-page-break">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">🏋️</span>
             <h3 className="pdf-section-title">Treino</h3>
@@ -203,7 +203,7 @@ export function ProtocolPdfContent({
 
       {/* Observações extras do admin */}
       {protocolo.observacoes && (
-        <div className="pdf-section pdf-page-break">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">📝</span>
             <h3 className="pdf-section-title">Observações Adicionais</h3>
@@ -212,7 +212,7 @@ export function ProtocolPdfContent({
         </div>
       )}
 
-      <div className="pdf-footer">
+      <div className="pdf-footer" data-pdf-section>
         <div className="pdf-footer-divider" />
         <p className="pdf-footer-text">Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva</p>
         <p className="pdf-footer-text pdf-footer-disclaimer">
