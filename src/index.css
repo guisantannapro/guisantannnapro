@@ -164,10 +164,14 @@
 }
 
 .pdf-plan-banner {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   padding: 10px 0 0;
   margin-top: 12px;
   border-top: 1px solid hsl(43 74% 49% / 0.3);
+  text-align: center;
 }
 
 .pdf-plan-banner-text {
