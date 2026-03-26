@@ -430,10 +430,18 @@ const ApplicationForm = () => {
       localStorage.removeItem("purchased_plan");
       localStorage.removeItem("purchased_period");
       localStorage.removeItem("purchased_modality");
+
+      // Salvar dados necessários para criação de conta antes de resetar
+      const savedEmail = form.email;
+      const savedName = form.fullName;
+
+      // Resetar formulário e fotos para evitar vazamento de dados
+      resetAllStates();
+
       setSubmissionId(generatedId);
       setTempUserId(sessionUserId);
-      setRegEmail(form.email);
-      setRegName(form.fullName);
+      setRegEmail(savedEmail);
+      setRegName(savedName);
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err);
