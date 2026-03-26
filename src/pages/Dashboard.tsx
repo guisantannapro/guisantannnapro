@@ -58,6 +58,9 @@ const hasRenewalPending = (profile?: Profile) => {
 
 interface ClientData extends FormSubmission {
   profile?: Profile;
+  resolvedPlan?: string | null;
+  resolvedPeriod?: string | null;
+  resolvedModality?: string | null;
 }
 
 const planLabels: Record<string, string> = {
@@ -88,7 +91,7 @@ const Dashboard = () => {
         const term = searchTerm.toLowerCase();
         if (!name.includes(term) && !email.includes(term)) return false;
       }
-      if (planFilter !== "all" && (client.plan || client.profile?.plan) !== planFilter) return false;
+      if (planFilter !== "all" && client.resolvedPlan !== planFilter) return false;
       if (statusFilter !== "all") {
         const status = getClientStatus(client.profile);
         if (statusFilter === "expired" && status !== "expired") return false;
@@ -143,11 +146,35 @@ const Dashboard = () => {
         }
       }
 
-      
+      const latestPlanByUser = new Map<string, string>();
+      const latestPeriodByUser = new Map<string, string>();
+      const latestModalityByUser = new Map<string, string>();
+
+      (submissions || []).forEach((submission) => {
+        const currentUserId = submission.user_id;
+        if (!currentUserId) return;
+
+        if (!latestPlanByUser.has(currentUserId) && typeof submission.plan === "string" && submission.plan.trim() !== "") {
+          latestPlanByUser.set(currentUserId, submission.plan);
+        }
+
+        const period = submission.form_data?.billingPeriod;
+        if (!latestPeriodByUser.has(currentUserId) && typeof period === "string" && period.trim() !== "") {
+          latestPeriodByUser.set(currentUserId, period);
+        }
+
+        const modality = submission.form_data?.billingModality;
+        if (!latestModalityByUser.has(currentUserId) && typeof modality === "string" && modality.trim() !== "") {
+          latestModalityByUser.set(currentUserId, modality);
+        }
+      });
 
       const enriched: ClientData[] = (submissions || []).map((s) => ({
         ...s,
         profile: profileMap.get(s.user_id),
+        resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
+        resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
+        resolvedModality: latestModalityByUser.get(s.user_id) || null,
       }));
 
       setClients(enriched);
@@ -374,7 +401,7 @@ const Dashboard = () => {
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                            {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                            {planLabels[client.resolvedPlan || ""] || "—"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">
@@ -434,7 +461,7 @@ const Dashboard = () => {
                         )}
                       </div>
                       <Badge variant="outline" className="border-primary/30 text-primary text-xs">
-                        {planLabels[client.plan || client.profile?.plan || ""] || "—"}
+                        {planLabels[client.resolvedPlan || ""] || "—"}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
@@ -553,13 +580,13 @@ const Dashboard = () => {
                   <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
                   <InfoItem label="Email" value={getField(selectedClient, "email")} />
                   <InfoItem label="WhatsApp" value={getField(selectedClient, "whatsapp")} />
-                  <InfoItem label="Plano" value={planLabels[selectedClient.plan || selectedClient.profile?.plan || ""] || "—"} />
+                  <InfoItem label="Plano" value={planLabels[selectedClient.resolvedPlan || ""] || "—"} />
                   <InfoItem label="Período" value={
-                    { mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" }[selectedClient.form_data?.billingPeriod] || "—"
+                    { mensal: "Mensal", trimestral: "Trimestral", semestral: "Semestral" }[selectedClient.resolvedPeriod || ""] || "—"
                   } />
-                  {(selectedClient.plan === "base" || selectedClient.profile?.plan === "base") && (
+                  {selectedClient.resolvedPlan === "base" && (
                     <InfoItem label="Modalidade" value={
-                      { dieta: "Dieta", treino: "Treino", ambos: "Dieta + Treino" }[selectedClient.form_data?.billingModality] || "—"
+                      { dieta: "Dieta", treino: "Treino", ambos: "Dieta + Treino" }[selectedClient.resolvedModality || ""] || "—"
                     } />
                   )}
                   <InfoItem label="Objetivo" value={getGoals(selectedClient)} />
