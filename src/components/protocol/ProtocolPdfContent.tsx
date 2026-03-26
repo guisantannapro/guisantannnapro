@@ -147,7 +147,9 @@ export function ProtocolPdfContent({
             <span className="pdf-section-icon">🍽</span>
             <h3 className="pdf-section-title">Plano Alimentar</h3>
           </div>
-          <div className="pdf-section-body">{protocolo.plano_alimentar}</div>
+          <div className="pdf-section-body">
+            <MealPlanFormatter content={protocolo.plano_alimentar} />
+          </div>
         </div>
       )}
 
