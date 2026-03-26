@@ -321,7 +321,11 @@
   color: hsl(0 0% 50%) !important;
 }
 
-.pdf-protocol-wrapper.pdf-export-light .pdf-brand-plan {
+.pdf-protocol-wrapper.pdf-export-light .pdf-plan-banner {
+  border-color: hsl(43 74% 35% / 0.3) !important;
+}
+
+.pdf-protocol-wrapper.pdf-export-light .pdf-plan-banner-text {
   color: hsl(43 74% 35%) !important;
 }
 
