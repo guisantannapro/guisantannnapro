@@ -254,15 +254,34 @@ const ApplicationForm = () => {
     });
   };
 
-  // Cleanup ao desmontar componente (navegação/voltar)
+  // Limpeza total ao montar: signOut + localStorage + reset de estados
   useEffect(() => {
+    const cleanEnvironment = async () => {
+      // Encerrar qualquer sessão anterior
+      await supabase.auth.signOut();
+
+      // Limpar localStorage de compras e debug
+      localStorage.removeItem("purchased_plan");
+      localStorage.removeItem("purchased_period");
+      localStorage.removeItem("purchased_modality");
+      localStorage.removeItem("debug_payload_post_checkout");
+      localStorage.removeItem("debug_payload_direct");
+
+      // Reset de estados
+      resetAllStates();
+      setSubmitted(false);
+    };
+
+    cleanEnvironment();
+
+    // Cleanup ao desmontar (navegação/voltar)
     return () => {
-      setForm(initialForm);
-      setPhotos({ front: null, side: null, back: null, assessment: null });
-      setPhotoPreviews({ front: "", side: "", back: "", assessment: "" });
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith("debug_payload_")) localStorage.removeItem(key);
-      });
+      supabase.auth.signOut();
+      localStorage.removeItem("purchased_plan");
+      localStorage.removeItem("purchased_period");
+      localStorage.removeItem("purchased_modality");
+      localStorage.removeItem("debug_payload_post_checkout");
+      localStorage.removeItem("debug_payload_direct");
     };
   }, []);
 
