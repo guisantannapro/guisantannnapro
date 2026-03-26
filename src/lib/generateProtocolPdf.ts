@@ -79,12 +79,21 @@ export async function generateProtocolPdf(
       }
 
       const pxPerMM = canvas.height / sectionHeightMM;
-      let remainingPxHeight = canvas.height;
+      const SLICE_OVERLAP_PX = 6;
       let sourceY = 0;
 
-      while (remainingPxHeight > 0) {
+      while (sourceY < canvas.height) {
         const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
+
+        // Evita fatias minúsculas no fim da página que cortam linhas
+        if (availableMM < 10 && currentY > MARGIN_TOP_MM) {
+          pdf.addPage();
+          currentY = MARGIN_TOP_MM;
+          continue;
+        }
+
         const availablePx = Math.max(1, Math.floor(availableMM * pxPerMM));
+        const remainingPxHeight = canvas.height - sourceY;
         const sliceHeightPx = Math.min(availablePx, remainingPxHeight);
         const sliceHeightMM = sliceHeightPx / pxPerMM;
 
@@ -114,15 +123,20 @@ export async function generateProtocolPdf(
         const sliceImgData = sliceCanvas.toDataURL("image/png");
         pdf.addImage(sliceImgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
 
-        sourceY += sliceHeightPx;
-        remainingPxHeight -= sliceHeightPx;
-
-        if (remainingPxHeight > 0) {
-          pdf.addPage();
-          currentY = MARGIN_TOP_MM;
-        } else {
+        const isLastSlice = sourceY + sliceHeightPx >= canvas.height;
+        if (isLastSlice) {
           currentY += sliceHeightMM + SECTION_GAP_MM;
+          break;
         }
+
+        // Pequena sobreposição entre páginas para não perder linhas na emenda
+        sourceY += sliceHeightPx;
+        if (sliceHeightPx > SLICE_OVERLAP_PX + 1) {
+          sourceY -= SLICE_OVERLAP_PX;
+        }
+
+        pdf.addPage();
+        currentY = MARGIN_TOP_MM;
       }
     }
 
