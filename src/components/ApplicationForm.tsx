@@ -98,6 +98,25 @@ const Field = ({ label, required, children }: { label: string; required?: boolea
 
 const inputClass = "w-full bg-muted border border-border rounded-md px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-colors text-sm";
 
+const sanitizePayloadValue = (value: unknown): unknown => {
+  if (value === undefined) return undefined;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed === "" ? undefined : trimmed;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizePayloadValue(item)).filter((item) => item !== undefined);
+  }
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .map(([key, item]) => [key, sanitizePayloadValue(item)] as const)
+        .filter(([, item]) => item !== undefined),
+    );
+  }
+  return value;
+};
+
 
 const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
   <div className="flex flex-col gap-2">
