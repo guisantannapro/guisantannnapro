@@ -141,7 +141,7 @@ export function ProtocolPdfContent({
 
 
       {protocolo.plano_alimentar && (
-        <div className="pdf-section">
+        <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">🍽</span>
             <h3 className="pdf-section-title">Plano Alimentar</h3>
