@@ -87,68 +87,69 @@ export function ProtocolPdfContent({
 
   return (
     <div id={wrapperId} className="pdf-protocol-wrapper">
-      <div className="pdf-cover-header" data-pdf-section>
-        <div className="pdf-cover-logo-row">
-          <img src={logoGS} alt="GS" className="pdf-cover-logo" crossOrigin="anonymous" />
-          <div className="pdf-cover-brand">
-            <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
-            <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
-          </div>
-        </div>
-        <div className="pdf-cover-divider" />
-        <div className="pdf-cover-info">
-          <div className="pdf-cover-info-left">
-            <span className="pdf-cover-label">PROTOCOLO</span>
-            <span className="pdf-cover-title">{clientName}</span>
-          </div>
-          <div className="pdf-cover-info-right">
-            <div className="pdf-cover-meta">
-              <span className="pdf-cover-label">TIPO</span>
-              <span className="pdf-cover-value">
-                {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
-              </span>
-            </div>
-            {clientInfo?.idade && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">IDADE</span>
-                <span className="pdf-cover-value">{clientInfo.idade}</span>
-              </div>
-            )}
-            {clientInfo?.peso && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">PESO</span>
-                <span className="pdf-cover-value">{clientInfo.peso}</span>
-              </div>
-            )}
-            {clientInfo?.altura && (
-              <div className="pdf-cover-meta">
-                <span className="pdf-cover-label">ALTURA</span>
-                <span className="pdf-cover-value">{clientInfo.altura}</span>
-              </div>
-            )}
-            <div className="pdf-cover-meta">
-              <span className="pdf-cover-label">DATA</span>
-              <span className="pdf-cover-value">{formattedDate}</span>
+      <div data-pdf-section>
+        <div className="pdf-cover-header">
+          <div className="pdf-cover-logo-row">
+            <img src={logoGS} alt="GS" className="pdf-cover-logo" crossOrigin="anonymous" />
+            <div className="pdf-cover-brand">
+              <span className="pdf-brand-name">GUILHERME SANT'ANNA</span>
+              <span className="pdf-brand-sub">CONSULTORIA ESPORTIVA</span>
             </div>
           </div>
+          <div className="pdf-cover-divider" />
+          <div className="pdf-cover-info">
+            <div className="pdf-cover-info-left">
+              <span className="pdf-cover-label">PROTOCOLO</span>
+              <span className="pdf-cover-title">{clientName}</span>
+            </div>
+            <div className="pdf-cover-info-right">
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">TIPO</span>
+                <span className="pdf-cover-value">
+                  {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
+                </span>
+              </div>
+              {clientInfo?.idade && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">IDADE</span>
+                  <span className="pdf-cover-value">{clientInfo.idade}</span>
+                </div>
+              )}
+              {clientInfo?.peso && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">PESO</span>
+                  <span className="pdf-cover-value">{clientInfo.peso}</span>
+                </div>
+              )}
+              {clientInfo?.altura && (
+                <div className="pdf-cover-meta">
+                  <span className="pdf-cover-label">ALTURA</span>
+                  <span className="pdf-cover-value">{clientInfo.altura}</span>
+                </div>
+              )}
+              <div className="pdf-cover-meta">
+                <span className="pdf-cover-label">DATA</span>
+                <span className="pdf-cover-value">{formattedDate}</span>
+              </div>
+            </div>
+          </div>
+          {planDisplay && (
+            <div className="pdf-plan-banner">
+              <span className="pdf-plan-banner-text">{planDisplay}</span>
+            </div>
+          )}
         </div>
-        {planDisplay && (
-          <div className="pdf-plan-banner">
-            <span className="pdf-plan-banner-text">{planDisplay}</span>
+
+        {protocolo.plano_alimentar && (
+          <div className="pdf-section">
+            <div className="pdf-section-header">
+              <span className="pdf-section-icon">🍽</span>
+              <h3 className="pdf-section-title">Plano Alimentar</h3>
+            </div>
+            <div className="pdf-section-body">{protocolo.plano_alimentar}</div>
           </div>
         )}
       </div>
-
-
-      {protocolo.plano_alimentar && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">🍽</span>
-            <h3 className="pdf-section-title">Plano Alimentar</h3>
-          </div>
-          <div className="pdf-section-body">{protocolo.plano_alimentar}</div>
-        </div>
-      )}
 
       {/* Observações Fixas */}
       <div className="pdf-section" data-pdf-section>
