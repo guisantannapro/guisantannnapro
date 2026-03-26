@@ -16,11 +16,17 @@ type ClientInfo = {
   altura?: string;
 };
 
+type PlanInfo = {
+  plan?: string;
+  duration?: string;
+};
+
 type ProtocolPdfContentProps = {
   protocolo: ProtocolPdfData;
   clientName: string;
   formattedDate: string;
   clientInfo?: ClientInfo;
+  planInfo?: PlanInfo;
   wrapperId?: string;
 };
 
