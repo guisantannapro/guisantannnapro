@@ -19,10 +19,66 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+interface ClientFormData {
+  fullName?: string;
+  age?: string;
+  height?: string;
+  weight?: string;
+  email?: string;
+  instagram?: string;
+  whatsapp?: string;
+  city?: string;
+  state?: string;
+  mainGoal?: string[];
+  mainGoalOther?: string;
+  timeline?: string;
+  commitment?: string;
+  healthConditions?: string[];
+  healthConditionsOther?: string;
+  usesMedication?: string;
+  medicationDetails?: string;
+  usesHormones?: string;
+  hormoneDetails?: string;
+  foodRestrictions?: string[];
+  foodRestrictionsOther?: string;
+  allergyDetails?: string;
+  usesSupplements?: string;
+  supplementDetails?: string;
+  mealsPerDay?: string;
+  fixedMealTimes?: string;
+  dailyDiet?: string;
+  waterIntake?: string;
+  bingEating?: string;
+  smoking?: string;
+  smokingAmount?: string;
+  alcohol?: string;
+  alcoholFrequency?: string;
+  otherSubstances?: string;
+  otherSubstancesDetails?: string;
+  sleepHours?: string;
+  sleepQuality?: string;
+  stressLevel?: string;
+  trainingModalities?: string[];
+  trainingModalitiesOther?: string;
+  sportFrequency?: string;
+  musculacaoFrequency?: string;
+  ciclismoFrequency?: string;
+  caminhadaFrequency?: string;
+  corridaFrequency?: string;
+  trainingFrequency?: string;
+  trainingDuration?: string;
+  trainingExperience?: string;
+  workEffort?: string;
+  availableSchedule?: string;
+  hadProfessionalCoaching?: string;
+  billingPeriod?: string | null;
+  billingModality?: string | null;
+}
+
 interface FormSubmission {
   id: string;
   created_at: string;
-  form_data: any;
+  form_data: ClientFormData;
   photo_front: string | null;
   photo_side: string | null;
   photo_back: string | null;
@@ -175,6 +231,7 @@ const Dashboard = () => {
 
       const enriched: ClientData[] = (submissions || []).map((s) => ({
         ...s,
+        form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
         profile: profileMap.get(s.user_id),
         resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
         resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
