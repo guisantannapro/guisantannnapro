@@ -38,7 +38,7 @@ const Protocolo = () => {
       const protocolUserId = data.user_id;
 
       const [{ data: profile }, { data: formSub }] = await Promise.all([
-        supabase.from("profiles").select("full_name").eq("id", protocolUserId).single(),
+        supabase.from("profiles").select("full_name, plan, plan_duration").eq("id", protocolUserId).single(),
         supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
