@@ -40,13 +40,14 @@ const Protocolo = () => {
 
       const [{ data: profile }, { data: formSub }] = await Promise.all([
         supabase.from("profiles").select("full_name, plan, plan_duration").eq("id", protocolUserId).single(),
-        supabase.from("form_submissions").select("form_data").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
+        supabase.from("form_submissions").select("form_data, plan").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
       ]);
 
-      
+      const resolvedPlan = profile?.plan || formSub?.plan || undefined;
+      const resolvedDuration = profile?.plan_duration || (formSub?.form_data as any)?.billingPeriod || undefined;
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
-      setPlanInfo({ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined });
+      setPlanInfo({ plan: resolvedPlan, duration: resolvedDuration });
       
       const fd = formSub?.form_data as any;
       const idade = fd?.age || undefined;
