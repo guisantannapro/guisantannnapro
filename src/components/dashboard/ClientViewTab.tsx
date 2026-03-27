@@ -161,7 +161,21 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
       setPdfProtocol(proto);
       setIsDownloadingPdf(true);
       toast.info("Gerando PDF...");
-      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+
+      // Wait for the ProtocolPdfContent to render in the DOM
+      const waitForElement = () =>
+        new Promise<void>((resolve) => {
+          const check = (attempts = 0) => {
+            if (document.getElementById("protocolo-content-client-view") || attempts > 20) {
+              resolve();
+            } else {
+              requestAnimationFrame(() => check(attempts + 1));
+            }
+          };
+          requestAnimationFrame(() => check());
+        });
+      await waitForElement();
+
       const filename = `protocolo-${proto.nome || "personalizado"}.pdf`.replace(/[\\/:*?"<>|]/g, "-");
       const ok = await generateProtocolPdf("protocolo-content-client-view", filename);
       if (!ok) { toast.error("Não foi possível gerar o PDF."); return; }
