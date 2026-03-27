@@ -494,7 +494,7 @@ const MinhaArea = () => {
               peso: (submissions?.[0]?.form_data as any)?.weight || undefined,
               altura: (submissions?.[0]?.form_data as any)?.height || undefined,
             }}
-            planInfo={{ plan: profile?.plan || undefined, duration: profile?.plan_duration || undefined }}
+            planInfo={{ plan: resolvedPlan || undefined, duration: resolvedPeriod || undefined }}
           />
         </div>
       )}
