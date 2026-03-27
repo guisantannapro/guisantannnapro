@@ -217,4 +217,4 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
       </div>
     </div>
   );
-}
+});
