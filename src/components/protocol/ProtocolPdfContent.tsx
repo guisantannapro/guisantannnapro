@@ -74,14 +74,14 @@ Feeder Sets: Antes do primeiro (depois de aquecer) e segundo exercícios de cada
 
 • Repetição na Reserva (RIR): Repetições que antecedem a falha. Ex: 1 RIR significa que você falharia na repetição 11, então finalize na repetição 10.`;
 
-export function ProtocolPdfContent({
+export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentProps>(function ProtocolPdfContent({
   protocolo,
   clientName,
   formattedDate,
   clientInfo,
   planInfo,
   wrapperId = "protocolo-content",
-}: ProtocolPdfContentProps) {
+}, ref) {
   const planLabel = planInfo?.plan ? planLabels[planInfo.plan] || planInfo.plan : null;
   const durationLabel = planInfo?.duration ? durationLabels[planInfo.duration.toLowerCase()] || planInfo.duration : null;
   const planDisplay = planLabel ? `Plano ${planLabel}${durationLabel ? ` ${durationLabel}` : ""}` : null;
