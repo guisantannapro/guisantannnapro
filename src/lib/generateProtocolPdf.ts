@@ -102,7 +102,7 @@ export async function generateProtocolPdf(
         const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
         // Evita fatias minúsculas no fim da página que cortam linhas
-        if (availableMM < 16 && currentY > MARGIN_TOP_MM) {
+        if (availableMM < 5 && currentY > MARGIN_TOP_MM) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
           continue;
