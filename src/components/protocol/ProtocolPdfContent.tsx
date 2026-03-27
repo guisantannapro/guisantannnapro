@@ -87,7 +87,7 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
   const planDisplay = planLabel ? `Plano ${planLabel}${durationLabel ? ` ${durationLabel}` : ""}` : null;
 
   return (
-    <div id={wrapperId} className="pdf-protocol-wrapper">
+    <div ref={ref} id={wrapperId} className="pdf-protocol-wrapper">
       <div data-pdf-section>
         <div className="pdf-cover-header">
           <div className="pdf-cover-logo-row">
