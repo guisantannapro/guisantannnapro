@@ -44,7 +44,7 @@ export async function generateProtocolPdf(
   const MARGIN_BOTTOM_MM = 10;
   const CONTENT_WIDTH_MM = A4_WIDTH_MM - MARGIN_MM * 2;
   const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - MARGIN_TOP_MM - MARGIN_BOTTOM_MM;
-  const SECTION_GAP_MM = 3;
+  const SECTION_GAP_MM = 1;
 
   element.classList.add("pdf-export-light");
 
@@ -83,14 +83,13 @@ export async function generateProtocolPdf(
         continue;
       }
 
-      // Evita cortes de texto quando falta pouco espaço no fim da página
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM && remainingSpaceMM < 24) {
-        pdf.addPage();
-        currentY = MARGIN_TOP_MM;
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
-        currentY += sectionHeightMM + SECTION_GAP_MM;
-        continue;
+      // Só pula página se restar menos de 15% do espaço disponível
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
+        const percentualRestante = (remainingSpaceMM / CONTENT_HEIGHT_MM) * 100;
+        if (percentualRestante < 15) {
+          pdf.addPage();
+          currentY = MARGIN_TOP_MM;
+        }
       }
 
       // Se não cabe, fatia a seção (nunca pula página deixando espaço vazio)
@@ -103,7 +102,7 @@ export async function generateProtocolPdf(
         const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
         // Evita fatias minúsculas no fim da página que cortam linhas
-        if (availableMM < 16 && currentY > MARGIN_TOP_MM) {
+        if (availableMM < 5 && currentY > MARGIN_TOP_MM) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
           continue;
