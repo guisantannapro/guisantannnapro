@@ -167,9 +167,11 @@ const EvolutionCard = ({ evolution }: { evolution: Evolution }) => {
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase", marginBottom: 4, letterSpacing: 1 }}>Depois</div>
                 {afterUrl ? (
-                  <img src={afterUrl} crossOrigin="anonymous" alt="Depois" style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover", borderRadius: 8, border: "1px solid #333" }} />
+                  <div style={{ width: "100%", height: 340, borderRadius: 8, border: "1px solid #333", overflow: "hidden" }}>
+                    <img src={afterUrl} crossOrigin="anonymous" alt="Depois" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
                 ) : (
-                  <div style={{ width: "100%", aspectRatio: "3/4", borderRadius: 8, backgroundColor: "#2a2a2a", border: "1px solid #333" }} />
+                  <div style={{ width: "100%", height: 340, borderRadius: 8, backgroundColor: "#2a2a2a", border: "1px solid #333" }} />
                 )}
               </div>
             </div>
