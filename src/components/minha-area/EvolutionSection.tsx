@@ -311,7 +311,7 @@ const generateEvolutionImage = async (
 
     // Text
     ctx.save();
-    ctx.translate(0, y + boxPad + 40);
+    ctx.translate(0, y + boxPad + 28);
     ctx.fillStyle = "#f5f5f5";
     ctx.font = "26px system-ui, sans-serif";
     wrapText(ctx, evolution.description, boxX + boxPad, boxW - boxPad * 2, 36);
