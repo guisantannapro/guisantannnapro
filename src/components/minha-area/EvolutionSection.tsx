@@ -175,7 +175,7 @@ const generateEvolutionImage = async (
       }
       lineCount++;
     }
-    descH = 24 + 20 + lineCount * 36 + 32 + 16;
+    descH = 24 + 48 + lineCount * 36 + 32 + 16;
     contentH += descH;
   }
 
