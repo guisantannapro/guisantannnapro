@@ -175,7 +175,7 @@ const generateEvolutionImage = async (
       }
       lineCount++;
     }
-    descH = 24 + 20 + lineCount * 36 + 32 + 16;
+    descH = 24 + 48 + lineCount * 36 + 32 + 16;
     contentH += descH;
   }
 
@@ -311,7 +311,7 @@ const generateEvolutionImage = async (
 
     // Text
     ctx.save();
-    ctx.translate(0, y + boxPad + 28);
+    ctx.translate(0, y + boxPad + 56);
     ctx.fillStyle = "#f5f5f5";
     ctx.font = "26px system-ui, sans-serif";
     wrapText(ctx, evolution.description, boxX + boxPad, boxW - boxPad * 2, 36);
