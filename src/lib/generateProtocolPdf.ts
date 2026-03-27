@@ -27,6 +27,51 @@ async function waitForFonts() {
   }
 }
 
+function findBestSliceEnd(canvas: HTMLCanvasElement, startY: number, idealHeight: number): number {
+  const minSliceHeight = Math.max(1, Math.floor(idealHeight * 0.75));
+  const maxEnd = Math.min(canvas.height, startY + idealHeight);
+  const minEnd = Math.max(startY + minSliceHeight, startY + 1);
+
+  if (maxEnd <= minEnd) return maxEnd;
+
+  const scanStart = Math.max(minEnd, maxEnd - 120);
+  const scanHeight = maxEnd - scanStart;
+  if (scanHeight <= 2) return maxEnd;
+
+  const scanCanvas = document.createElement("canvas");
+  scanCanvas.width = canvas.width;
+  scanCanvas.height = scanHeight;
+  const scanCtx = scanCanvas.getContext("2d");
+  if (!scanCtx) return maxEnd;
+
+  scanCtx.drawImage(canvas, 0, scanStart, canvas.width, scanHeight, 0, 0, canvas.width, scanHeight);
+  const image = scanCtx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+  const data = image.data;
+
+  let bestY = maxEnd;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (let y = 1; y < scanHeight - 1; y++) {
+    let darkPixels = 0;
+    const rowStart = y * scanCanvas.width * 4;
+    for (let x = 0; x < scanCanvas.width; x++) {
+      const idx = rowStart + x * 4;
+      const r = data[idx];
+      const g = data[idx + 1];
+      const b = data[idx + 2];
+      if (r < 240 || g < 240 || b < 240) darkPixels++;
+    }
+
+    if (darkPixels < bestScore) {
+      bestScore = darkPixels;
+      bestY = scanStart + y;
+      if (bestScore === 0) break;
+    }
+  }
+
+  return Math.min(maxEnd, Math.max(minEnd, bestY));
+}
+
 export async function generateProtocolPdf(
   elementId = "protocolo-content",
   filename = "protocolo.pdf"
@@ -111,7 +156,9 @@ export async function generateProtocolPdf(
 
         const availablePx = Math.max(1, Math.floor(availableMM * pxPerMM));
         const remainingPxHeight = canvas.height - sourceY;
-        const sliceHeightPx = Math.min(availablePx, remainingPxHeight);
+        const rawSliceHeightPx = Math.min(availablePx, remainingPxHeight);
+        const adjustedSliceEnd = sourceY + findBestSliceEnd(canvas, sourceY, rawSliceHeightPx) - sourceY;
+        const sliceHeightPx = Math.max(1, Math.min(remainingPxHeight, adjustedSliceEnd - sourceY));
         const sliceHeightMM = sliceHeightPx / pxPerMM;
 
         const sliceCanvas = document.createElement("canvas");
