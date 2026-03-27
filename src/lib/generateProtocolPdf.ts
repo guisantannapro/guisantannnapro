@@ -18,6 +18,15 @@ async function waitForImages(root: HTMLElement) {
   );
 }
 
+async function waitForFonts() {
+  if (!('fonts' in document)) return;
+  try {
+    await document.fonts.ready;
+  } catch {
+    // Ignora falha de fonte para não bloquear a geração
+  }
+}
+
 export async function generateProtocolPdf(
   elementId = "protocolo-content",
   filename = "protocolo.pdf"
@@ -40,6 +49,7 @@ export async function generateProtocolPdf(
   element.classList.add("pdf-export-light");
 
   try {
+    await waitForFonts();
     await waitForImages(element);
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
@@ -61,9 +71,7 @@ export async function generateProtocolPdf(
         windowWidth: 700,
       });
 
-      const renderedWidthPx = canvas.width / 2;
-      const renderedHeightPx = canvas.height / 2;
-      const sectionHeightMM = (renderedHeightPx * CONTENT_WIDTH_MM) / renderedWidthPx;
+      const sectionHeightMM = (canvas.height * CONTENT_WIDTH_MM) / canvas.width;
 
       const remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
@@ -75,17 +83,27 @@ export async function generateProtocolPdf(
         continue;
       }
 
+      // Evita cortes de texto quando falta pouco espaço no fim da página
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM && remainingSpaceMM < 24) {
+        pdf.addPage();
+        currentY = MARGIN_TOP_MM;
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        currentY += sectionHeightMM + SECTION_GAP_MM;
+        continue;
+      }
+
       // Se não cabe, fatia a seção (nunca pula página deixando espaço vazio)
 
       const pxPerMM = canvas.height / sectionHeightMM;
-      const SLICE_OVERLAP_PX = 6;
+      const SLICE_OVERLAP_PX = 8;
       let sourceY = 0;
 
       while (sourceY < canvas.height) {
         const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
         // Evita fatias minúsculas no fim da página que cortam linhas
-        if (availableMM < 10 && currentY > MARGIN_TOP_MM) {
+        if (availableMM < 16 && currentY > MARGIN_TOP_MM) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
           continue;
