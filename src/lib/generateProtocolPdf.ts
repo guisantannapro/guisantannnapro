@@ -44,7 +44,7 @@ export async function generateProtocolPdf(
   const MARGIN_BOTTOM_MM = 10;
   const CONTENT_WIDTH_MM = A4_WIDTH_MM - MARGIN_MM * 2;
   const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - MARGIN_TOP_MM - MARGIN_BOTTOM_MM;
-  const SECTION_GAP_MM = 3;
+  const SECTION_GAP_MM = 1;
 
   element.classList.add("pdf-export-light");
 
