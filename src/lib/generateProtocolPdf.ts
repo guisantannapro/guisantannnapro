@@ -66,18 +66,16 @@ export async function generateProtocolPdf(
       const sectionHeightMM = (renderedHeightPx * CONTENT_WIDTH_MM) / renderedWidthPx;
 
       const remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
-      // Só pula página se a seção cabe inteira numa página (senão vai ser fatiada e pode começar aqui)
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
-        pdf.addPage();
-        currentY = MARGIN_TOP_MM;
-      }
 
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM) {
+      // Se a seção cabe no espaço restante, adiciona direto sem fatiar
+      if (sectionHeightMM <= remainingSpaceMM) {
         const imgData = canvas.toDataURL("image/png");
         pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
+
+      // Se não cabe, fatia a seção (nunca pula página deixando espaço vazio)
 
       const pxPerMM = canvas.height / sectionHeightMM;
       const SLICE_OVERLAP_PX = 6;
