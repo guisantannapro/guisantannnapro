@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import logoGS from "@/assets/logo-gs.png";
 
 type ProtocolPdfData = {
