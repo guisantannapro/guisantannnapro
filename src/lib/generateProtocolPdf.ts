@@ -83,14 +83,13 @@ export async function generateProtocolPdf(
         continue;
       }
 
-      // Evita cortes de texto quando falta pouco espaço no fim da página
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM && remainingSpaceMM < 24) {
-        pdf.addPage();
-        currentY = MARGIN_TOP_MM;
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
-        currentY += sectionHeightMM + SECTION_GAP_MM;
-        continue;
+      // Só pula página se restar menos de 15% do espaço disponível
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
+        const percentualRestante = (remainingSpaceMM / CONTENT_HEIGHT_MM) * 100;
+        if (percentualRestante < 15) {
+          pdf.addPage();
+          currentY = MARGIN_TOP_MM;
+        }
       }
 
       // Se não cabe, fatia a seção (nunca pula página deixando espaço vazio)
