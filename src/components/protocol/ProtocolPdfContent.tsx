@@ -190,10 +190,7 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
             <span className="pdf-section-icon">🏋️</span>
             <h3 className="pdf-section-title">Treino</h3>
           </div>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line", marginBottom: "16px" }}>
-            {TREINO_INTRO}
-          </div>
-          <div className="pdf-section-body">{protocolo.treino}</div>
+          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>{protocolo.treino}</div>
         </div>
       )}
 

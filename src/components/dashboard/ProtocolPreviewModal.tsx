@@ -246,7 +246,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
   useEffect(() => {
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
-      setTreino(trainingTextTemplates[protocolType]);
+      setTreino(defaultTreinoIntro + "\n\n\n" + trainingTextTemplates[protocolType]);
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
