@@ -86,7 +86,7 @@ export async function generateProtocolPdf(
       // Só pula página se restar menos de 15% do espaço disponível
       if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
         const percentualRestante = (remainingSpaceMM / CONTENT_HEIGHT_MM) * 100;
-        if (percentualRestante < 15) {
+        if (percentualRestante < 10) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
         }
