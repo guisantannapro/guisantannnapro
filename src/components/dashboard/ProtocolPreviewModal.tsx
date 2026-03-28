@@ -151,6 +151,18 @@ Refeição 5 — Jantar (19:00)
 • 150g carne vermelha magra + batata doce + legumes refogados`,
 };
 
+const defaultTreinoIntro = `Técnica: Execute todos os exercícios com a máxima técnica possível. Priorize a forma sobre a carga.
+
+Progressão de Carga: Aumente a carga quando sugerido, sem comprometer a execução.
+
+Descanso: Descanse entre 1-5 minutos (2 a 5 minutos em séries pesadas e 1 a 2 minutos em séries normais).
+
+Aquecimento: Antes do primeiro exercício de cada músculo, faça 2 a 3 séries de aquecimento com 15-20 repetições (30% da carga final pretendida).
+
+Feeder Sets: Antes do primeiro (depois de aquecer) e segundo exercícios de cada músculo, faça 2-3 feeder sets (séries de adaptação, 4-8 repetições com 70-80% da carga final pretendida). Antes dos outros exercícios para cada músculo, faça 1 feeder set seguindo o esquema acima.
+
+• Repetição na Reserva (RIR): Repetições que antecedem a falha. Ex: 1 RIR significa que você falharia na repetição 11, então finalize na repetição 10.`;
+
 const trainingTextTemplates: Record<ProtocolType, string> = {
   bulking: `Segunda — Peito / Tríceps (Volume)
 • Supino reto 4x8 | Supino inclinado 4x10 | Crucifixo 3x12 | Tríceps testa 4x10
@@ -234,7 +246,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
   useEffect(() => {
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
-      setTreino(trainingTextTemplates[protocolType]);
+      setTreino(defaultTreinoIntro + "\n\n\n" + trainingTextTemplates[protocolType]);
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
