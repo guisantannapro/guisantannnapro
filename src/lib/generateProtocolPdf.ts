@@ -27,6 +27,60 @@ async function waitForFonts() {
   }
 }
 
+function getBestBreakRow(
+  canvas: HTMLCanvasElement,
+  preferredEndY: number,
+  minEndY: number,
+  maxEndY: number
+): number {
+  const clampedPreferred = Math.max(minEndY, Math.min(preferredEndY, maxEndY));
+
+  try {
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx || maxEndY - minEndY < 8) {
+      return clampedPreferred;
+    }
+
+    const SEARCH_WINDOW_PX = 48;
+    const ROW_BAND_HEIGHT = 2;
+    const STEP_PX = 2;
+
+    const searchStart = Math.max(minEndY, clampedPreferred - SEARCH_WINDOW_PX);
+    const searchEnd = Math.min(maxEndY, clampedPreferred + SEARCH_WINDOW_PX);
+
+    const sampleX = Math.min(12, Math.max(0, Math.floor(canvas.width * 0.05)));
+    const sampleWidth = Math.max(1, canvas.width - sampleX * 2);
+
+    let bestY = clampedPreferred;
+    let bestInkScore = Number.POSITIVE_INFINITY;
+
+    for (let y = searchStart; y <= searchEnd; y += STEP_PX) {
+      const sampleY = Math.max(0, Math.min(canvas.height - ROW_BAND_HEIGHT, y));
+      const data = ctx.getImageData(sampleX, sampleY, sampleWidth, ROW_BAND_HEIGHT).data;
+
+      let inkScore = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        const alpha = data[i + 3];
+        if (alpha < 16) continue;
+
+        const luminance = (data[i] * 299 + data[i + 1] * 587 + data[i + 2] * 114) / 1000;
+        if (luminance < 245) {
+          inkScore++;
+        }
+      }
+
+      if (inkScore < bestInkScore) {
+        bestInkScore = inkScore;
+        bestY = y;
+      }
+    }
+
+    return Math.max(minEndY, Math.min(bestY, maxEndY));
+  } catch {
+    return clampedPreferred;
+  }
+}
+
 export async function generateProtocolPdf(
   elementId = "protocolo-content",
   filename = "protocolo.pdf"
@@ -72,10 +126,8 @@ export async function generateProtocolPdf(
       });
 
       const sectionHeightMM = (canvas.height * CONTENT_WIDTH_MM) / canvas.width;
+      let remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
-      const remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
-
-      // Se a seção cabe no espaço restante, adiciona direto sem fatiar
       if (sectionHeightMM <= remainingSpaceMM) {
         const imgData = canvas.toDataURL("image/png");
         pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
@@ -83,50 +135,61 @@ export async function generateProtocolPdf(
         continue;
       }
 
-      // Keep-together: se a seção cabe em uma página inteira mas não no espaço restante,
-      // move para a próxima página em vez de fatiar
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
-        const percentualRestante = (remainingSpaceMM / CONTENT_HEIGHT_MM) * 100;
-        if (percentualRestante < 15) {
-          pdf.addPage();
-          currentY = MARGIN_TOP_MM;
-          // Seção cabe inteira na nova página
-          const imgData = canvas.toDataURL("image/png");
-          pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
-          currentY += sectionHeightMM + SECTION_GAP_MM;
-          continue;
-        }
-      }
+      const sectionFitsSinglePage = sectionHeightMM <= CONTENT_HEIGHT_MM;
 
-      // Seções que cabem em uma página: mover inteira para próxima página se não cabe no restante
-      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
+      if (sectionFitsSinglePage && currentY > MARGIN_TOP_MM) {
         pdf.addPage();
         currentY = MARGIN_TOP_MM;
+        remainingSpaceMM = CONTENT_HEIGHT_MM;
+      }
+
+      if (sectionFitsSinglePage) {
         const imgData = canvas.toDataURL("image/png");
         pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
 
-      // Se não cabe em uma página inteira, fatia a seção
-
       const pxPerMM = canvas.height / sectionHeightMM;
       const SLICE_OVERLAP_PX = 12;
+      const MIN_FIRST_SLICE_MM = 36;
+      const MIN_SLICE_MM = 5;
+      const MIN_SLICE_PX = 120;
       let sourceY = 0;
 
       while (sourceY < canvas.height) {
         const availableMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
-        // Evita fatias minúsculas no fim da página que cortam linhas
-        if (availableMM < 5 && currentY > MARGIN_TOP_MM) {
+        if (sourceY === 0 && availableMM < MIN_FIRST_SLICE_MM && currentY > MARGIN_TOP_MM) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
           continue;
         }
 
-        const availablePx = Math.max(1, Math.floor(availableMM * pxPerMM));
+        if (availableMM < MIN_SLICE_MM && currentY > MARGIN_TOP_MM) {
+          pdf.addPage();
+          currentY = MARGIN_TOP_MM;
+          continue;
+        }
+
+        const preferredSlicePx = Math.max(1, Math.floor(availableMM * pxPerMM));
         const remainingPxHeight = canvas.height - sourceY;
-        const sliceHeightPx = Math.min(availablePx, remainingPxHeight);
+
+        let sliceHeightPx = Math.min(preferredSlicePx, remainingPxHeight);
+
+        const wouldFinishSection = sourceY + sliceHeightPx >= canvas.height;
+        if (!wouldFinishSection) {
+          const maxSlicePx = Math.min(preferredSlicePx, remainingPxHeight);
+          const minSlicePx = Math.min(maxSlicePx, Math.max(MIN_SLICE_PX, Math.floor(6 * pxPerMM)));
+
+          const preferredEndY = sourceY + sliceHeightPx;
+          const minEndY = sourceY + minSlicePx;
+          const maxEndY = sourceY + maxSlicePx;
+
+          const bestBreakY = getBestBreakRow(canvas, preferredEndY, minEndY, maxEndY);
+          sliceHeightPx = Math.max(1, bestBreakY - sourceY);
+        }
+
         const sliceHeightMM = sliceHeightPx / pxPerMM;
 
         const sliceCanvas = document.createElement("canvas");
@@ -161,7 +224,6 @@ export async function generateProtocolPdf(
           break;
         }
 
-        // Pequena sobreposição entre páginas para não perder linhas na emenda
         sourceY += sliceHeightPx;
         if (sliceHeightPx > SLICE_OVERLAP_PX + 1) {
           sourceY -= SLICE_OVERLAP_PX;
