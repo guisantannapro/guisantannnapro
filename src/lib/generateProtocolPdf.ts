@@ -83,19 +83,35 @@ export async function generateProtocolPdf(
         continue;
       }
 
-      // Só pula página se restar menos de 15% do espaço disponível
+      // Keep-together: se a seção cabe em uma página inteira mas não no espaço restante,
+      // move para a próxima página em vez de fatiar
       if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
         const percentualRestante = (remainingSpaceMM / CONTENT_HEIGHT_MM) * 100;
-        if (percentualRestante < 10) {
+        if (percentualRestante < 15) {
           pdf.addPage();
           currentY = MARGIN_TOP_MM;
+          // Seção cabe inteira na nova página
+          const imgData = canvas.toDataURL("image/png");
+          pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+          currentY += sectionHeightMM + SECTION_GAP_MM;
+          continue;
         }
       }
 
-      // Se não cabe, fatia a seção (nunca pula página deixando espaço vazio)
+      // Seções que cabem em uma página: mover inteira para próxima página se não cabe no restante
+      if (sectionHeightMM <= CONTENT_HEIGHT_MM && sectionHeightMM > remainingSpaceMM && currentY > MARGIN_TOP_MM) {
+        pdf.addPage();
+        currentY = MARGIN_TOP_MM;
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        currentY += sectionHeightMM + SECTION_GAP_MM;
+        continue;
+      }
+
+      // Se não cabe em uma página inteira, fatia a seção
 
       const pxPerMM = canvas.height / sectionHeightMM;
-      const SLICE_OVERLAP_PX = 8;
+      const SLICE_OVERLAP_PX = 12;
       let sourceY = 0;
 
       while (sourceY < canvas.height) {
