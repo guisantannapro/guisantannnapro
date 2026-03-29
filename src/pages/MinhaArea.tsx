@@ -361,7 +361,7 @@ const MinhaArea = () => {
                   className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
                 >
                   {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                  {isDownloadingPdf ? "Gerando PDF..." : "Baixar PDF"}
+                  {isDownloadingPdf ? "Gerando PDF..." : "Baixar PDF atualizado"}
                 </Button>
               </div>
             </div>
@@ -443,7 +443,7 @@ const MinhaArea = () => {
                     className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
                   >
                     <Download size={14} />
-                    Baixar
+                    Baixar arquivo original
                   </Button>
                 </div>
               ))}

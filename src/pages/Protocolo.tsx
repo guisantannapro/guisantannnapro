@@ -38,22 +38,45 @@ const Protocolo = () => {
 
       const protocolUserId = data.user_id;
 
-      const [{ data: profile }, { data: formSub }] = await Promise.all([
+      const [{ data: profile }, { data: formSubs }] = await Promise.all([
         supabase.from("profiles").select("full_name, plan, plan_duration").eq("id", protocolUserId).single(),
-        supabase.from("form_submissions").select("form_data, plan").eq("user_id", protocolUserId).order("created_at", { ascending: false }).limit(1).single(),
+        supabase
+          .from("form_submissions")
+          .select("form_data, plan")
+          .eq("user_id", protocolUserId)
+          .order("created_at", { ascending: false }),
       ]);
 
-      const resolvedPlan = profile?.plan || formSub?.plan || undefined;
-      const resolvedDuration = profile?.plan_duration || (formSub?.form_data as any)?.billingPeriod || undefined;
+      const latestSubmissionWithPlan = (formSubs || []).find(
+        (sub) => typeof sub?.plan === "string" && sub.plan.trim() !== ""
+      );
+      const latestSubmissionWithPeriod = (formSubs || []).find((sub) => {
+        const period = (sub?.form_data as any)?.billingPeriod;
+        return typeof period === "string" && period.trim() !== "";
+      });
+
+      const resolvedPlan =
+        profile?.plan ||
+        latestSubmissionWithPlan?.plan ||
+        localStorage.getItem("purchased_plan") ||
+        undefined;
+      const resolvedDuration =
+        profile?.plan_duration ||
+        (latestSubmissionWithPeriod?.form_data as any)?.billingPeriod ||
+        localStorage.getItem("purchased_period") ||
+        undefined;
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
       setPlanInfo({ plan: resolvedPlan, duration: resolvedDuration });
-      
-      const fd = formSub?.form_data as any;
+
+      const latestSubmissionWithBodyInfo = (formSubs || []).find((sub) => {
+        const data = sub?.form_data as any;
+        return Boolean(data?.age || data?.weight || data?.height);
+      });
+      const fd = latestSubmissionWithBodyInfo?.form_data as any;
       const idade = fd?.age || undefined;
       const peso = fd?.weight || undefined;
       const altura = fd?.height || undefined;
-      
 
       if (fd) {
         setClientInfo({ idade, peso, altura });
