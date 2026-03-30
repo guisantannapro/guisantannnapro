@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, type ReactNode } from "react";
 import logoGS from "@/assets/logo-gs.png";
 
 type ProtocolPdfData = {
@@ -29,6 +29,12 @@ type ProtocolPdfContentProps = {
   clientInfo?: ClientInfo;
   planInfo?: PlanInfo;
   wrapperId?: string;
+};
+
+type ProtocolPdfSectionProps = {
+  icon: string;
+  title: string;
+  children: ReactNode;
 };
 
 const tipoProtocoloLabels: Record<string, string> = {
@@ -74,6 +80,35 @@ Feeder Sets: Antes do primeiro (depois de aquecer) e segundo exercícios de cada
 
 • Repetição na Reserva (RIR): Repetições que antecedem a falha. Ex: 1 RIR significa que você falharia na repetição 11, então finalize na repetição 10.`;
 
+function ProtocolPdfSection({ icon, title, children }: ProtocolPdfSectionProps) {
+  return (
+    <section className="pdf-section" data-pdf-section>
+      <div className="pdf-section-header">
+        <span className="pdf-section-icon">{icon}</span>
+        <h3 className="pdf-section-title">{title}</h3>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function renderFormattedContent(content: string) {
+  const blocks = content
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  if (blocks.length <= 1) {
+    return content;
+  }
+
+  return blocks.map((block, index) => (
+    <p key={`${block.slice(0, 20)}-${index}`} style={{ marginTop: index === 0 ? 0 : 12, whiteSpace: "pre-line" }}>
+      {block}
+    </p>
+  ));
+}
+
 export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentProps>(function ProtocolPdfContent({
   protocolo,
   clientName,
@@ -103,26 +138,26 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
               <span className="pdf-cover-label">PROTOCOLO</span>
               <span className="pdf-cover-title">{clientName}</span>
             </div>
-            <div className="pdf-cover-info-right" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <div className="pdf-cover-info-right" style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+              <div className="pdf-cover-meta" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                 <span className="pdf-cover-label">TIPO</span>
                 <span className="pdf-cover-value">
                   {tipoProtocoloLabels[protocolo.tipo_protocolo] || protocolo.tipo_protocolo}
                 </span>
               </div>
-              <div className="pdf-cover-meta" style={{ display: clientInfo?.idade ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.idade ? "flex" : "none", flexDirection: "column", gap: "2px" }}>
                 <span className="pdf-cover-label">IDADE</span>
-                <span className="pdf-cover-value">{clientInfo?.idade || '--'}</span>
+                <span className="pdf-cover-value">{clientInfo?.idade || "--"}</span>
               </div>
-              <div className="pdf-cover-meta" style={{ display: clientInfo?.peso ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.peso ? "flex" : "none", flexDirection: "column", gap: "2px" }}>
                 <span className="pdf-cover-label">PESO</span>
-                <span className="pdf-cover-value">{clientInfo?.peso || '--'}</span>
+                <span className="pdf-cover-value">{clientInfo?.peso || "--"}</span>
               </div>
-              <div className="pdf-cover-meta" style={{ display: clientInfo?.altura ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+              <div className="pdf-cover-meta" style={{ display: clientInfo?.altura ? "flex" : "none", flexDirection: "column", gap: "2px" }}>
                 <span className="pdf-cover-label">ALTURA</span>
-                <span className="pdf-cover-value">{clientInfo?.altura || '--'}</span>
+                <span className="pdf-cover-value">{clientInfo?.altura || "--"}</span>
               </div>
-              <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <div className="pdf-cover-meta" style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                 <span className="pdf-cover-label">DATA</span>
                 <span className="pdf-cover-value">{formattedDate}</span>
               </div>
@@ -137,75 +172,43 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
       </div>
 
       {protocolo.plano_alimentar && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">🍽</span>
-            <h3 className="pdf-section-title">Plano Alimentar</h3>
-          </div>
-          <div className="pdf-section-body">{protocolo.plano_alimentar}</div>
-        </div>
+        <ProtocolPdfSection icon="🍽" title="Plano Alimentar">
+          <div className="pdf-section-body">{renderFormattedContent(protocolo.plano_alimentar)}</div>
+        </ProtocolPdfSection>
       )}
 
-      {/* Observações Fixas */}
-      <div className="pdf-section" data-pdf-section>
-        <div className="pdf-section-header">
-          <span className="pdf-section-icon">📋</span>
-          <h3 className="pdf-section-title">Observações</h3>
-        </div>
-        <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
-          {OBSERVACOES_FIXAS}
-        </div>
-      </div>
+      <ProtocolPdfSection icon="📋" title="Observações">
+        <div className="pdf-section-body">{renderFormattedContent(OBSERVACOES_FIXAS)}</div>
+      </ProtocolPdfSection>
 
-      {/* Suplementação */}
       {protocolo.suplementacao && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">💊</span>
-            <h3 className="pdf-section-title">Suplementação</h3>
-          </div>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
-            {protocolo.suplementacao}
-          </div>
-        </div>
+        <ProtocolPdfSection icon="💊" title="Suplementação">
+          <div className="pdf-section-body">{renderFormattedContent(protocolo.suplementacao)}</div>
+        </ProtocolPdfSection>
       )}
 
-      {/* Cardio */}
       {protocolo.cardio && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">🏃</span>
-            <h3 className="pdf-section-title">Cardio</h3>
-          </div>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
-            {protocolo.cardio}
-          </div>
-        </div>
+        <ProtocolPdfSection icon="🏃" title="Cardio">
+          <div className="pdf-section-body">{renderFormattedContent(protocolo.cardio)}</div>
+        </ProtocolPdfSection>
       )}
 
-      {/* Treino */}
       {protocolo.treino && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">🏋️</span>
-            <h3 className="pdf-section-title">Treino</h3>
-          </div>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line", marginBottom: "16px" }}>
-            {TREINO_INTRO}
-          </div>
-          <div className="pdf-section-body">{protocolo.treino}</div>
-        </div>
+        <>
+          <ProtocolPdfSection icon="📌" title="Diretrizes de Treino">
+            <div className="pdf-section-body">{renderFormattedContent(TREINO_INTRO)}</div>
+          </ProtocolPdfSection>
+
+          <ProtocolPdfSection icon="🏋️" title="Treino">
+            <div className="pdf-section-body">{renderFormattedContent(protocolo.treino)}</div>
+          </ProtocolPdfSection>
+        </>
       )}
 
-      {/* Observações extras do admin */}
       {protocolo.observacoes && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">📝</span>
-            <h3 className="pdf-section-title">Observações Adicionais</h3>
-          </div>
-          <div className="pdf-section-body">{protocolo.observacoes}</div>
-        </div>
+        <ProtocolPdfSection icon="📝" title="Observações Adicionais">
+          <div className="pdf-section-body">{renderFormattedContent(protocolo.observacoes)}</div>
+        </ProtocolPdfSection>
       )}
 
       <div className="pdf-footer" data-pdf-section>
