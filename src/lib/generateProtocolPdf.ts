@@ -93,10 +93,11 @@ export async function generateProtocolPdf(
 
   const A4_WIDTH_MM = 210;
   const A4_HEIGHT_MM = 297;
-  const MARGIN_MM = 12;
+  const MARGIN_MM = 10;
   const MARGIN_TOP_MM = 10;
   const MARGIN_BOTTOM_MM = 5;
-  const CONTENT_WIDTH_MM = A4_WIDTH_MM - MARGIN_MM * 2;
+  const CONTENT_WIDTH_MM = 190;
+  const MARGIN_X_MM = (A4_WIDTH_MM - CONTENT_WIDTH_MM) / 2;
   const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - MARGIN_TOP_MM - MARGIN_BOTTOM_MM;
   const SECTION_GAP_MM = 4;
   const CANVAS_SCALE = 2;
@@ -132,7 +133,7 @@ export async function generateProtocolPdf(
 
       if (sectionHeightMM <= remainingSpaceMM) {
         const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        pdf.addImage(imgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
@@ -147,7 +148,7 @@ export async function generateProtocolPdf(
 
       if (sectionFitsSinglePage) {
         const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        pdf.addImage(imgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
@@ -218,7 +219,7 @@ export async function generateProtocolPdf(
         );
 
         const sliceImgData = sliceCanvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(sliceImgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
+        pdf.addImage(sliceImgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
 
         const isLastSlice = sourceY + sliceHeightPx >= canvas.height;
         if (isLastSlice) {
