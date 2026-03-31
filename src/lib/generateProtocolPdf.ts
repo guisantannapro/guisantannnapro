@@ -133,7 +133,7 @@ export async function generateProtocolPdf(
 
       if (sectionHeightMM <= remainingSpaceMM) {
         const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        pdf.addImage(imgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
@@ -148,7 +148,7 @@ export async function generateProtocolPdf(
 
       if (sectionFitsSinglePage) {
         const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        pdf.addImage(imgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
@@ -219,7 +219,7 @@ export async function generateProtocolPdf(
         );
 
         const sliceImgData = sliceCanvas.toDataURL("image/jpeg", JPEG_QUALITY);
-        pdf.addImage(sliceImgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
+        pdf.addImage(sliceImgData, "JPEG", MARGIN_X_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
 
         const isLastSlice = sourceY + sliceHeightPx >= canvas.height;
         if (isLastSlice) {
