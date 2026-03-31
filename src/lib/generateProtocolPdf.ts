@@ -217,8 +217,8 @@ export async function generateProtocolPdf(
           sliceCanvas.height
         );
 
-        const sliceImgData = sliceCanvas.toDataURL("image/png");
-        pdf.addImage(sliceImgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
+        const sliceImgData = sliceCanvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        pdf.addImage(sliceImgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
 
         const isLastSlice = sourceY + sliceHeightPx >= canvas.height;
         if (isLastSlice) {
