@@ -146,8 +146,8 @@ export async function generateProtocolPdf(
       }
 
       if (sectionFitsSinglePage) {
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
