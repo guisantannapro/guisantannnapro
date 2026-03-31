@@ -153,7 +153,7 @@ export async function generateProtocolPdf(
       }
 
       const pxPerMM = canvas.height / sectionHeightMM;
-      const SLICE_OVERLAP_PX = 12;
+      const SLICE_OVERLAP_PX = 4;
       const MIN_FIRST_SLICE_MM = 36;
       const MIN_SLICE_MM = 5;
       const MIN_SLICE_PX = 120;
