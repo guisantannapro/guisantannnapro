@@ -109,7 +109,7 @@ export async function generateProtocolPdf(
     await waitForImages(element);
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
     let currentY = MARGIN_TOP_MM;
 
     const sections = Array.from(element.querySelectorAll("[data-pdf-section]")) as HTMLElement[];
