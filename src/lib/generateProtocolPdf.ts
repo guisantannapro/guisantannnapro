@@ -99,6 +99,8 @@ export async function generateProtocolPdf(
   const CONTENT_WIDTH_MM = A4_WIDTH_MM - MARGIN_MM * 2;
   const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - MARGIN_TOP_MM - MARGIN_BOTTOM_MM;
   const SECTION_GAP_MM = 0.5;
+  const CANVAS_SCALE = 1.5;
+  const JPEG_QUALITY = 0.85;
 
   element.classList.add("pdf-export-light");
 
@@ -107,7 +109,7 @@ export async function generateProtocolPdf(
     await waitForImages(element);
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
-    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
     let currentY = MARGIN_TOP_MM;
 
     const sections = Array.from(element.querySelectorAll("[data-pdf-section]")) as HTMLElement[];
@@ -117,7 +119,7 @@ export async function generateProtocolPdf(
 
     for (const section of sections) {
       const canvas = await html2canvas(section, {
-        scale: 2,
+        scale: CANVAS_SCALE,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
@@ -129,8 +131,8 @@ export async function generateProtocolPdf(
       let remainingSpaceMM = CONTENT_HEIGHT_MM - (currentY - MARGIN_TOP_MM);
 
       if (sectionHeightMM <= remainingSpaceMM) {
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
@@ -144,14 +146,14 @@ export async function generateProtocolPdf(
       }
 
       if (sectionFitsSinglePage) {
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(imgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
+        const imgData = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        pdf.addImage(imgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sectionHeightMM);
         currentY += sectionHeightMM + SECTION_GAP_MM;
         continue;
       }
 
       const pxPerMM = canvas.height / sectionHeightMM;
-      const SLICE_OVERLAP_PX = 12;
+      const SLICE_OVERLAP_PX = 4;
       const MIN_FIRST_SLICE_MM = 36;
       const MIN_SLICE_MM = 5;
       const MIN_SLICE_PX = 120;
@@ -215,8 +217,8 @@ export async function generateProtocolPdf(
           sliceCanvas.height
         );
 
-        const sliceImgData = sliceCanvas.toDataURL("image/png");
-        pdf.addImage(sliceImgData, "PNG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
+        const sliceImgData = sliceCanvas.toDataURL("image/jpeg", JPEG_QUALITY);
+        pdf.addImage(sliceImgData, "JPEG", MARGIN_MM, currentY, CONTENT_WIDTH_MM, sliceHeightMM);
 
         const isLastSlice = sourceY + sliceHeightPx >= canvas.height;
         if (isLastSlice) {
