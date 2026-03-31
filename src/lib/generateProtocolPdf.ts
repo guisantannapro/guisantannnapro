@@ -119,7 +119,7 @@ export async function generateProtocolPdf(
 
     for (const section of sections) {
       const canvas = await html2canvas(section, {
-        scale: 2,
+        scale: CANVAS_SCALE,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
