@@ -99,6 +99,8 @@ export async function generateProtocolPdf(
   const CONTENT_WIDTH_MM = A4_WIDTH_MM - MARGIN_MM * 2;
   const CONTENT_HEIGHT_MM = A4_HEIGHT_MM - MARGIN_TOP_MM - MARGIN_BOTTOM_MM;
   const SECTION_GAP_MM = 0.5;
+  const CANVAS_SCALE = 1.5;
+  const JPEG_QUALITY = 0.85;
 
   element.classList.add("pdf-export-light");
 
