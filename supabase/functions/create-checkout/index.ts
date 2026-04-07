@@ -10,17 +10,17 @@ const corsHeaders = {
 // Price ID mapping
 const PRICE_MAP: Record<string, string> = {
   // Base
-  "base-dieta-mensal": "price_1TClTIRYQWJHE7ZJ5ec2BJgc",
-  "base-treino-mensal": "price_1TClTIRYQWJHE7ZJ5ec2BJgc",
-  "base-dieta+treino-mensal": "price_1TClZxRYQWJHE7ZJmv7abwpd",
+  "base-dieta-mensal": "price_1TEaQaD7JC4bhIaasPJSIQk0",
+  "base-treino-mensal": "price_1TEaQaD7JC4bhIaasPJSIQk0",
+  "base-dieta+treino-mensal": "price_1TEaQYD7JC4bhIaaCaYtk0GJ",
   // Transformação
-  "transformação-mensal": "price_1TClUhRYQWJHE7ZJqL9QVHDV",
-  "transformação-trimestral": "price_1TClVZRYQWJHE7ZJxvQIDdFN",
-  "transformação-semestral": "price_1TClWmRYQWJHE7ZJ8xdw6a05",
+  "transformação-mensal": "price_1TEaQYD7JC4bhIaaWiYhiSXs",
+  "transformação-trimestral": "price_1TEaQYD7JC4bhIaaDY6ZYWJM",
+  "transformação-semestral": "price_1TEaQWD7JC4bhIaa4kdp2Y5J",
   // Elite
-  "elite-mensal": "price_1TClXQRYQWJHE7ZJfRfErreJ",
-  "elite-trimestral": "price_1TClYHRYQWJHE7ZJ7wwQhglH",
-  "elite-semestral": "price_1TClYxRYQWJHE7ZJj9iPjQoi",
+  "elite-mensal": "price_1TEaQYD7JC4bhIaaMHDW0e3f",
+  "elite-trimestral": "price_1TEaQWD7JC4bhIaakd5j4CkL",
+  "elite-semestral": "price_1TEaQXD7JC4bhIaa3PrSd7l8",
 };
 
 serve(async (req) => {
