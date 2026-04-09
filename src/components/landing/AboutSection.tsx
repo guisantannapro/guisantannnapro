@@ -17,6 +17,7 @@ const AboutSection = () => {
               <img
                 src={heroImg}
                 alt="Guilherme Sant'Anna - Coach"
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />

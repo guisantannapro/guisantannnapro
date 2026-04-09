@@ -46,7 +46,7 @@ const ResultsSection = () => {
               className={`${item.image ? 'aspect-[4/3]' : 'aspect-[4/5]'} rounded-lg bg-card border border-border flex flex-col items-center justify-center gap-4 overflow-hidden`}
             >
               {item.image ? (
-                <img src={item.image} alt={item.label} className="w-full h-full object-contain bg-card" />
+                <img src={item.image} alt={item.label} loading="lazy" className="w-full h-full object-contain bg-card" />
               ) : (
                 <>
                   <ImageIcon className="w-12 h-12 text-muted-foreground/30" />
