@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { ImageIcon } from "lucide-react";
-import alunoA from "@/assets/aluno-a.jpg";
-import alunoB from "@/assets/aluno-b.jpg";
-import alunoC from "@/assets/aluno-c.jpg";
-import alunoD from "@/assets/aluno-d.jpg";
-import alunoE from "@/assets/aluno-e.jpg";
-import alunoF from "@/assets/aluno-f.jpg";
+import alunoA from "@/assets/aluno-a.webp";
+import alunoB from "@/assets/aluno-b.webp";
+import alunoC from "@/assets/aluno-c.webp";
+import alunoD from "@/assets/aluno-d.webp";
+import alunoE from "@/assets/aluno-e.webp";
+import alunoF from "@/assets/aluno-f.webp";
 
 const results = [
   { image: alunoA, label: "Transformação 1" },
