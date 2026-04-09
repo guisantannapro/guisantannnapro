@@ -278,8 +278,8 @@ const PricingSection = () => {
     console.log("Checkout initiated:", { priceKey, plan: plan.name });
 
     // Fire Google Analytics begin_checkout event
-    if (typeof window.gtag === "function") {
-      window.gtag("event", "begin_checkout", {
+    if (typeof (window as any).gtag === "function") {
+      (window as any).gtag("event", "begin_checkout", {
         items: [{ item_name: plan.name, price: plan.pricing[billings[plan.name]].value }],
       });
     }
