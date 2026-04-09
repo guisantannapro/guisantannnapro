@@ -277,6 +277,13 @@ const PricingSection = () => {
 
     console.log("Checkout initiated:", { priceKey, plan: plan.name });
 
+    // Fire Google Analytics begin_checkout event
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "begin_checkout", {
+        items: [{ item_name: plan.name, price: plan.pricing[billings[plan.name]].value }],
+      });
+    }
+
     setLoadingPlan(plan.name);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
