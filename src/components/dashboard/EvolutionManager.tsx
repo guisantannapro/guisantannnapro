@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { TrendingUp, Plus, Trash2, Upload, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,11 +76,12 @@ const EvolutionManager = ({ clientUserId }: EvolutionManagerProps) => {
   };
 
   const uploadPhoto = async (file: File, label: string): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
+    const compressed = await compressImage(file);
+    const ext = compressed.name.split(".").pop();
     const path = `${clientUserId}/${Date.now()}-${label}.${ext}`;
     const { error } = await supabase.storage
       .from("evolution-photos")
-      .upload(path, file, { upsert: false });
+      .upload(path, compressed, { upsert: false });
     if (error) {
       console.error(`Upload error (${label}):`, error);
       return null;

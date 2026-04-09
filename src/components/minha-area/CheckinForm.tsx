@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,9 +36,10 @@ const CheckinForm = ({ userId, onSuccess }: CheckinFormProps) => {
   };
 
   const uploadPhoto = async (file: File, type: string): Promise<string | null> => {
-    const ext = file.name.split(".").pop();
+    const compressed = await compressImage(file);
+    const ext = compressed.name.split(".").pop();
     const path = `${userId}/checkin-${Date.now()}-${type}.${ext}`;
-    const { error } = await supabase.storage.from("client-photos").upload(path, file);
+    const { error } = await supabase.storage.from("client-photos").upload(path, compressed);
     if (error) {
       console.error("Upload error:", error);
       return null;
