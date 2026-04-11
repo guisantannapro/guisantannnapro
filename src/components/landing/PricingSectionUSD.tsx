@@ -31,16 +31,16 @@ const plans: Plan[] = [
     name: "Base",
     subtitle: "Ideal para quem quer começar com estratégia e direcionamento profissional.",
     pricing: {
-      mensal: { value: "49.90", period: "/mo", label: "Monthly" },
-      trimestral: { value: "49.90", period: "/mo", label: "Monthly" },
-      semestral: { value: "49.90", period: "/mo", label: "Monthly" },
+      mensal: { value: "49.90", period: "/mês", label: "Mensal" },
+      trimestral: { value: "49.90", period: "/mês", label: "Mensal" },
+      semestral: { value: "49.90", period: "/mês", label: "Mensal" },
     },
     features: [
       "Dieta ou treino individualizado (você escolhe)",
       "Estrutura personalizada inicial",
       "Direcionamento profissional",
     ],
-    cta: "Get Started",
+    cta: "Começar Agora",
     badge: null,
     featured: false,
     icon: Zap,
@@ -50,9 +50,9 @@ const plans: Plan[] = [
     name: "Transformação",
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
-      mensal: { value: "99.90", period: "/mo", label: "Monthly" },
-      trimestral: { value: "262.90", period: "/quarter", label: "Quarterly", savingsText: "You save $36.80 total" },
-      semestral: { value: "508.90", period: "/half-year", label: "Semi-annual", savingsText: "You save $90.50 total" },
+      mensal: { value: "99.90", period: "/mês", label: "Mensal" },
+      trimestral: { value: "262.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $36,80 no total" },
+      semestral: { value: "508.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $90,50 no total" },
     },
     features: [
       "Dieta individualizada completa",
@@ -63,8 +63,8 @@ const plans: Plan[] = [
       "Avaliação de exames",
       "Ajustes de Protocolo",
     ],
-    cta: "Start My Transformation",
-    badge: "Most popular",
+    cta: "Iniciar Minha Transformação",
+    badge: "Mais popular",
     featured: true,
     icon: Star,
     hasSelector: true,
@@ -73,9 +73,9 @@ const plans: Plan[] = [
     name: "Elite",
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
-      mensal: { value: "149.90", period: "/mo", label: "Monthly" },
-      trimestral: { value: "389.90", period: "/quarter", label: "Quarterly", savingsText: "You save $59.80 total" },
-      semestral: { value: "749.90", period: "/half-year", label: "Semi-annual", savingsText: "You save $149.50 total" },
+      mensal: { value: "149.90", period: "/mês", label: "Mensal" },
+      trimestral: { value: "389.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $59,80 no total" },
+      semestral: { value: "749.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $149,50 no total" },
     },
     features: [
       "Dieta individualizada completa",
@@ -88,8 +88,8 @@ const plans: Plan[] = [
       "Ajustes de Protocolo",
       "Resposta prioritária",
     ],
-    cta: "Go Elite",
-    badge: "Premium Plan",
+    cta: "Quero o Elite",
+    badge: "Plano Premium",
     featured: false,
     icon: Crown,
     hasSelector: true,
@@ -99,9 +99,9 @@ const plans: Plan[] = [
 const billingKeys: BillingPeriod[] = ["mensal", "trimestral", "semestral"];
 
 const guarantees = [
-  "100% personalized coaching",
-  "Strategies based on real bodybuilding experience",
-  "Method focused on consistent results",
+  "Coaching 100% personalizado",
+  "Estratégias baseadas em experiência real no fisiculturismo",
+  "Método focado em resultados consistentes",
 ];
 
 /* ── Per-card price selector dropdown ── */
@@ -311,12 +311,12 @@ const PricingSectionUSD = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            Choose Your{" "}
-            <span className="text-gradient-gold">Transformation</span>
+            Escolha Sua{" "}
+            <span className="text-gradient-gold">Transformação</span>
           </h2>
           <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
-            All plans include personalized strategy and professional coaching
-            for real results.
+            Todos os planos incluem estratégia personalizada e coaching
+            profissional para resultados reais.
           </p>
         </motion.div>
 
@@ -361,7 +361,7 @@ const PricingSectionUSD = () => {
               {plan.name === "Base" && (
                 <div className="mb-6">
                   <p className="text-xs text-muted-foreground font-body normal-case mb-2">
-                    Choose your modality:
+                    Escolha sua modalidade:
                   </p>
                   <div className="flex gap-2">
                     {(["dieta", "treino"] as BaseOption[]).map((opt) => (
@@ -375,7 +375,7 @@ const PricingSectionUSD = () => {
                             : "border border-border text-muted-foreground hover:border-primary/40"
                         }`}
                       >
-                        {opt === "dieta" ? "Diet" : "Training"}
+                        {opt === "dieta" ? "Dieta" : "Treino"}
                       </button>
                     ))}
                   </div>
@@ -386,7 +386,7 @@ const PricingSectionUSD = () => {
                       className="text-[11px] font-body normal-case mt-2"
                       style={{ color: "hsl(var(--gold-light))" }}
                     >
-                      Diet + Training selected
+                      Dieta + Treino selecionados
                     </motion.p>
                   )}
                 </div>
