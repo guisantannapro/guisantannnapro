@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard.tsx";
 import Login from "./pages/Login.tsx";
 import MinhaArea from "./pages/MinhaArea.tsx";
 import Protocolo from "./pages/Protocolo.tsx";
+import CheckoutUSD from "./pages/CheckoutUSD.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/checkout-usd" element={<CheckoutUSD />} />
           <Route path="/pagamento-sucesso" element={<PaymentSuccess />} />
           <Route path="/formulario" element={<Formulario />} />
           <Route path="/login" element={<Login />} />
