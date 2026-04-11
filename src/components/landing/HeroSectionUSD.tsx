@@ -46,15 +46,6 @@ const HeroSectionUSD = () => {
           A metodologia de elite do Brasil, agora disponível para você nos EUA.
         </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="font-body text-muted-foreground text-sm md:text-base max-w-xl mx-auto mb-10 normal-case"
-        >
-          Mais de 20 anos de experiência no fisiculturismo aplicados para ajudar
-          cada pessoa a construir sua melhor versão física.
-        </motion.p>
 
         <motion.a
           href="#planos"
