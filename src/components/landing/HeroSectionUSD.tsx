@@ -54,7 +54,7 @@ const HeroSectionUSD = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="inline-block bg-gradient-gold text-primary-foreground px-10 py-4 rounded-lg font-display text-lg font-bold tracking-wider uppercase hover:opacity-90 transition-opacity glow-gold"
         >
-          Start My Transformation
+          Iniciar Minha Transformação
         </motion.a>
       </div>
     </section>
