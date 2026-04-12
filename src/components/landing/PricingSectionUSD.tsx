@@ -51,8 +51,8 @@ const plans: Plan[] = [
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
       mensal: { value: "109.00", period: "/mês", label: "Mensal" },
-      trimestral: { value: "286.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $40,10 no total" },
-      semestral: { value: "555.00", period: "/semestre", label: "Semestral", savingsText: "Você economiza $99,00 no total" },
+      trimestral: { value: "289.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $37,10 no total" },
+      semestral: { value: "529.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $124,10 no total" },
     },
     features: [
       "Dieta individualizada completa",
@@ -74,8 +74,8 @@ const plans: Plan[] = [
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
       mensal: { value: "149.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "389.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $59,80 no total" },
-      semestral: { value: "749.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $149,50 no total" },
+      trimestral: { value: "399.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $49,80 no total" },
+      semestral: { value: "719.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $179,50 no total" },
     },
     features: [
       "Dieta individualizada completa",
