@@ -9,7 +9,7 @@ const stats = [
     value: "15x",
     label: "Campeão",
   },
-  { icon: Users, value: "100+", label: "Atletas e clientes atendidos" },
+  { icon: Users, value: "500+", label: "Atletas e clientes atendidos" },
   { icon: Target, value: "100%", label: "Método baseado em prática real" },
 ];
 
