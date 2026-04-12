@@ -10,8 +10,8 @@ const corsHeaders = {
 // Price ID mapping
 const PRICE_MAP: Record<string, string> = {
   // Base
-  "base-dieta-mensal": "price_1TEaQaD7JC4bhIaasPJSIQk0",
-  "base-treino-mensal": "price_1TEaQaD7JC4bhIaasPJSIQk0",
+  "base-dieta-mensal": "price_1TLXIwD7JC4bhIaaGd8KWDwU",
+  "base-treino-mensal": "price_1TLXK8D7JC4bhIaaIm3VwLmi",
   "base-dieta+treino-mensal": "price_1TEaQYD7JC4bhIaaCaYtk0GJ",
   // Transformação
   "transformação-mensal": "price_1TEaQYD7JC4bhIaaWiYhiSXs",

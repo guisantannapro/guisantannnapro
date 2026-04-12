@@ -10,8 +10,8 @@ const corsHeaders = {
 // USD Price ID mapping — replace placeholder values with real Stripe USD price IDs
 const PRICE_MAP: Record<string, string> = {
   // Base
-  "base-dieta-mensal": "price_1TLVtuD7JC4bhIaakcTKe1nx",
-  "base-treino-mensal": "price_1TLVtuD7JC4bhIaakcTKe1nx",
+  "base-dieta-mensal": "price_1TLXM3D7JC4bhIaaiyNAnY4y",
+  "base-treino-mensal": "price_1TLXMhD7JC4bhIaaDdU1KJqA",
   "base-dieta+treino-mensal": "price_1TLVxDD7JC4bhIaagYUn9QD1",
   // Transformação
   "transformação-mensal": "price_1TLVzYD7JC4bhIaa1gTCNtid",
