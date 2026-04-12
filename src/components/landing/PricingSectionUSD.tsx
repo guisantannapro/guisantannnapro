@@ -50,9 +50,9 @@ const plans: Plan[] = [
     name: "Transformação",
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
-      mensal: { value: "99.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "262.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $36,80 no total" },
-      semestral: { value: "508.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $90,50 no total" },
+      mensal: { value: "109.00", period: "/mês", label: "Mensal" },
+      trimestral: { value: "286.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $40,10 no total" },
+      semestral: { value: "555.00", period: "/semestre", label: "Semestral", savingsText: "Você economiza $99,00 no total" },
     },
     features: [
       "Dieta individualizada completa",
