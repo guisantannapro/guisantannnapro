@@ -15,7 +15,7 @@ const PRICE_MAP: Record<string, string> = {
   "base-dieta+treino-mensal": "price_1TLVxDD7JC4bhIaagYUn9QD1",
   // Transformação
   "transformação-mensal": "price_1TLVzYD7JC4bhIaa1gTCNtid",
-  "transformação-trimestral": "price_1TLW1zD7JC4bhIaaPgzIWZzd",
+  "transformação-trimestral": "price_1TLW0mD7JC4bhIaaCheVPeWe",
   "transformação-semestral": "price_1TLW1zD7JC4bhIaaPgzIWZzd",
   // Elite
   "elite-mensal": "price_1TLW4BD7JC4bhIaatJeVB0CE",
