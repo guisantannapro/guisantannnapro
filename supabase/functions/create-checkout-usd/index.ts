@@ -10,17 +10,17 @@ const corsHeaders = {
 // USD Price ID mapping — replace placeholder values with real Stripe USD price IDs
 const PRICE_MAP: Record<string, string> = {
   // Base
-  "base-dieta-mensal": "price_USD_BASE_DIETA",
-  "base-treino-mensal": "price_USD_BASE_TREINO",
-  "base-dieta+treino-mensal": "price_USD_BASE_AMBOS",
+  "base-dieta-mensal": "price_1TLVtuD7JC4bhIaakcTKe1nx",
+  "base-treino-mensal": "price_1TLVtuD7JC4bhIaakcTKe1nx",
+  "base-dieta+treino-mensal": "price_1TLVxDD7JC4bhIaagYUn9QD1",
   // Transformação
-  "transformação-mensal": "price_USD_TRANSF_MENSAL",
-  "transformação-trimestral": "price_USD_TRANSF_TRIM",
-  "transformação-semestral": "price_USD_TRANSF_SEM",
+  "transformação-mensal": "price_1TLVzYD7JC4bhIaa1gTCNtid",
+  "transformação-trimestral": "price_1TLW1zD7JC4bhIaaPgzIWZzd",
+  "transformação-semestral": "price_1TLW1zD7JC4bhIaaPgzIWZzd",
   // Elite
-  "elite-mensal": "price_USD_ELITE_MENSAL",
-  "elite-trimestral": "price_USD_ELITE_TRIM",
-  "elite-semestral": "price_USD_ELITE_SEM",
+  "elite-mensal": "price_1TLW4BD7JC4bhIaatJeVB0CE",
+  "elite-trimestral": "price_1TLW5CD7JC4bhIaaLfxYkawm",
+  "elite-semestral": "price_1TLW6AD7JC4bhIaa02GdRXj4",
 };
 
 serve(async (req) => {
