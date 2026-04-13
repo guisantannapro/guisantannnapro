@@ -6,12 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
+import PwaInstallModal, { usePwaInstall } from "@/components/PwaInstallModal";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPwaModal, setShowPwaModal] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { shouldShow, isIos, deferredPrompt, triggerInstall } = usePwaInstall();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,18 +31,31 @@ const Login = () => {
 
     // Check if user is admin to decide where to redirect
     const userId = authData.user?.id;
+    let redirectTo = "/area-do-cliente";
     if (userId) {
       const { data: isAdmin } = await supabase.rpc("has_role", {
         _user_id: userId,
         _role: "admin",
       });
       if (isAdmin) {
-        navigate("/dashboard");
-      } else {
-        navigate("/area-do-cliente");
+        redirectTo = "/dashboard";
       }
+    }
+
+    // Show PWA install modal for non-admin users if applicable
+    if (shouldShow && redirectTo === "/area-do-cliente") {
+      setPendingRedirect(redirectTo);
+      setShowPwaModal(true);
+      setLoading(false);
     } else {
-      navigate("/area-do-cliente");
+      navigate(redirectTo);
+    }
+  };
+
+  const handlePwaModalClose = (open: boolean) => {
+    setShowPwaModal(open);
+    if (!open && pendingRedirect) {
+      navigate(pendingRedirect);
     }
   };
 
@@ -82,6 +99,14 @@ const Login = () => {
           </Button>
         </form>
       </div>
+
+      <PwaInstallModal
+        open={showPwaModal}
+        onOpenChange={handlePwaModalClose}
+        isIos={isIos}
+        onInstall={triggerInstall}
+        hasNativePrompt={!!deferredPrompt}
+      />
     </div>
   );
 };
