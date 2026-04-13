@@ -82,20 +82,20 @@ const IosStep = ({
   delay: string;
 }) => (
   <div
-    className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-primary/20 opacity-0 animate-fade-in"
-    style={{ animationDelay: delay, animationFillMode: "forwards" }}
+    className="flex items-center gap-4 rounded-xl border border-primary/20 bg-white/5 p-4 animate-fade-up"
+    style={{ animationDelay: delay }}
   >
-    <div className="relative">
-      <div className="w-12 h-12 rounded-full bg-primary/30 flex items-center justify-center shrink-0 ring-2 ring-primary/40">
+    <div className="relative shrink-0">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/30 ring-2 ring-primary/40">
         {icon}
       </div>
-      <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+      <span className="absolute -left-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
         {step}
       </span>
     </div>
-    <div className="flex-1 min-w-0">
+    <div className="min-w-0 flex-1">
       <p className="text-sm font-semibold text-foreground">{label}</p>
-      <p className="text-xs text-muted-foreground mt-0.5">{sublabel}</p>
+      <p className="mt-0.5 text-xs text-muted-foreground">{sublabel}</p>
     </div>
   </div>
 );
