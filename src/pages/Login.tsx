@@ -99,6 +99,14 @@ const Login = () => {
           </Button>
         </form>
       </div>
+
+      <PwaInstallModal
+        open={showPwaModal}
+        onOpenChange={handlePwaModalClose}
+        isIos={isIos}
+        onInstall={triggerInstall}
+        hasNativePrompt={!!deferredPrompt}
+      />
     </div>
   );
 };
