@@ -239,6 +239,7 @@ const MinhaArea = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <PwaInstallBanner />
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-6 flex items-center justify-between">
           <div>
