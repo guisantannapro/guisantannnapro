@@ -1,4 +1,4 @@
-const CACHE_NAME = "gs-app-shell-v1";
+const CACHE_NAME = "gs-app-shell-v2";
 
 // App Shell files to pre-cache
 const APP_SHELL = [
