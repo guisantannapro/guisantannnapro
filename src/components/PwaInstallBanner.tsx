@@ -54,7 +54,7 @@ const PwaInstallBanner = () => {
       <PwaInstallModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        isIos={isIos}
+        isIos={true}
         onInstall={triggerInstall}
         hasNativePrompt={!!deferredPrompt}
       />
