@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Download, Share, Plus, X } from "lucide-react";
+import { Download, Share, Plus, CheckCircle2 } from "lucide-react";
 
 const STORAGE_KEY = "pwa-install-dismissed";
 const COOLDOWN_DAYS = 7;
@@ -67,6 +67,39 @@ interface PwaInstallModalProps {
   hasNativePrompt: boolean;
 }
 
+/* Animated step indicator for iOS */
+const IosStep = ({
+  step,
+  icon,
+  label,
+  sublabel,
+  delay,
+}: {
+  step: number;
+  icon: React.ReactNode;
+  label: string;
+  sublabel: string;
+  delay: string;
+}) => (
+  <div
+    className="flex items-center gap-4 p-4 rounded-xl bg-secondary/80 border border-border/50 opacity-0 animate-fade-in"
+    style={{ animationDelay: delay, animationFillMode: "forwards" }}
+  >
+    <div className="relative">
+      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0 ring-2 ring-primary/30">
+        {icon}
+      </div>
+      <span className="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+        {step}
+      </span>
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-semibold text-foreground">{label}</p>
+      <p className="text-xs text-muted-foreground mt-0.5">{sublabel}</p>
+    </div>
+  </div>
+);
+
 const PwaInstallModal = ({
   open,
   onOpenChange,
@@ -81,86 +114,53 @@ const PwaInstallModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-background border-border max-w-sm mx-auto">
+      <DialogContent className="bg-[#0a0a0a] border-primary/20 max-w-sm mx-auto rounded-2xl">
         <DialogHeader className="text-center space-y-3">
-          <div className="mx-auto w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <Download className="w-7 h-7 text-primary" />
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center ring-1 ring-primary/30">
+            <Download className="w-8 h-8 text-primary" />
           </div>
-          <DialogTitle className="text-xl font-bold text-foreground">
+          <DialogTitle className="text-xl font-bold text-gradient-gold">
             Instale o App
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground text-sm">
-            Acesse sua consultoria direto da tela inicial do seu celular, como
-            um app nativo.
+          <DialogDescription className="text-muted-foreground text-sm leading-relaxed">
+            Acesse sua consultoria direto da tela inicial, como um app nativo — rápido e sem precisar abrir o navegador.
           </DialogDescription>
         </DialogHeader>
 
         {ios ? (
-          <div className="space-y-4 mt-2">
-            <p className="text-sm font-medium text-foreground text-center">
-              Siga os passos abaixo no Safari:
-            </p>
-            <div className="space-y-3">
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Share className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    1. Toque em{" "}
-                    <span className="text-primary font-semibold">
-                      Compartilhar
-                    </span>
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    O ícone de quadrado com seta na barra do Safari
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <Plus className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    2. Toque em{" "}
-                    <span className="text-primary font-semibold">
-                      Adicionar à Tela de Início
-                    </span>
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Role para baixo no menu se necessário
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-primary font-bold text-sm">OK</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">
-                    3. Confirme tocando em{" "}
-                    <span className="text-primary font-semibold">
-                      Adicionar
-                    </span>
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Pronto! O app aparecerá na sua tela inicial
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="space-y-3 mt-2">
+            <IosStep
+              step={1}
+              icon={<Share className="w-5 h-5 text-primary" />}
+              label="Toque em Compartilhar"
+              sublabel="O ícone ↑ na barra inferior do Safari"
+              delay="0.1s"
+            />
+            <IosStep
+              step={2}
+              icon={<Plus className="w-5 h-5 text-primary" />}
+              label="Adicionar à Tela de Início"
+              sublabel="Role o menu para baixo se necessário"
+              delay="0.3s"
+            />
+            <IosStep
+              step={3}
+              icon={<CheckCircle2 className="w-5 h-5 text-primary" />}
+              label="Confirme e pronto!"
+              sublabel="O app aparece na sua tela inicial"
+              delay="0.5s"
+            />
             <Button
               onClick={handleDismiss}
               variant="outline"
-              className="w-full"
+              className="w-full mt-3 border-primary/30 text-primary hover:bg-primary/10"
             >
               Entendi, fechar
             </Button>
           </div>
         ) : hasNativePrompt ? (
           <div className="space-y-3 mt-2">
-            <Button onClick={onInstall} className="w-full">
+            <Button onClick={onInstall} className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold uppercase tracking-wider">
               <Download className="w-4 h-4 mr-2" />
               Instalar Agora
             </Button>
@@ -181,7 +181,7 @@ const PwaInstallModal = ({
             <Button
               onClick={handleDismiss}
               variant="outline"
-              className="w-full"
+              className="w-full border-primary/30 text-primary hover:bg-primary/10"
             >
               Entendi, fechar
             </Button>
