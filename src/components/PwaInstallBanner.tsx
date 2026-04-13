@@ -12,13 +12,15 @@ const PwaInstallBanner = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const { shouldShow, isIos, deferredPrompt, triggerInstall } = usePwaInstall();
 
-  // TEMP: forced visible for admin testing
-  // if (isInStandaloneMode() || dismissed || !shouldShow) return null;
-  if (dismissed) return null;
+  // Hide if already installed, dismissed, or shouldn't show
+  if (isInStandaloneMode() || dismissed || !shouldShow) return null;
 
   const handleInstallClick = () => {
-    // TEMP: always open iOS modal for testing
-    setModalOpen(true);
+    if (isIos || !deferredPrompt) {
+      setModalOpen(true);
+    } else {
+      triggerInstall();
+    }
   };
 
   return (
@@ -54,7 +56,7 @@ const PwaInstallBanner = () => {
       <PwaInstallModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        isIos={true}
+        isIos={isIos}
         onInstall={triggerInstall}
         hasNativePrompt={!!deferredPrompt}
       />
