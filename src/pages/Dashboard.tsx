@@ -18,6 +18,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import DashboardSkeleton from "@/components/skeletons/DashboardSkeleton";
 
 interface ClientFormData {
   fullName?: string;
@@ -348,9 +349,7 @@ const Dashboard = () => {
       {/* Content */}
       <main className="container mx-auto px-4 py-8">
         {loading ? (
-          <div className="flex items-center justify-center py-24">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          </div>
+          <DashboardSkeleton />
         ) : clients.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
