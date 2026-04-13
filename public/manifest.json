@@ -5,7 +5,7 @@
   "start_url": "/area-do-cliente",
   "display": "standalone",
   "background_color": "#0a0a0a",
-  "theme_color": "#b8860b",
+  "theme_color": "#0a0a0a",
   "orientation": "portrait",
   "icons": [
     {
