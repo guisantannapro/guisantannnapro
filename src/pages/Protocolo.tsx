@@ -6,6 +6,7 @@ import { Loader2, ArrowLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
+import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
@@ -117,11 +118,7 @@ const Protocolo = () => {
   }, [loading, protocolo, autoDownloaded, searchParams]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <ProtocoloSkeleton />;
   }
 
   const formattedDate = new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR");

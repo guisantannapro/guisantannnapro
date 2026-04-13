@@ -15,6 +15,7 @@ import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import RenewalModal from "@/components/minha-area/RenewalModal";
 import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
+import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 
 
 const planLabels: Record<string, string> = {
@@ -232,11 +233,7 @@ const MinhaArea = () => {
   const currentModality = submissions?.[0]?.form_data?.billingModality || "dieta";
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <MinhaAreaSkeleton />;
   }
 
   return (
