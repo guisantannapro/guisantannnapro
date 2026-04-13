@@ -52,12 +52,17 @@
 }
 
 @layer base {
+  :root {
+    background-color: #0a0a0a;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground;
+    background-color: #0a0a0a;
     font-family: 'Inter', sans-serif;
   }
 
