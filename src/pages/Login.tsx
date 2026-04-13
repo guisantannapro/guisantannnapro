@@ -42,8 +42,8 @@ const Login = () => {
       }
     }
 
-    // Show PWA install modal for non-admin users if applicable
-    if (shouldShow && redirectTo === "/area-do-cliente") {
+    // Show PWA install modal after login (temporarily forced for all users)
+    if (shouldShow) {
       setPendingRedirect(redirectTo);
       setShowPwaModal(true);
       setLoading(false);
