@@ -16,6 +16,7 @@ import RenewalModal from "@/components/minha-area/RenewalModal";
 import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
+import PwaInstallBanner from "@/components/PwaInstallBanner";
 
 
 const planLabels: Record<string, string> = {
