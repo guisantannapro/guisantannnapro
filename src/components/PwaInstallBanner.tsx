@@ -17,11 +17,8 @@ const PwaInstallBanner = () => {
   if (dismissed) return null;
 
   const handleInstallClick = () => {
-    if (isIos || !deferredPrompt) {
-      setModalOpen(true);
-    } else {
-      triggerInstall();
-    }
+    // TEMP: always open iOS modal for testing
+    setModalOpen(true);
   };
 
   return (
