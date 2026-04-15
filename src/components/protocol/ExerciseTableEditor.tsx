@@ -77,17 +77,7 @@ const DEFAULT_DAYS: DayBlock[] = [
     ],
   },
   {
-    id: uid(), day_label: "SÁBADO – PULL", table_type: "standard",
-    exercises: [
-      { id: uid(), exercise_name: "Puxada aberta", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
-      { id: uid(), exercise_name: "Remada máquina", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
-      { id: uid(), exercise_name: "Pullover halter", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
-      { id: uid(), exercise_name: "Rosca Scott W", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
-      { id: uid(), exercise_name: "Rosca halteres", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
-    ],
-  },
-  {
-    id: uid(), day_label: "DOMINGO – COMPLEMENTAR", table_type: "complementar",
+    id: uid(), day_label: "SÁBADO – COMPLEMENTAR", table_type: "complementar",
     exercises: [
       { id: uid(), exercise_name: "Extensão lombar", top_set: "", back_off: "", metodo: "Controle (3x10-12)", admin_obs: "", table_type: "complementar" },
       { id: uid(), exercise_name: "Extensão lombar carga", top_set: "", back_off: "", metodo: "Controle (3x10-12)", admin_obs: "", table_type: "complementar" },
@@ -227,7 +217,7 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
                     ) : (
                       <TableHead className="h-8 text-xs w-40">Método</TableHead>
                     )}
-                    <TableHead className="h-8 text-xs w-28">Obs (admin)</TableHead>
+                    <TableHead className="h-8 text-xs w-28">Obs (Coach)</TableHead>
                     <TableHead className="h-8 text-xs w-10"></TableHead>
                   </TableRow>
                 </TableHeader>

@@ -157,7 +157,8 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                             </>
                           )}
                           <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
-                          <TableHead className="text-xs font-bold h-9 w-32">Observações</TableHead>
+                          <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
+                          <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -216,21 +217,22 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                   {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
                                 </div>
                               </TableCell>
+                              {/* Obs Cliente - always editable */}
                               <TableCell className="py-1">
-                                {ex.admin_obs ? (
-                                  <span className="text-xs text-muted-foreground italic">{ex.admin_obs}</span>
-                                ) : (
-                                  <div className="relative">
-                                    <Input
-                                      value={ex.client_obs}
-                                      onChange={(e) => handleClientFieldChange(ex.id, "client_obs", e.target.value)}
-                                      placeholder="—"
-                                      className="h-8 text-xs border-muted bg-background"
-                                      readOnly={isAdmin}
-                                    />
-                                    {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                  </div>
-                                )}
+                                <div className="relative">
+                                  <Input
+                                    value={ex.client_obs}
+                                    onChange={(e) => handleClientFieldChange(ex.id, "client_obs", e.target.value)}
+                                    placeholder="—"
+                                    className="h-8 text-xs border-muted bg-background"
+                                    readOnly={isAdmin}
+                                  />
+                                  {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                </div>
+                              </TableCell>
+                              {/* Obs Coach - read-only for client */}
+                              <TableCell className="text-xs text-muted-foreground italic py-2">
+                                {ex.admin_obs || "—"}
                               </TableCell>
                             </TableRow>
                           );
