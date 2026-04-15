@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale, Dumbbell } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
+import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 
 const planLabels: Record<string, string> = {
