@@ -11,6 +11,7 @@ interface PlanPricing {
   value: string;
   period: string;
   label: string;
+  daysLabel: string;
   savingsText?: string;
 }
 
