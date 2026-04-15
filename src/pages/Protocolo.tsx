@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
+import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
