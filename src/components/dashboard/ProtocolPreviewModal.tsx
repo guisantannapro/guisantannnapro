@@ -235,59 +235,37 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     setSaving(true);
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
-      const { data: protocolData, error } = await (supabase.from("protocolos") as any).insert({
-        user_id: client.user_id,
-        nome,
-        tipo_protocolo: protocolType,
-        plano_alimentar: planoAlimentar,
-        treino: regrasGerais,
-        suplementacao,
-        cardio,
-        observacoes,
-      }).select("id").single();
+
+      const daysPayload = exerciseDays.map(d => ({
+        day_label: d.day_label,
+        table_type: d.table_type,
+        exercises: d.exercises.map(e => ({
+          exercise_name: e.exercise_name,
+          metodo: e.metodo || "",
+          admin_obs: e.admin_obs || "",
+        })),
+      }));
+
+      const { data, error } = await supabase.rpc("create_structured_protocol", {
+        _user_id: client.user_id,
+        _nome: nome,
+        _tipo_protocolo: protocolType,
+        _plano_alimentar: planoAlimentar,
+        _treino: regrasGerais,
+        _suplementacao: suplementacao,
+        _cardio: cardio,
+        _observacoes: observacoes,
+        _exercise_weeks: exerciseWeeks,
+        _exercise_days: daysPayload as any,
+      });
 
       if (error) throw error;
-
-      const protocoloId = protocolData.id;
-
-      // Insert exercises for all weeks
-      const exerciseRows: any[] = [];
-      for (let week = 1; week <= exerciseWeeks; week++) {
-        let globalSort = 0;
-        for (const day of exerciseDays) {
-          for (const ex of day.exercises) {
-            exerciseRows.push({
-              protocolo_id: protocoloId,
-              user_id: client.user_id,
-              week_number: week,
-              day_label: day.day_label,
-              sort_order: globalSort++,
-              table_type: day.table_type,
-              exercise_name: ex.exercise_name,
-              metodo: ex.metodo || "",
-              admin_obs: ex.admin_obs || "",
-              client_top_set: "",
-              client_back_off: "",
-              client_resultado: "",
-              client_obs: "",
-            });
-          }
-        }
-      }
-
-      if (exerciseRows.length > 0) {
-        const { error: exError } = await (supabase.from("protocol_exercises") as any).insert(exerciseRows);
-        if (exError) {
-          console.error("Error saving exercises:", exError);
-          toast.error("Protocolo salvo, mas houve erro ao salvar exercícios.");
-        }
-      }
 
       toast.success("Protocolo salvo com sucesso!");
       handleClose(false);
     } catch (err: any) {
       console.error("Error saving protocol:", err);
-      toast.error("Erro ao salvar protocolo.");
+      toast.error(err?.message || "Erro ao salvar protocolo.");
     } finally {
       setSaving(false);
     }
