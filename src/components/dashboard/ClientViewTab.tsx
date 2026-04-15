@@ -293,7 +293,22 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         )}
       </div>
 
-      {/* Histórico de Protocolos */}
+      {/* Logbook — Exercícios do Cliente */}
+      {protocoloAtual && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Dumbbell className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Logbook do Cliente</h3>
+          </div>
+          <InteractiveTrainingTable
+            protocoloId={protocoloAtual.id}
+            userId={userId}
+            isAdmin={true}
+            regrasGerais={protocoloAtual.treino}
+          />
+        </div>
+      )}
+
       <div className="border border-border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <History className="w-4 h-4 text-primary" />
