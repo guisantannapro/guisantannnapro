@@ -390,6 +390,9 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         )}
       </div>
 
+      {/* Diário de Treino */}
+      <TrainingLogsViewer userId={userId} />
+
       {/* Evolução */}
       {evolutions.length > 0 ? (
         <EvolutionSection evolutions={evolutions} />
