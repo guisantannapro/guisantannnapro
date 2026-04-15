@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
+import TrainingLogsViewer from "@/components/dashboard/TrainingLogsViewer";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 
