@@ -370,6 +370,31 @@ const MinhaArea = () => {
           )}
         </motion.div>
 
+        {/* Diário de Treino Interativo */}
+        {protocoloAtual?.treino && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.07 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Dumbbell className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Diário de Treino</h2>
+            </div>
+            <p className="text-muted-foreground text-sm mb-4">
+              Registre pesos, repetições e dificuldade de cada exercício.
+            </p>
+            {session?.user?.id && (
+              <TrainingLog
+                protocoloId={protocoloAtual.id}
+                userId={session.user.id}
+                treino={protocoloAtual.treino}
+              />
+            )}
+          </motion.div>
+        )}
+
         {protocolosHistorico.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
