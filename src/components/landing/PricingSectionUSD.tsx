@@ -32,9 +32,9 @@ const plans: Plan[] = [
     name: "Base",
     subtitle: "Ideal para quem quer começar com estratégia e direcionamento profissional.",
     pricing: {
-      mensal: { value: "49.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "49.90", period: "/mês", label: "Mensal" },
-      semestral: { value: "49.90", period: "/mês", label: "Mensal" },
+      mensal: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      semestral: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
     },
     features: [
       "Dieta ou treino individualizado (você escolhe)",
@@ -51,9 +51,9 @@ const plans: Plan[] = [
     name: "Transformação",
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
-      mensal: { value: "109.00", period: "/mês", label: "Mensal" },
-      trimestral: { value: "289.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $37,10 no total" },
-      semestral: { value: "529.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $124,10 no total" },
+      mensal: { value: "109.00", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "289.90", period: " / 90 days", label: "90 Days", daysLabel: "90 days", savingsText: "You save $37.10 — one-time payment" },
+      semestral: { value: "529.90", period: " / 180 days", label: "180 Days", daysLabel: "180 days", savingsText: "You save $124.10 — one-time payment" },
     },
     features: [
       "Dieta individualizada completa",
@@ -65,7 +65,7 @@ const plans: Plan[] = [
       "Ajustes de Protocolo",
     ],
     cta: "Iniciar Minha Transformação",
-    badge: "Mais popular",
+    badge: "Most popular",
     featured: true,
     icon: Star,
     hasSelector: true,
@@ -74,9 +74,9 @@ const plans: Plan[] = [
     name: "Elite",
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
-      mensal: { value: "149.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "399.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $49,80 no total" },
-      semestral: { value: "719.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $179,50 no total" },
+      mensal: { value: "149.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "399.90", period: " / 90 days", label: "90 Days", daysLabel: "90 days", savingsText: "You save $49.80 — one-time payment" },
+      semestral: { value: "719.90", period: " / 180 days", label: "180 Days", daysLabel: "180 days", savingsText: "You save $179.50 — one-time payment" },
     },
     features: [
       "Dieta individualizada completa",
@@ -90,7 +90,7 @@ const plans: Plan[] = [
       "Resposta prioritária",
     ],
     cta: "Quero o Elite",
-    badge: "Plano Premium",
+    badge: "Premium Plan",
     featured: false,
     icon: Crown,
     hasSelector: true,
