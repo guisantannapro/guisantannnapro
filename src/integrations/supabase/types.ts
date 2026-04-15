@@ -223,6 +223,71 @@ export type Database = {
         }
         Relationships: []
       }
+      protocol_exercises: {
+        Row: {
+          admin_obs: string | null
+          client_back_off: string | null
+          client_obs: string | null
+          client_resultado: string | null
+          client_top_set: string | null
+          created_at: string
+          day_label: string
+          exercise_name: string
+          id: string
+          metodo: string | null
+          protocolo_id: string
+          sort_order: number
+          table_type: string
+          updated_at: string
+          user_id: string
+          week_number: number
+        }
+        Insert: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string
+          day_label?: string
+          exercise_name?: string
+          id?: string
+          metodo?: string | null
+          protocolo_id: string
+          sort_order?: number
+          table_type?: string
+          updated_at?: string
+          user_id: string
+          week_number?: number
+        }
+        Update: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string
+          day_label?: string
+          exercise_name?: string
+          id?: string
+          metodo?: string | null
+          protocolo_id?: string
+          sort_order?: number
+          table_type?: string
+          updated_at?: string
+          user_id?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "protocol_exercises_protocolo_id_fkey"
+            columns: ["protocolo_id"]
+            isOneToOne: false
+            referencedRelation: "protocolos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       protocolos: {
         Row: {
           cardio: string
