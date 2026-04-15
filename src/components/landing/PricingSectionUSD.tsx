@@ -11,6 +11,7 @@ interface PlanPricing {
   value: string;
   period: string;
   label: string;
+  daysLabel: string;
   savingsText?: string;
 }
 
@@ -31,9 +32,9 @@ const plans: Plan[] = [
     name: "Base",
     subtitle: "Ideal para quem quer começar com estratégia e direcionamento profissional.",
     pricing: {
-      mensal: { value: "49.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "49.90", period: "/mês", label: "Mensal" },
-      semestral: { value: "49.90", period: "/mês", label: "Mensal" },
+      mensal: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      semestral: { value: "49.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
     },
     features: [
       "Dieta ou treino individualizado (você escolhe)",
@@ -50,9 +51,9 @@ const plans: Plan[] = [
     name: "Transformação",
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
-      mensal: { value: "109.00", period: "/mês", label: "Mensal" },
-      trimestral: { value: "289.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $37,10 no total" },
-      semestral: { value: "529.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $124,10 no total" },
+      mensal: { value: "109.00", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "289.90", period: " / 90 days", label: "90 Days", daysLabel: "90 days", savingsText: "You save $37.10 — one-time payment" },
+      semestral: { value: "529.90", period: " / 180 days", label: "180 Days", daysLabel: "180 days", savingsText: "You save $124.10 — one-time payment" },
     },
     features: [
       "Dieta individualizada completa",
@@ -64,7 +65,7 @@ const plans: Plan[] = [
       "Ajustes de Protocolo",
     ],
     cta: "Iniciar Minha Transformação",
-    badge: "Mais popular",
+    badge: "Most popular",
     featured: true,
     icon: Star,
     hasSelector: true,
@@ -73,9 +74,9 @@ const plans: Plan[] = [
     name: "Elite",
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
-      mensal: { value: "149.90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "399.90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza $49,80 no total" },
-      semestral: { value: "719.90", period: "/semestre", label: "Semestral", savingsText: "Você economiza $179,50 no total" },
+      mensal: { value: "149.90", period: " / 30 days", label: "30 Days", daysLabel: "30 days" },
+      trimestral: { value: "399.90", period: " / 90 days", label: "90 Days", daysLabel: "90 days", savingsText: "You save $49.80 — one-time payment" },
+      semestral: { value: "719.90", period: " / 180 days", label: "180 Days", daysLabel: "180 days", savingsText: "You save $179.50 — one-time payment" },
     },
     features: [
       "Dieta individualizada completa",
@@ -89,7 +90,7 @@ const plans: Plan[] = [
       "Resposta prioritária",
     ],
     cta: "Quero o Elite",
-    badge: "Plano Premium",
+    badge: "Premium Plan",
     featured: false,
     icon: Crown,
     hasSelector: true,
@@ -225,7 +226,7 @@ const PriceSelector = ({
                   }`}
                 >
                   <span className="font-display text-sm font-bold uppercase tracking-wider shrink-0">
-                    {p.label}
+                    {p.daysLabel}
                   </span>
                   <span className="font-body text-xs normal-case text-right whitespace-nowrap">
                     $ {applyMultiplier(p.value)}
@@ -314,10 +315,13 @@ const PricingSectionUSD = () => {
             Escolha Sua{" "}
             <span className="text-gradient-gold">Transformação</span>
           </h2>
-          <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
+          <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto mb-3">
             Todos os planos incluem estratégia personalizada e coaching
             profissional para resultados reais.
           </p>
+          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+            One-time payment — No subscription
+          </span>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
