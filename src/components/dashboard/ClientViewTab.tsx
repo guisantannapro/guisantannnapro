@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
+import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 interface ClientViewTabProps {
   userId: string;
