@@ -407,6 +407,21 @@ export type Database = {
         Args: { _old_user_id: string; _submission_id: string }
         Returns: undefined
       }
+      create_structured_protocol: {
+        Args: {
+          _cardio?: string
+          _exercise_days?: Json
+          _exercise_weeks?: number
+          _nome: string
+          _observacoes?: string
+          _plano_alimentar?: string
+          _suplementacao?: string
+          _tipo_protocolo: string
+          _treino?: string
+          _user_id: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
