@@ -1,13 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
+import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 interface ClientViewTabProps {
   userId: string;
@@ -292,7 +293,22 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         )}
       </div>
 
-      {/* Histórico de Protocolos */}
+      {/* Logbook — Exercícios do Cliente */}
+      {protocoloAtual && (
+        <div className="border border-border rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Dumbbell className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Logbook do Cliente</h3>
+          </div>
+          <InteractiveTrainingTable
+            protocoloId={protocoloAtual.id}
+            userId={userId}
+            isAdmin={true}
+            regrasGerais={protocoloAtual.treino}
+          />
+        </div>
+      )}
+
       <div className="border border-border rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <History className="w-4 h-4 text-primary" />
