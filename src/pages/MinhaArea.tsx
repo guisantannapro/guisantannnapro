@@ -20,6 +20,16 @@ import PwaInstallBanner from "@/components/PwaInstallBanner";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 
+const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
+  const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
+
+  return {
+    protocoloAtual: current,
+    protocolosHistorico: current ? protocols.filter((protocol) => protocol.id !== current.id) : [],
+  };
+};
+
+
 const planLabels: Record<string, string> = {
   base: "Base",
   transformacao: "Transformação",
@@ -102,8 +112,17 @@ const MinhaArea = () => {
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
       if (protocoloRes.data && protocoloRes.data.length > 0) {
-        setProtocoloAtual(protocoloRes.data[0]);
-        setProtocolosHistorico(protocoloRes.data.slice(1));
+        const protocolIds = protocoloRes.data.map((protocol) => protocol.id);
+        const { data: exerciseProtocols } = await supabase
+          .from("protocol_exercises")
+          .select("protocolo_id")
+          .in("protocolo_id", protocolIds);
+
+        const structuredProtocolIds = new Set((exerciseProtocols || []).map((exercise) => exercise.protocolo_id));
+        const { protocoloAtual, protocolosHistorico } = resolveCurrentProtocol(protocoloRes.data, structuredProtocolIds);
+
+        setProtocoloAtual(protocoloAtual);
+        setProtocolosHistorico(protocolosHistorico);
       } else {
         setProtocoloAtual(null);
         setProtocolosHistorico([]);
