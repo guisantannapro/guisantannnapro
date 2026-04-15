@@ -28,22 +28,10 @@ interface InteractiveTrainingTableProps {
   protocoloId: string;
   userId: string;
   isAdmin?: boolean;
+  regrasGerais?: string;
 }
 
-const REGRAS_GERAIS = `**1º Exercício do Músculo:** 2x Aquecimento (30% carga) + 1x Feeder Set (80% carga).
-
-**Exercícios Subsequentes (mesmo músculo):** Realizar apenas 1x Feeder Set antes das séries de trabalho.
-
-1 **Top Set** até falha absoluta
-1 **Back-off** (RIR 0–1) 10-15% menos carga
-
-**RIR 0:** Até a falha. | **RIR 1:** 1 na reserva.
-**Rest-pause:** 3 x 10-12 (Última série: falha → 20s descanso → falha)
-**Progressão:** bate topo da faixa → sobe carga
-
-Logbook obrigatório (anotar tudo)`;
-
-const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false }: InteractiveTrainingTableProps) => {
+const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regrasGerais }: InteractiveTrainingTableProps) => {
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
