@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale } from "lucide-react";
+import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTriangle, ClipboardList, Eye, EyeOff, History, RefreshCw, Scale, Dumbbell } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import RenewalModal from "@/components/minha-area/RenewalModal";
 import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
+import TrainingLog from "@/components/minha-area/TrainingLog";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
 
@@ -368,6 +369,31 @@ const MinhaArea = () => {
             <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
           )}
         </motion.div>
+
+        {/* Diário de Treino Interativo */}
+        {protocoloAtual?.treino && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.07 }}
+            className="bg-card border border-border rounded-lg p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Dumbbell className="w-5 h-5 text-primary" />
+              <h2 className="text-lg font-bold uppercase text-foreground">Diário de Treino</h2>
+            </div>
+            <p className="text-muted-foreground text-sm mb-4">
+              Registre pesos, repetições e dificuldade de cada exercício.
+            </p>
+            {session?.user?.id && (
+              <TrainingLog
+                protocoloId={protocoloAtual.id}
+                userId={session.user.id}
+                treino={protocoloAtual.treino}
+              />
+            )}
+          </motion.div>
+        )}
 
         {protocolosHistorico.length > 0 && (
           <motion.div
