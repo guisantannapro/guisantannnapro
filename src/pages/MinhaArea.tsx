@@ -15,6 +15,7 @@ import EvolutionSection from "@/components/minha-area/EvolutionSection";
 import RenewalModal from "@/components/minha-area/RenewalModal";
 import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
+import TrainingLog from "@/components/minha-area/TrainingLog";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
 
