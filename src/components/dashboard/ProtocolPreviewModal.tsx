@@ -409,6 +409,19 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
             <Separator />
 
+            {/* Regras Gerais do Treino */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">📋 Regras Gerais do Treino</h3>
+              <Textarea
+                value={regrasGerais}
+                onChange={(e) => setRegrasGerais(e.target.value)}
+                rows={12}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
+              />
+            </section>
+
+            <Separator />
+
             {/* Exercise Table Editor */}
             <section>
               <ExerciseTableEditor
