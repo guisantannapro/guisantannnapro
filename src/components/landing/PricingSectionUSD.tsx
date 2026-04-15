@@ -315,10 +315,13 @@ const PricingSectionUSD = () => {
             Escolha Sua{" "}
             <span className="text-gradient-gold">Transformação</span>
           </h2>
-          <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
+          <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto mb-3">
             Todos os planos incluem estratégia personalizada e coaching
             profissional para resultados reais.
           </p>
+          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+            One-time payment — No subscription
+          </span>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
