@@ -152,7 +152,7 @@ const Protocolo = () => {
       
       {/* Interactive Training Table */}
       <div className="container mx-auto px-4 py-8">
-        <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} />
+        <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} regrasGerais={protocolo.treino} />
       </div>
     </div>
   );
