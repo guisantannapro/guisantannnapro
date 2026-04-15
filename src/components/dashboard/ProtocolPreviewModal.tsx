@@ -209,7 +209,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
   useEffect(() => {
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
-      setTreino(trainingTextTemplates[protocolType]);
+      setRegrasGerais(defaultRegrasGerais);
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
@@ -222,7 +222,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     if (!value) {
       setProtocolType(null);
       setPlanoAlimentar("");
-      setTreino("");
+      setRegrasGerais("");
       setSuplementacao("");
       setCardio("");
       setObservacoes("");
@@ -240,7 +240,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
         nome,
         tipo_protocolo: protocolType,
         plano_alimentar: planoAlimentar,
-        treino,
+        treino: regrasGerais,
         suplementacao,
         cardio,
         observacoes,
