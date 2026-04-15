@@ -149,6 +149,11 @@ const Protocolo = () => {
 
       
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
+      
+      {/* Interactive Training Table */}
+      <div className="container mx-auto px-4 py-8">
+        <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} />
+      </div>
     </div>
   );
 };
