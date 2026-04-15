@@ -157,7 +157,8 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                             </>
                           )}
                           <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
-                          <TableHead className="text-xs font-bold h-9 w-32">Observações</TableHead>
+                          <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
+                          <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>

@@ -217,7 +217,7 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
                     ) : (
                       <TableHead className="h-8 text-xs w-40">Método</TableHead>
                     )}
-                    <TableHead className="h-8 text-xs w-28">Obs (admin)</TableHead>
+                    <TableHead className="h-8 text-xs w-28">Obs (Coach)</TableHead>
                     <TableHead className="h-8 text-xs w-10"></TableHead>
                   </TableRow>
                 </TableHeader>
