@@ -10,6 +10,15 @@ import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
+const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
+  const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
+
+  return {
+    protocoloAtual: current,
+    protocolosHistorico: current ? protocols.filter((protocol) => protocol.id !== current.id) : [],
+  };
+};
+
 interface ClientViewTabProps {
   userId: string;
   clientName: string;
@@ -68,8 +77,20 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
       if (submissionsRes.data) setSubmissions(submissionsRes.data);
       if (protocolsRes.data) setProtocols(protocolsRes.data);
       if (protocoloRes.data && protocoloRes.data.length > 0) {
-        setProtocoloAtual(protocoloRes.data[0]);
-        setProtocolosHistorico(protocoloRes.data.slice(1));
+        const protocolIds = protocoloRes.data.map((protocol) => protocol.id);
+        const { data: exerciseProtocols } = await supabase
+          .from("protocol_exercises")
+          .select("protocolo_id")
+          .in("protocolo_id", protocolIds);
+
+        const structuredProtocolIds = new Set((exerciseProtocols || []).map((exercise) => exercise.protocolo_id));
+        const { protocoloAtual, protocolosHistorico } = resolveCurrentProtocol(protocoloRes.data, structuredProtocolIds);
+
+        setProtocoloAtual(protocoloAtual);
+        setProtocolosHistorico(protocolosHistorico);
+      } else {
+        setProtocoloAtual(null);
+        setProtocolosHistorico([]);
       }
       if (evolutionsRes.data) setEvolutions(evolutionsRes.data);
       if (checkinsRes.data) setCheckins(checkinsRes.data as any[]);

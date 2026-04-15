@@ -62,18 +62,6 @@ Ketchup e mostarda zero de mercado liberado com moderação
 
 Os refrigerantes zero, suco clight, gelatina zero, café preto s/açúcar liberado com moderação`;
 
-const TREINO_INTRO = `Técnica: Execute todos os exercícios com a máxima técnica possível. Priorize a forma sobre a carga.
-
-Progressão de Carga: Aumente a carga quando sugerido, sem comprometer a execução.
-
-Descanso: Descanse entre 1-5 minutos (2 a 5 minutos em séries pesadas e 1 a 2 minutos em séries normais).
-
-Aquecimento: Antes do primeiro exercício de cada músculo, faça 2 a 3 séries de aquecimento com 15-20 repetições (30% da carga final pretendida).
-
-Feeder Sets: Antes do primeiro (depois de aquecer) e segundo exercícios de cada músculo, faça 2-3 feeder sets (séries de adaptação, 4-8 repetições com 70-80% da carga final pretendida). Antes dos outros exercícios para cada músculo, faça 1 feeder set seguindo o esquema acima.
-
-• Repetição na Reserva (RIR): Repetições que antecedem a falha. Ex: 1 RIR significa que você falharia na repetição 11, então finalize na repetição 10.`;
-
 export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentProps>(function ProtocolPdfContent({
   protocolo,
   clientName,
@@ -180,20 +168,6 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
           <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
             {protocolo.cardio}
           </div>
-        </div>
-      )}
-
-      {/* Treino */}
-      {protocolo.treino && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
-            <span className="pdf-section-icon">🏋️</span>
-            <h3 className="pdf-section-title">Treino</h3>
-          </div>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line", marginBottom: "16px" }}>
-            {TREINO_INTRO}
-          </div>
-          <div className="pdf-section-body">{protocolo.treino}</div>
         </div>
       )}
 
