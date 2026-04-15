@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
+import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
@@ -148,6 +149,11 @@ const Protocolo = () => {
 
       
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
+      
+      {/* Interactive Training Table */}
+      <div className="container mx-auto px-4 py-8">
+        <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} />
+      </div>
     </div>
   );
 };
