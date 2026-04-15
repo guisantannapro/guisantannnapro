@@ -1,4 +1,4 @@
-const CACHE_NAME = "gs-app-shell-v3";
+const CACHE_NAME = "gs-app-shell-v4";
 
 const APP_SHELL = [
   "/",
@@ -32,6 +32,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
+  // Never cache API calls, auth, or non-GET
   if (
     url.hostname.includes("supabase") ||
     url.hostname.includes("googleapis") ||
@@ -47,20 +48,36 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.open(CACHE_NAME).then((cache) =>
-      cache.match(event.request).then((cachedResponse) => {
-        const fetchPromise = fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
-          })
-          .catch(() => cachedResponse);
+  // For JS/CSS assets with hashes, use cache-first (immutable)
+  const isHashedAsset = /\/assets\/.*\.[a-f0-9]{8,}\.(js|css)$/i.test(url.pathname);
 
-        return cachedResponse || fetchPromise;
+  if (isHashedAsset) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(event.request).then((cached) => {
+          if (cached) return cached;
+          return fetch(event.request).then((resp) => {
+            if (resp && resp.status === 200) {
+              cache.put(event.request, resp.clone());
+            }
+            return resp;
+          });
+        })
+      )
+    );
+    return;
+  }
+
+  // For HTML/navigation: network-first (always get fresh build)
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return networkResponse;
       })
-    )
+      .catch(() => caches.match(event.request))
   );
 });
