@@ -226,7 +226,7 @@ const PriceSelector = ({
                   }`}
                 >
                   <span className="font-display text-sm font-bold uppercase tracking-wider shrink-0">
-                    {p.label}
+                    {p.daysLabel}
                   </span>
                   <span className="font-body text-xs normal-case text-right whitespace-nowrap">
                     $ {applyMultiplier(p.value)}
