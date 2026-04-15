@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
-import TrainingLogsViewer from "@/components/dashboard/TrainingLogsViewer";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 
@@ -389,9 +388,6 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
           <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
         )}
       </div>
-
-      {/* Diário de Treino */}
-      <TrainingLogsViewer userId={userId} />
 
       {/* Evolução */}
       {evolutions.length > 0 ? (

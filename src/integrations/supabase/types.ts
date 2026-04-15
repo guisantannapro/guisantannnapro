@@ -265,56 +265,6 @@ export type Database = {
         }
         Relationships: []
       }
-      training_logs: {
-        Row: {
-          created_at: string
-          difficulty: number | null
-          exercise_name: string
-          id: string
-          notes: string | null
-          protocolo_id: string
-          reps: number | null
-          set_number: number
-          training_date: string
-          user_id: string
-          weight_kg: number | null
-        }
-        Insert: {
-          created_at?: string
-          difficulty?: number | null
-          exercise_name: string
-          id?: string
-          notes?: string | null
-          protocolo_id: string
-          reps?: number | null
-          set_number?: number
-          training_date?: string
-          user_id: string
-          weight_kg?: number | null
-        }
-        Update: {
-          created_at?: string
-          difficulty?: number | null
-          exercise_name?: string
-          id?: string
-          notes?: string | null
-          protocolo_id?: string
-          reps?: number | null
-          set_number?: number
-          training_date?: string
-          user_id?: string
-          weight_kg?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "training_logs_protocolo_id_fkey"
-            columns: ["protocolo_id"]
-            isOneToOne: false
-            referencedRelation: "protocolos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_roles: {
         Row: {
           id: string
