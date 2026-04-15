@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ClipboardList, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ExerciseTableEditor, { DayBlock, DEFAULT_DAYS } from "@/components/protocol/ExerciseTableEditor";
 
 interface ClientData {
   form_data: any;
@@ -152,50 +153,9 @@ Refeição 5 — Jantar (19:00)
 };
 
 const trainingTextTemplates: Record<ProtocolType, string> = {
-  bulking: `Segunda — Peito / Tríceps (Volume)
-• Supino reto 4x8 | Supino inclinado 4x10 | Crucifixo 3x12 | Tríceps testa 4x10
-
-Terça — Costas / Bíceps (Volume)
-• Barra fixa 4x8 | Remada curvada 4x10 | Pulley 3x12 | Rosca Scott 4x10
-
-Quarta — Pernas (Força)
-• Agachamento livre 5x6 | Leg press 4x10 | Extensora 3x12 | Panturrilha 4x15
-
-Quinta — Ombros / Trapézio
-• Desenvolvimento militar 4x8 | Elevação lateral 4x12 | Encolhimento 4x12
-
-Sexta — Posterior / Glúteos (Volume)
-• Stiff 4x8 | Cadeira flexora 4x10 | Hip thrust 4x10 | Abdômen 3x20`,
-
-  cutting: `Segunda — Full Upper (Circuito)
-• Supino reto 3x12 | Remada 3x12 | Desenvolvimento 3x12 | Tríceps/Bíceps 2x15
-
-Terça — Full Lower + HIIT
-• Agachamento 3x12 | Leg press 3x12 | Stiff 3x12 | 15min HIIT bike
-
-Quarta — Cardio moderado
-• 40min esteira inclinada ou elíptico
-
-Quinta — Full Upper (Circuito)
-• Puxada 3x12 | Supino inclinado 3x12 | Elevação lateral 3x15 | Abdômen 3x20
-
-Sexta — Full Lower + HIIT
-• Hip thrust 3x12 | Extensora 3x15 | Flexora 3x15 | 15min HIIT`,
-
-  recomp: `Segunda — Peito / Tríceps
-• Supino reto 4x10 | Crucifixo 3x12 | Tríceps corda 3x12
-
-Terça — Costas / Bíceps
-• Puxada frontal 4x10 | Remada curvada 3x12 | Rosca direta 3x12
-
-Quarta — Pernas
-• Agachamento livre 4x10 | Leg press 3x12 | Extensora 3x15
-
-Quinta — Ombros / Abdômen
-• Desenvolvimento 4x10 | Elevação lateral 3x12 | Prancha 3x45s
-
-Sexta — Posterior / Glúteos
-• Stiff 4x10 | Cadeira flexora 3x12 | Hip thrust 3x12`,
+  bulking: "",
+  cutting: "",
+  recomp: "",
 };
 
 const defaultSupplementacao = `Whey Protein - nas refeições indicadas
@@ -224,13 +184,16 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
   const [observacoes, setObservacoes] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Exercise table state
+  const [exerciseDays, setExerciseDays] = useState<DayBlock[]>(DEFAULT_DAYS);
+  const [exerciseWeeks, setExerciseWeeks] = useState(4);
+
   const getField = (field: string) => client.form_data?.[field] || "—";
   const plan = client.plan || client.profile?.plan || "";
   const clientGoal = Array.isArray(client.form_data?.mainGoal)
     ? client.form_data.mainGoal.join(", ")
     : getField("mainGoal");
 
-  // Load template when type is selected
   useEffect(() => {
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
@@ -238,6 +201,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
+      setExerciseDays(DEFAULT_DAYS.map(d => ({ ...d, id: crypto.randomUUID(), exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })) })));
+      setExerciseWeeks(4);
     }
   }, [protocolType]);
 
@@ -258,7 +223,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     setSaving(true);
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
-      const { error } = await (supabase.from("protocolos") as any).insert({
+      const { data: protocolData, error } = await (supabase.from("protocolos") as any).insert({
         user_id: client.user_id,
         nome,
         tipo_protocolo: protocolType,
@@ -267,8 +232,45 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
         suplementacao,
         cardio,
         observacoes,
-      });
+      }).select("id").single();
+
       if (error) throw error;
+
+      const protocoloId = protocolData.id;
+
+      // Insert exercises for all weeks
+      const exerciseRows: any[] = [];
+      for (let week = 1; week <= exerciseWeeks; week++) {
+        let globalSort = 0;
+        for (const day of exerciseDays) {
+          for (const ex of day.exercises) {
+            exerciseRows.push({
+              protocolo_id: protocoloId,
+              user_id: client.user_id,
+              week_number: week,
+              day_label: day.day_label,
+              sort_order: globalSort++,
+              table_type: day.table_type,
+              exercise_name: ex.exercise_name,
+              metodo: ex.metodo || "",
+              admin_obs: ex.admin_obs || "",
+              client_top_set: "",
+              client_back_off: "",
+              client_resultado: "",
+              client_obs: "",
+            });
+          }
+        }
+      }
+
+      if (exerciseRows.length > 0) {
+        const { error: exError } = await (supabase.from("protocol_exercises") as any).insert(exerciseRows);
+        if (exError) {
+          console.error("Error saving exercises:", exError);
+          toast.error("Protocolo salvo, mas houve erro ao salvar exercícios.");
+        }
+      }
+
       toast.success("Protocolo salvo com sucesso!");
       handleClose(false);
     } catch (err: any) {
@@ -281,7 +283,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-2xl text-gradient-gold uppercase">
             {protocolType ? `Protocolo ${protocolTypeLabels[protocolType]}` : "Gerar Protocolo"} — {getField("fullName")}
@@ -395,14 +397,13 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
             <Separator />
 
-            {/* Treino */}
+            {/* Exercise Table Editor */}
             <section>
-              <h3 className="text-sm font-semibold uppercase text-primary mb-3">Treino</h3>
-              <Textarea
-                value={treino}
-                onChange={(e) => setTreino(e.target.value)}
-                rows={14}
-                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
+              <ExerciseTableEditor
+                days={exerciseDays}
+                onChange={setExerciseDays}
+                weeks={exerciseWeeks}
+                onWeeksChange={setExerciseWeeks}
               />
             </section>
 
