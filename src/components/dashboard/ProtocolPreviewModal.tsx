@@ -152,11 +152,23 @@ Refeição 5 — Jantar (19:00)
 • 150g carne vermelha magra + batata doce + legumes refogados`,
 };
 
-const trainingTextTemplates: Record<ProtocolType, string> = {
-  bulking: "",
-  cutting: "",
-  recomp: "",
-};
+const defaultRegrasGerais = `1º Exercício do Músculo: 2x Aquecimento (30% carga) + 1x Feeder Set (80% carga).
+
+Exercícios Subsequentes (mesmo músculo): Realizar apenas 1x Feeder Set antes das séries de trabalho.
+
+1 Top Set até falha absoluta
+1 Back-off (RIR 0–1) 10-15% menos carga
+
+RIR (Reserva)
+RIR 0: Até a falha.
+RIR 1: 1 na reserva.
+
+Rest-pause: 3 x 10-12 (Última série: falha → 20s descanso → falha)
+
+Progressão: bate topo da faixa → sobe carga
+
+Logbook obrigatório (anotar tudo)`;
+
 
 const defaultSupplementacao = `Whey Protein - nas refeições indicadas
 Creatina - 10g/dia (qualquer horário)
@@ -178,7 +190,7 @@ Tipo: Qualquer um de sua preferência. O importante é manter a frequência card
 const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewModalProps) => {
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
-  const [treino, setTreino] = useState("");
+  const [regrasGerais, setRegrasGerais] = useState("");
   const [suplementacao, setSuplementacao] = useState("");
   const [cardio, setCardio] = useState("");
   const [observacoes, setObservacoes] = useState("");
@@ -197,7 +209,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
   useEffect(() => {
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
-      setTreino(trainingTextTemplates[protocolType]);
+      setRegrasGerais(defaultRegrasGerais);
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
@@ -210,7 +222,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     if (!value) {
       setProtocolType(null);
       setPlanoAlimentar("");
-      setTreino("");
+      setRegrasGerais("");
       setSuplementacao("");
       setCardio("");
       setObservacoes("");
@@ -228,7 +240,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
         nome,
         tipo_protocolo: protocolType,
         plano_alimentar: planoAlimentar,
-        treino,
+        treino: regrasGerais,
         suplementacao,
         cardio,
         observacoes,
@@ -392,6 +404,19 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
                 onChange={(e) => setCardio(e.target.value)}
                 rows={8}
                 className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
+              />
+            </section>
+
+            <Separator />
+
+            {/* Regras Gerais do Treino */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">📋 Regras Gerais do Treino</h3>
+              <Textarea
+                value={regrasGerais}
+                onChange={(e) => setRegrasGerais(e.target.value)}
+                rows={12}
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[200px]"
               />
             </section>
 
