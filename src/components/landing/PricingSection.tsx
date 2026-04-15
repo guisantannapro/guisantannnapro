@@ -1,296 +1,81 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, Crown, Star, Zap, ChevronDown, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-type BaseOption = "dieta" | "treino";
-type BaseSelection = BaseOption[];
-type BillingPeriod = "mensal" | "trimestral" | "semestral";
-
-interface PlanPricing {
-  value: string;
-  period: string;
-  label: string;
-  savingsText?: string;
-}
-
-interface Plan {
+interface PricingPlan {
   name: string;
-  subtitle: string;
-  pricing: Record<BillingPeriod, PlanPricing>;
+  description: string;
+  price: string;
+  priceKey: string;
   features: string[];
   cta: string;
-  badge: string | null;
   featured: boolean;
-  icon: typeof Zap;
-  hasSelector: boolean;
+  badge: string | null;
 }
 
-const plans: Plan[] = [
+const plans: PricingPlan[] = [
   {
-    name: "Base",
-    subtitle: "Ideal para quem quer começar com estratégia e direcionamento profissional.",
-    pricing: {
-      mensal: { value: "129,90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "129,90", period: "/mês", label: "Mensal" },
-      semestral: { value: "129,90", period: "/mês", label: "Mensal" },
-    },
+    name: "Protocolo Mensal",
+    description: "Acesso total por 30 dias",
+    price: "$129",
+    priceKey: "transformação-mensal",
     features: [
-      "Dieta ou treino individualizado (você escolhe)",
-      "Estrutura personalizada inicial",
-      "Direcionamento profissional",
+      "Treino Individualizado (App)",
+      "Planejamento Alimentar",
+      "Suporte Direto",
     ],
-    cta: "Começar Agora",
+    cta: "COMPRAR ACESSO 30 DIAS",
+    featured: false,
     badge: null,
-    featured: false,
-    icon: Zap,
-    hasSelector: false,
   },
   {
-    name: "Transformação",
-    subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
-    pricing: {
-      mensal: { value: "329,90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "867,90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza R$ 121,80 no total" },
-      semestral: { value: "1.679,90", period: "/semestre", label: "Semestral", savingsText: "Você economiza R$ 299,50 no total" },
-    },
+    name: "Protocolo Trimestral",
+    description: "Acesso total por 90 dias",
+    price: "$329",
+    priceKey: "transformação-trimestral",
     features: [
-      "Dieta individualizada completa",
-      "Periodização de treino personalizada",
-      "Feedback mensal via WhatsApp",
-      "Atualização mensal (fotos)",
-      "Sugestão de suplementos e manipulados",
-      "Avaliação de exames",
-      "Ajustes de Protocolo",
+      "Tudo do Plano Mensal",
+      "Ajustes Periódicos de Protocolo",
+      "Prioridade no Suporte",
     ],
-    cta: "Quero Minha Transformação",
-    badge: "Mais escolhido pelos clientes",
+    cta: "COMPRAR ACESSO 90 DIAS",
     featured: true,
-    icon: Star,
-    hasSelector: true,
+    badge: "Mais Procurado",
   },
   {
-    name: "Elite",
-    subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
-    pricing: {
-      mensal: { value: "449,90", period: "/mês", label: "Mensal" },
-      trimestral: { value: "1.169,90", period: "/trimestre", label: "Trimestral", savingsText: "Você economiza R$ 179,80 no total" },
-      semestral: { value: "2.249,90", period: "/semestre", label: "Semestral", savingsText: "Você economiza R$ 449,50 no total" },
-    },
+    name: "Protocolo Semestral",
+    description: "Acesso total por 180 dias",
+    price: "$449",
+    priceKey: "transformação-semestral",
     features: [
-      "Dieta individualizada completa",
-      "Periodização de treino avançada",
-      "Feedback semanal via WhatsApp",
-      "Correção de exercícios por vídeo",
-      "Atualização quinzenal (fotos)",
-      "Sugestão de suplementos e manipulados",
-      "Avaliação de exames",
-      "Ajustes de Protocolo",
-      "Resposta prioritária",
+      "Acompanhamento de Longo Prazo",
+      "Estratégia de Off-Season e Cutting",
+      "Melhor Custo-Benefício",
     ],
-    cta: "Quero Acompanhamento Elite",
-    badge: "Plano Premium",
+    cta: "COMPRAR ACESSO 180 DIAS",
     featured: false,
-    icon: Crown,
-    hasSelector: true,
+    badge: null,
   },
 ];
 
-const billingKeys: BillingPeriod[] = ["mensal", "trimestral", "semestral"];
-
-const guarantees = [
-  "Acompanhamento 100% personalizado",
-  "Estratégias baseadas em experiência real no fisiculturismo",
-  "Método focado em resultados consistentes",
-];
-
-/* ── Per-card price selector dropdown ── */
-const PriceSelector = ({
-  plan,
-  billing,
-  onSelect,
-  priceMultiplier = 1,
-}: {
-  plan: Plan;
-  billing: BillingPeriod;
-  onSelect: (b: BillingPeriod) => void;
-  priceMultiplier?: number;
-}) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const current = plan.pricing[billing];
-  
-  // Apply multiplier to value
-  const applyMultiplier = (val: string) => {
-    const num = parseFloat(val.replace(".", "").replace(",", "."));
-    const result = num * priceMultiplier;
-    return result.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
-
-  const displayValue = applyMultiplier(current.value);
-  const [intPart, centPart] = displayValue.split(",");
-
-  return (
-    <div className="mb-8 relative" ref={ref}>
-      {/* Price row: clickable button + period label outside */}
-      <div className="flex items-baseline flex-wrap gap-x-1">
-        <span className="text-sm text-muted-foreground font-body normal-case">R$</span>
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={billing}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2 }}
-            className="inline-flex items-baseline gap-x-0.5"
-          >
-            <span className="text-5xl font-bold font-display text-gradient-gold">{intPart}</span>
-            <span className="text-lg font-bold font-display text-gradient-gold">,{centPart}</span>
-          </motion.span>
-        </AnimatePresence>
-        {plan.hasSelector && (
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            className="inline-flex items-center gap-1 cursor-pointer group ml-1"
-          >
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={billing}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="text-muted-foreground font-body normal-case text-sm group-hover:text-primary transition-colors"
-              >
-                {current.period}
-              </motion.span>
-            </AnimatePresence>
-            <ChevronDown
-              className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""} group-hover:text-primary`}
-            />
-          </button>
-        )}
-        {!plan.hasSelector && (
-          <span className="text-muted-foreground font-body normal-case text-sm">{current.period}</span>
-        )}
-      </div>
-
-        {/* Savings text */}
-        <AnimatePresence>
-          {current.savingsText && (
-            <motion.p
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.1, duration: 0.25 }}
-              className="text-[11px] font-body normal-case mt-2"
-              style={{ color: "hsl(var(--gold-light))" }}
-            >
-              {current.savingsText}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
-      {/* Dropdown */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -4, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-            className="absolute left-0 right-0 top-full mt-2 z-30 rounded-lg border border-border bg-secondary/95 backdrop-blur-sm overflow-hidden shadow-lg"
-          >
-            {billingKeys.map((key) => {
-              const p = plan.pricing[key];
-              const isActive = key === billing;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    onSelect(key);
-                    setOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left transition-colors ${
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground/80 hover:bg-muted"
-                  }`}
-                >
-                  <span className="font-display text-sm font-bold uppercase tracking-wider shrink-0">
-                    {p.label}
-                  </span>
-                  <span className="font-body text-xs normal-case text-right whitespace-nowrap">
-                    R$ {applyMultiplier(p.value)}
-                  </span>
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
-/* ── Main Section ── */
 const PricingSection = () => {
-  const [billings, setBillings] = useState<Record<string, BillingPeriod>>({
-    Base: "mensal",
-    Transformação: "trimestral",
-    Elite: "trimestral",
-  });
-  const [baseSelection, setBaseSelection] = useState<BaseSelection>(["dieta"]);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  const toggleBaseOption = (opt: BaseOption) => {
-    setBaseSelection((prev) => {
-      if (prev.includes(opt)) {
-        if (prev.length === 1) return prev;
-        return prev.filter((o) => o !== opt);
-      }
-      return [...prev, opt];
-    });
-  };
+  const handleCheckout = async (plan: PricingPlan) => {
+    console.log("Checkout initiated:", { priceKey: plan.priceKey });
 
-  const baseMultiplier = baseSelection.length === 2 ? 2 : 1;
-
-  const handleCheckout = async (plan: Plan) => {
-    let priceKey: string;
-    if (plan.name === "Base") {
-      const modalidade = baseSelection.length === 2 ? "dieta+treino" : baseSelection[0];
-      priceKey = `base-${modalidade}-mensal`;
-    } else {
-      priceKey = `${plan.name.toLowerCase()}-${billings[plan.name]}`;
-    }
-
-    console.log("Checkout initiated:", { priceKey, plan: plan.name });
-
-    // Fire Google Analytics begin_checkout event
     if (typeof (window as any).gtag === "function") {
       (window as any).gtag("event", "begin_checkout", {
-        items: [{ item_name: plan.name, price: plan.pricing[billings[plan.name]].value }],
+        items: [{ item_name: plan.name, price: plan.price }],
       });
     }
 
-    setLoadingPlan(plan.name);
+    setLoadingPlan(plan.priceKey);
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceKey },
+        body: { priceKey: plan.priceKey },
       });
-
-      console.log("Checkout response:", { data, error });
 
       if (error) throw error;
       if (data?.url) {
@@ -306,123 +91,67 @@ const PricingSection = () => {
   };
 
   return (
-    <section className="py-20 md:py-32" id="planos">
-      <div className="container mx-auto px-4">
+    <section id="planos" className="py-20 md:py-32 bg-background">
+      <div className="container mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-12"
         >
-          <h2 className="text-3xl md:text-5xl font-bold font-display mb-4">
-            Escolha Seu Nível de{" "}
-            <span className="text-gradient-gold">Transformação</span>
+          <h2 className="text-4xl font-bold font-display mb-4 uppercase tracking-tighter">
+            Escolha seu Protocolo
           </h2>
-          <p className="text-muted-foreground font-body normal-case max-w-2xl mx-auto">
-            Todos os planos incluem estratégia personalizada e acompanhamento
-            profissional para evolução real.
+          <p className="text-muted-foreground">
+            Pagamento único e seguro via Stripe. Sem cobranças automáticas.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, i) => (
             <motion.div
-              key={plan.name}
+              key={plan.priceKey}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.12 }}
-              className={`relative flex flex-col rounded-xl border p-8 transition-all ${
+              className={`relative flex flex-col rounded-2xl border p-8 transition-all ${
                 plan.featured
-                  ? "border-primary bg-card glow-gold scale-[1.02] md:scale-105"
-                  : "border-border bg-card hover:border-primary/30"
+                  ? "border-2 border-primary bg-card scale-[1.02] md:scale-105"
+                  : "border-border bg-card/50 hover:border-primary transition-all"
               }`}
             >
               {plan.badge && (
-                <div
-                  className={`absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider whitespace-nowrap ${
-                    plan.featured
-                      ? "bg-gradient-gold text-primary-foreground"
-                      : "bg-muted text-foreground border border-border"
-                  }`}
-                >
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full uppercase whitespace-nowrap">
                   {plan.badge}
-                </div>
+                </span>
               )}
 
-              <div className="mb-6 mt-2">
-                <plan.icon
-                  className={`w-8 h-8 mb-4 ${
-                    plan.featured ? "text-primary" : "text-muted-foreground"
-                  }`}
-                />
-                <h3 className="text-2xl font-bold font-display">{plan.name}</h3>
-                <p className="text-muted-foreground text-sm font-body normal-case mt-2">
-                  {plan.subtitle}
-                </p>
+              <h3 className="text-xl font-bold font-display mb-2">{plan.name}</h3>
+              <p className="text-muted-foreground text-sm mb-6">{plan.description}</p>
+
+              <div className="text-5xl font-extrabold font-display mb-6 text-gradient-gold">
+                {plan.price}
               </div>
 
-              {/* Base plan option selector */}
-              {plan.name === "Base" && (
-                <div className="mb-6">
-                  <p className="text-xs text-muted-foreground font-body normal-case mb-2">
-                    Escolha sua modalidade:
-                  </p>
-                  <div className="flex gap-2">
-                    {(["dieta", "treino"] as BaseOption[]).map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => toggleBaseOption(opt)}
-                        className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-display font-bold uppercase tracking-wider transition-all ${
-                          baseSelection.includes(opt)
-                            ? "bg-primary text-primary-foreground"
-                            : "border border-border text-muted-foreground hover:border-primary/40"
-                        }`}
-                      >
-                        {opt === "dieta" ? "Dieta" : "Treino"}
-                      </button>
-                    ))}
-                  </div>
-                  {baseSelection.length === 2 && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-[11px] font-body normal-case mt-2"
-                      style={{ color: "hsl(var(--gold-light))" }}
-                    >
-                      Dieta + Treino selecionados
-                    </motion.p>
-                  )}
-                </div>
-              )}
-
-              <PriceSelector
-                plan={plan}
-                billing={billings[plan.name]}
-                onSelect={(b) => setBillings((prev) => ({ ...prev, [plan.name]: b }))}
-                priceMultiplier={plan.name === "Base" ? baseMultiplier : 1}
-              />
-
-              <ul className="space-y-3 mb-8 flex-1">
+              <ul className="text-left space-y-4 mb-8 flex-1">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-sm font-body normal-case text-foreground/80">{f}</span>
+                  <li key={f} className="text-foreground/80 text-sm">
+                    • {f}
                   </li>
                 ))}
               </ul>
 
               <button
                 onClick={() => handleCheckout(plan)}
-                disabled={loadingPlan === plan.name}
-                className={`w-full block text-center py-4 rounded-lg font-display font-bold uppercase tracking-wider transition-all disabled:opacity-70 ${
+                disabled={loadingPlan === plan.priceKey}
+                className={`w-full py-4 font-bold font-display rounded-full uppercase tracking-wider transition-all disabled:opacity-70 ${
                   plan.featured
-                    ? "bg-gradient-gold text-primary-foreground hover:opacity-90"
-                    : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    ? "bg-primary text-primary-foreground hover:opacity-90"
+                    : "bg-foreground text-background hover:bg-primary hover:text-primary-foreground"
                 }`}
               >
-                {loadingPlan === plan.name ? (
+                {loadingPlan === plan.priceKey ? (
                   <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                 ) : (
                   plan.cta
@@ -432,23 +161,9 @@ const PricingSection = () => {
           ))}
         </div>
 
-        {/* Guarantees */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-6 mt-16"
-        >
-          {guarantees.map((g) => (
-            <div
-              key={g}
-              className="flex items-center gap-2 text-sm text-muted-foreground font-body normal-case"
-            >
-              <Check className="w-4 h-4 text-primary" />
-              {g}
-            </div>
-          ))}
-        </motion.div>
+        <p className="mt-8 text-muted-foreground text-xs italic">
+          *Ao clicar em comprar, você será redirecionado para o checkout seguro do Stripe. O acesso é liberado imediatamente após a confirmação.
+        </p>
       </div>
     </section>
   );
