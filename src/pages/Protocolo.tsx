@@ -150,13 +150,13 @@ const Protocolo = () => {
       
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
       
-      {/* Interactive Training Table */}
-      <div className="container mx-auto px-4 py-8">
+      {/* Interactive Training Table — same width as PDF wrapper */}
+      <div className="w-full max-w-[700px] mx-auto px-4 pb-8">
         <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} regrasGerais={protocolo.treino} />
       </div>
 
       {/* Footer */}
-      <div className="container mx-auto px-4 pb-8">
+      <div className="w-full max-w-[700px] mx-auto px-4 pb-8">
         <div className="pdf-footer" data-pdf-section>
           <div className="pdf-footer-divider" />
           <p className="pdf-footer-text">Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva</p>
