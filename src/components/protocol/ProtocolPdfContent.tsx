@@ -182,13 +182,7 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
         </div>
       )}
 
-      <div className="pdf-footer" data-pdf-section>
-        <div className="pdf-footer-divider" />
-        <p className="pdf-footer-text">Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva</p>
-        <p className="pdf-footer-text pdf-footer-disclaimer">
-          Este documento é pessoal e intransferível. Proibida a reprodução sem autorização.
-        </p>
-      </div>
+      {/* Footer removed from here — now rendered at page bottom in Protocolo.tsx */}
     </div>
   );
 });

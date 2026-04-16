@@ -102,9 +102,9 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 w-full">
       {regrasGerais && (
-        <div className="pdf-section" data-pdf-section>
+        <div className="pdf-section w-full" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">📋</span>
             <h3 className="pdf-section-title">REGRAS GERAIS</h3>
@@ -115,7 +115,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         </div>
       )}
 
-      <div className="pdf-section" data-pdf-section>
+      <div className="pdf-section w-full" data-pdf-section>
         <div className="pdf-section-header">
           <span className="pdf-section-icon">🏋️</span>
           <h3 className="pdf-section-title">PROTOCOLO GUI SANT'ANNA PRO – LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
