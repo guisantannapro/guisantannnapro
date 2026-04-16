@@ -4,8 +4,10 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Loader2, Save, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
+import ExerciseCard from "./ExerciseCard";
 
 interface ExerciseData {
   id: string;
@@ -34,9 +36,9 @@ interface InteractiveTrainingTableProps {
 const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regrasGerais }: InteractiveTrainingTableProps) => {
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -61,7 +63,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   const handleClientFieldChange = useCallback((exerciseId: string, field: string, value: string) => {
     setExercises(prev => prev.map(e => e.id === exerciseId ? { ...e, [field]: value } : e));
 
-    // Debounced auto-save
     const key = `${exerciseId}-${field}`;
     if (debounceTimers.current[key]) clearTimeout(debounceTimers.current[key]);
     debounceTimers.current[key] = setTimeout(async () => {
@@ -88,7 +89,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
   if (exercises.length === 0) return null;
 
-  // Group by week → day
   const weeks = [...new Set(exercises.map(e => e.week_number))].sort((a, b) => a - b);
 
   const groupByDay = (weekExercises: ExerciseData[]) => {
@@ -103,7 +103,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
   return (
     <div className="space-y-8">
-      {/* Regras Gerais */}
       {regrasGerais && (
         <div className="pdf-section" data-pdf-section>
           <div className="pdf-section-header">
@@ -143,103 +142,117 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                     <span className="inline-block w-3 h-3 rounded-full bg-primary" />
                     {dayLabel}
                   </h5>
-                  <div className="border border-border rounded-lg overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/50">
-                          <TableHead className="text-xs font-bold h-9">Exercício</TableHead>
-                          {isComplementar ? (
-                            <TableHead className="text-xs font-bold h-9">Método</TableHead>
-                          ) : (
-                            <>
-                              <TableHead className="text-xs font-bold h-9 w-28">Top Set (6–8)</TableHead>
-                              <TableHead className="text-xs font-bold h-9 w-28">Back-off (8–10)</TableHead>
-                            </>
-                          )}
-                          <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
-                          <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
-                          <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {dayExercises.map(ex => {
-                          const topSetKey = `${ex.id}-client_top_set`;
-                          const backOffKey = `${ex.id}-client_back_off`;
-                          const resultadoKey = `${ex.id}-client_resultado`;
-                          const obsKey = `${ex.id}-client_obs`;
 
-                          return (
-                            <TableRow key={ex.id} className="hover:bg-muted/30">
-                              <TableCell className="text-sm font-medium py-2">
-                                {ex.exercise_name}
-                              </TableCell>
-                              {isComplementar ? (
-                                <TableCell className="text-sm text-muted-foreground py-2">
-                                  {ex.metodo}
+                  {isMobile ? (
+                    <div className="space-y-3">
+                      {dayExercises.map(ex => (
+                        <ExerciseCard
+                          key={ex.id}
+                          exercise={ex}
+                          isComplementar={isComplementar}
+                          isAdmin={isAdmin}
+                          savedFields={savedFields}
+                          onFieldChange={handleClientFieldChange}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/50">
+                            <TableHead className="text-xs font-bold h-9">Exercício</TableHead>
+                            {isComplementar ? (
+                              <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                            ) : (
+                              <>
+                                <TableHead className="text-xs font-bold h-9 w-28">Top Set (6–8)</TableHead>
+                                <TableHead className="text-xs font-bold h-9 w-28">Back-off (8–10)</TableHead>
+                              </>
+                            )}
+                            <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
+                            <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
+                            <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {dayExercises.map(ex => {
+                            const topSetKey = `${ex.id}-client_top_set`;
+                            const backOffKey = `${ex.id}-client_back_off`;
+                            const resultadoKey = `${ex.id}-client_resultado`;
+                            const obsKey = `${ex.id}-client_obs`;
+
+                            return (
+                              <TableRow key={ex.id} className="hover:bg-muted/30">
+                                <TableCell className="text-sm font-medium py-2">
+                                  {ex.exercise_name}
                                 </TableCell>
-                              ) : (
-                                <>
-                                  <TableCell className="py-1">
-                                    <div className="relative">
-                                      <Input
-                                        value={ex.client_top_set}
-                                        onChange={(e) => handleClientFieldChange(ex.id, "client_top_set", e.target.value)}
-                                        placeholder="—"
-                                        className="h-8 text-xs border-muted bg-background"
-                                        readOnly={isAdmin}
-                                      />
-                                      {savedFields.has(topSetKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                    </div>
+                                {isComplementar ? (
+                                  <TableCell className="text-sm text-muted-foreground py-2">
+                                    {ex.metodo}
                                   </TableCell>
-                                  <TableCell className="py-1">
-                                    <div className="relative">
-                                      <Input
-                                        value={ex.client_back_off}
-                                        onChange={(e) => handleClientFieldChange(ex.id, "client_back_off", e.target.value)}
-                                        placeholder="—"
-                                        className="h-8 text-xs border-muted bg-background"
-                                        readOnly={isAdmin}
-                                      />
-                                      {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                    </div>
-                                  </TableCell>
-                                </>
-                              )}
-                              <TableCell className="py-1">
-                                <div className="relative">
-                                  <Input
-                                    value={ex.client_resultado}
-                                    onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
-                                    placeholder="—"
-                                    className="h-8 text-xs border-muted bg-background"
-                                    readOnly={isAdmin}
-                                  />
-                                  {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                </div>
-                              </TableCell>
-                              {/* Obs Cliente - always editable */}
-                              <TableCell className="py-1">
-                                <div className="relative">
-                                  <Input
-                                    value={ex.client_obs}
-                                    onChange={(e) => handleClientFieldChange(ex.id, "client_obs", e.target.value)}
-                                    placeholder="—"
-                                    className="h-8 text-xs border-muted bg-background"
-                                    readOnly={isAdmin}
-                                  />
-                                  {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                </div>
-                              </TableCell>
-                              {/* Obs Coach - read-only for client */}
-                              <TableCell className="text-xs text-muted-foreground italic py-2">
-                                {ex.admin_obs || "—"}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
+                                ) : (
+                                  <>
+                                    <TableCell className="py-1">
+                                      <div className="relative">
+                                        <Input
+                                          value={ex.client_top_set}
+                                          onChange={(e) => handleClientFieldChange(ex.id, "client_top_set", e.target.value)}
+                                          placeholder="—"
+                                          className="h-8 text-xs border-muted bg-background"
+                                          readOnly={isAdmin}
+                                        />
+                                        {savedFields.has(topSetKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="py-1">
+                                      <div className="relative">
+                                        <Input
+                                          value={ex.client_back_off}
+                                          onChange={(e) => handleClientFieldChange(ex.id, "client_back_off", e.target.value)}
+                                          placeholder="—"
+                                          className="h-8 text-xs border-muted bg-background"
+                                          readOnly={isAdmin}
+                                        />
+                                        {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                      </div>
+                                    </TableCell>
+                                  </>
+                                )}
+                                <TableCell className="py-1">
+                                  <div className="relative">
+                                    <Input
+                                      value={ex.client_resultado}
+                                      onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
+                                      placeholder="—"
+                                      className="h-8 text-xs border-muted bg-background"
+                                      readOnly={isAdmin}
+                                    />
+                                    {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-1">
+                                  <div className="relative">
+                                    <Input
+                                      value={ex.client_obs}
+                                      onChange={(e) => handleClientFieldChange(ex.id, "client_obs", e.target.value)}
+                                      placeholder="—"
+                                      className="h-8 text-xs border-muted bg-background"
+                                      readOnly={isAdmin}
+                                    />
+                                    {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs text-muted-foreground italic py-2">
+                                  {ex.admin_obs || "—"}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
                 </div>
               );
             })}
