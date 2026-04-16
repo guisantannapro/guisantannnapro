@@ -154,6 +154,17 @@ const Protocolo = () => {
       <div className="container mx-auto px-4 py-8">
         <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} regrasGerais={protocolo.treino} />
       </div>
+
+      {/* Footer */}
+      <div className="container mx-auto px-4 pb-8">
+        <div className="pdf-footer" data-pdf-section>
+          <div className="pdf-footer-divider" />
+          <p className="pdf-footer-text">Protocolo exclusivo — Guilherme Sant'Anna Consultoria Esportiva</p>
+          <p className="pdf-footer-text pdf-footer-disclaimer">
+            Este documento é pessoal e intransferível. Proibida a reprodução sem autorização.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
