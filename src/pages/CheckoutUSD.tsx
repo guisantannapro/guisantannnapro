@@ -25,6 +25,8 @@ const CheckoutUSD = () => {
           Área administrativa
         </Link>
       </footer>
+      
+      <WhatsAppFloatButton phoneNumber="+5548999501722" />
     </div>
   );
 };
