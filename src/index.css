@@ -29,23 +29,22 @@
     --gold: 43 74% 49%;
     --gold-light: 43 74% 65%;
     --gold-dark: 43 74% 35%;
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 43 74% 49%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 43 74% 49%;
   }
 
-  * { @apply border-border; }
-
-  html, body {
-    background-color: #0a0a0a !important;
-    color: #f2f2f2;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    overflow-y: auto !important;
-    height: auto !important;
-    min-height: 100vh;
+  * {
+    @apply border-border;
   }
 
   body {
-    @apply antialiased font-sans;
+    @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
 
@@ -57,27 +56,42 @@
 
 @layer utilities {
   .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#b8860b] via-[#ffd700] to-[#b8860b];
+    background: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 49%), hsl(43 74% 35%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
+
   .bg-gradient-gold {
     background: linear-gradient(135deg, hsl(43 74% 49%), hsl(43 74% 35%));
   }
+
+  .border-gradient-gold {
+    border-image: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 35%)) 1;
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 30px hsl(43 74% 49% / 0.3), 0 0 60px hsl(43 74% 49% / 0.1);
+  }
 }
 
-/* ── ESTILOS DO PROTOCOLO E PDF ── */
+/* ── PDF Protocol Styles ── */
 .pdf-protocol-wrapper {
-  width: 100%;
+  width: 700px;
   max-width: 700px;
   margin: 0 auto;
-  padding: 40px 16px;
-  background: #0a0a0a;
+  padding: 40px 44px;
+  font-family: 'Inter', sans-serif;
+  color: hsl(0 0% 90%);
+  background: hsl(0 0% 5%);
+  box-sizing: border-box;
 }
 
 .pdf-cover-header {
   padding: 32px 28px;
   border: 1.5px solid hsl(43 74% 49% / 0.25);
   border-radius: 14px;
-  background: linear-gradient(135deg, #0f0f0f, #050505);
+  background: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 6%));
   margin-bottom: 32px;
   position: relative;
 }
@@ -89,7 +103,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b);
+  background: linear-gradient(90deg, hsl(43 74% 49%), hsl(43 74% 65%), hsl(43 74% 49%));
 }
 
 .pdf-cover-logo-row {
@@ -112,15 +126,18 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #ffd700;
+  background: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 49%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .pdf-section {
-  border: 1px solid #1a1a1a;
+  border: 1px solid hsl(0 0% 18%);
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 12px;
-  background: #0f0f0f;
+  background: hsl(0 0% 8%);
 }
 
 .pdf-section-header {
@@ -128,33 +145,25 @@
   align-items: center;
   gap: 10px;
   padding: 14px 22px;
-  border-bottom: 1px solid #1a1a1a;
-  background: linear-gradient(90deg, rgba(184, 134, 11, 0.1), transparent);
+  border-bottom: 1px solid hsl(0 0% 18%);
+  background: linear-gradient(90deg, hsl(43 74% 49% / 0.08), transparent);
 }
 
 .pdf-section-title {
   font-family: 'Oswald', sans-serif;
   font-size: 15px;
   font-weight: 600;
-  color: #b8860b;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.pdf-section-body {
-  padding: 18px 20px;
-  font-size: 13px;
-  line-height: 1.8;
-  color: #d1d1d1;
+  color: hsl(43 74% 38%);
 }
 
 .pdf-footer {
   margin-top: 36px;
   text-align: center;
-  padding-bottom: 20px;
 }
 
 .pdf-footer-text {
   font-size: 10px;
-  color: #666;
-  letter-spacing: 1px;
+  color: hsl(0 0% 45%);
 }
