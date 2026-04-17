@@ -7,6 +7,7 @@ import BenefitsSection from "@/components/landing/BenefitsSection";
 import ResultsSection from "@/components/landing/ResultsSection";
 import PricingSectionUSD from "@/components/landing/PricingSectionUSD";
 import FinalCTA from "@/components/landing/FinalCTA";
+import { WhatsAppFloatButton } from "@/components/WhatsAppFloatButton";
 
 const CheckoutUSD = () => {
   return (
@@ -24,6 +25,8 @@ const CheckoutUSD = () => {
           Área administrativa
         </Link>
       </footer>
+      
+      <WhatsAppFloatButton phoneNumber="+5548999501722" />
     </div>
   );
 };
