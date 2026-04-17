@@ -59,6 +59,9 @@
   .text-gradient-gold {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-[#b8860b] via-[#ffd700] to-[#b8860b];
   }
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(43 74% 49%), hsl(43 74% 35%));
+  }
 }
 
 /* ── ESTILOS DO PROTOCOLO E PDF ── */
