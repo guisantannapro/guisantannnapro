@@ -3,19 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  /* DESTRAVA O SCROLL EM TUDO */
-  html, body, #root {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    display: block !important;
-    background-color: #0a0a0a !important;
-    color: #f2f2f2;
-    margin: 0;
-    padding: 0;
-  }
-
   :root {
     --background: 0 0% 5%;
     --foreground: 0 0% 95%;
@@ -37,6 +24,22 @@
     --input: 0 0% 18%;
     --ring: 43 74% 49%;
     --radius: 0.5rem;
+  }
+
+  /* DESTRAVA O SCROLL SEM QUEBRAR O LAYOUT */
+  html, body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    background-color: #0a0a0a !important;
+    color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply antialiased font-sans;
   }
 }
 
