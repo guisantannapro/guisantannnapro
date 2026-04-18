@@ -57,7 +57,7 @@ const DEFAULT_DAYS: DayBlock[] = [
     ],
   },
   {
-    id: uid(), day_label: "QUINTA – LEGS", table_type: "standard",
+    id: uid(), day_label: "QUARTA – LEGS", table_type: "standard",
     exercises: [
       { id: uid(), exercise_name: "Agachamento", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
       { id: uid(), exercise_name: "Leg press", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
@@ -67,13 +67,23 @@ const DEFAULT_DAYS: DayBlock[] = [
     ],
   },
   {
-    id: uid(), day_label: "SEXTA – PUSH", table_type: "standard",
+    id: uid(), day_label: "QUINTA – PUSH", table_type: "standard",
     exercises: [
       { id: uid(), exercise_name: "Supino inclinado", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
       { id: uid(), exercise_name: "Paralelas", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
       { id: uid(), exercise_name: "Elevação lateral", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
       { id: uid(), exercise_name: "Tríceps halter", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
       { id: uid(), exercise_name: "Peck deck", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
+    ],
+  },
+  {
+    id: uid(), day_label: "SEXTA – PULL", table_type: "standard",
+    exercises: [
+      { id: uid(), exercise_name: "Puxada frontal", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
+      { id: uid(), exercise_name: "Remada curvada", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
+      { id: uid(), exercise_name: "Pulldown", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
+      { id: uid(), exercise_name: "Rosca martelo", top_set: "", back_off: "", metodo: "", admin_obs: "", table_type: "standard" },
+      { id: uid(), exercise_name: "Rosca direta", top_set: "", back_off: "", metodo: "", admin_obs: "Rest-pause", table_type: "standard" },
     ],
   },
   {
