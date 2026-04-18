@@ -17,7 +17,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
-import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
+
 
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
