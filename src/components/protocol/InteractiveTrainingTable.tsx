@@ -4,6 +4,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -37,6 +38,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
+  const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
   const isMobile = useIsMobile();
 
@@ -122,7 +124,23 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         </div>
       </div>
 
-      {weeks.map(weekNum => {
+      {weeks.length > 1 && (
+        <div className="flex flex-wrap gap-2 print:hidden" data-html2canvas-ignore="true">
+          {weeks.map(w => (
+            <Button
+              key={w}
+              variant={selectedWeek === w ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedWeek(w)}
+              className="text-xs"
+            >
+              Semana {w}
+            </Button>
+          ))}
+        </div>
+      )}
+
+      {weeks.filter(w => w === selectedWeek).map(weekNum => {
         const weekExercises = exercises.filter(e => e.week_number === weekNum);
         const dayMap = groupByDay(weekExercises);
 
