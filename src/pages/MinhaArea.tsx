@@ -384,18 +384,6 @@ const MinhaArea = () => {
                 </Button>
               </div>
 
-              {/* Interactive Training Logbook */}
-              <div className="mt-6 border-t border-border pt-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Dumbbell className="w-4 h-4 text-primary" />
-                  <h3 className="text-sm font-bold uppercase text-foreground">Treino - Logbook</h3>
-                </div>
-                <InteractiveTrainingTable
-                  protocoloId={protocoloAtual.id}
-                  userId={session?.user?.id || protocoloAtual.user_id}
-                  regrasGerais={protocoloAtual.treino}
-                />
-              </div>
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
