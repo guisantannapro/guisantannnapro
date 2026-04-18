@@ -124,31 +124,29 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         </div>
       </div>
 
-      {weeks.length > 1 && (
-        <div className="flex flex-wrap gap-2 print:hidden" data-html2canvas-ignore="true">
-          {weeks.map(w => (
-            <Button
-              key={w}
-              variant={selectedWeek === w ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedWeek(w)}
-              className="text-xs"
-            >
-              Semana {w}
-            </Button>
-          ))}
-        </div>
-      )}
-
       {weeks.filter(w => w === selectedWeek).map(weekNum => {
         const weekExercises = exercises.filter(e => e.week_number === weekNum);
         const dayMap = groupByDay(weekExercises);
 
         return (
           <div key={weekNum} className="space-y-4" data-pdf-section>
-            <h4 className="text-lg font-bold uppercase text-primary border-b border-primary/20 pb-2">
-              📅 SEMANA {weekNum}
-            </h4>
+            <div className="flex items-center justify-between gap-3 border-b border-primary/20 pb-2">
+              <h4 className="text-lg font-bold uppercase text-primary">
+                📅 SEMANA {weekNum}
+              </h4>
+              {weeks.length > 1 && (
+                <select
+                  value={selectedWeek}
+                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                  data-html2canvas-ignore="true"
+                  className="print:hidden h-8 rounded-md border border-primary/40 bg-background text-foreground text-xs font-semibold uppercase px-2 cursor-pointer hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  {weeks.map(w => (
+                    <option key={w} value={w}>Semana {w}</option>
+                  ))}
+                </select>
+              )}
+            </div>
 
             {[...dayMap.entries()].map(([dayLabel, dayExercises]) => {
               const tableType = dayExercises[0]?.table_type || "standard";
