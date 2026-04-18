@@ -50,9 +50,9 @@ const plans: Plan[] = [
     name: "Transformação",
     subtitle: "Para quem quer resultados visíveis com estratégia completa e acompanhamento.",
     pricing: {
-      mensal: { value: "329,90", period: " (30 dias)", label: "30 dias - Compra única" },
-      trimestral: { value: "867,90", period: " (90 dias)", label: "90 dias - Compra única", savingsText: "Você economiza R$ 121,80 no total" },
-      semestral: { value: "1.679,90", period: " (180 dias)", label: "180 dias - Compra única", savingsText: "Você economiza R$ 299,50 no total" },
+      mensal: { value: "329,90", period: " (30 dias)", label: "30 Dias", savingsText: "Pagamento único" },
+      trimestral: { value: "867,90", period: " (90 dias)", label: "90 Dias", savingsText: "Você economiza R$ 121,80 — pagamento único" },
+      semestral: { value: "1.679,90", period: " (180 dias)", label: "180 Dias", savingsText: "Você economiza R$ 299,50 — pagamento único" },
     },
     features: [
       "Dieta individualizada completa",
@@ -73,9 +73,9 @@ const plans: Plan[] = [
     name: "Elite",
     subtitle: "Acompanhamento próximo e estratégico para máxima evolução física.",
     pricing: {
-      mensal: { value: "449,90", period: " (30 dias)", label: "30 dias - Compra única" },
-      trimestral: { value: "1.169,90", period: " (90 dias)", label: "90 dias - Compra única", savingsText: "Você economiza R$ 179,80 no total" },
-      semestral: { value: "2.249,90", period: " (180 dias)", label: "180 dias - Compra única", savingsText: "Você economiza R$ 449,50 no total" },
+      mensal: { value: "449,90", period: " (30 dias)", label: "30 Dias", savingsText: "Pagamento único" },
+      trimestral: { value: "1.169,90", period: " (90 dias)", label: "90 Dias", savingsText: "Você economiza R$ 179,80 — pagamento único" },
+      semestral: { value: "2.249,90", period: " (180 dias)", label: "180 Dias", savingsText: "Você economiza R$ 449,50 — pagamento único" },
     },
     features: [
       "Dieta individualizada completa",
