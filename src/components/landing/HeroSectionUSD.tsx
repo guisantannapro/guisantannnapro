@@ -9,6 +9,7 @@ const HeroSectionUSD = () => {
           src={heroImg}
           alt="Coach Guilherme Sant'Anna - IFBB Pro Athlete"
           loading="eager"
+          fetchPriority="high"
           className="w-full h-full object-cover object-[center_20%] md:object-top opacity-50"
         />
         <div className="absolute inset-0 bg-background/40" />
