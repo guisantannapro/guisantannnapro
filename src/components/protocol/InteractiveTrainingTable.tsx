@@ -38,6 +38,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
+  const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
   const isMobile = useIsMobile();
 
