@@ -105,7 +105,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
   return (
     <div className="space-y-8 w-full">
-      {regrasGerais && (
+      {regrasGerais && !isMobile && (
         <div className="pdf-section w-full" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">📋</span>
@@ -117,12 +117,14 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         </div>
       )}
 
-      <div className="pdf-section w-full" data-pdf-section>
-        <div className="pdf-section-header">
-          <span className="pdf-section-icon">🏋️</span>
-          <h3 className="pdf-section-title">PROTOCOLO GUI SANT'ANNA PRO – LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+      {!isMobile && (
+        <div className="pdf-section w-full" data-pdf-section>
+          <div className="pdf-section-header">
+            <span className="pdf-section-icon">🏋️</span>
+            <h3 className="pdf-section-title">PROTOCOLO GUI SANT'ANNA PRO – LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+          </div>
         </div>
-      </div>
+      )}
 
       {weeks.filter(w => w === selectedWeek).map(weekNum => {
         const weekExercises = exercises.filter(e => e.week_number === weekNum);
