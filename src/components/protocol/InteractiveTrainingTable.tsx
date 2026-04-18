@@ -107,7 +107,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         <div className="pdf-section w-full" data-pdf-section>
           <div className="pdf-section-header">
             <span className="pdf-section-icon">📋</span>
-            <h3 className="pdf-section-title">REGRAS GERAIS</h3>
+            <h3 className="pdf-section-title">TREINO - REGRAS GERAIS</h3>
           </div>
           <div className="pdf-section-body text-sm" style={{ whiteSpace: "pre-line" }}>
             {regrasGerais}
