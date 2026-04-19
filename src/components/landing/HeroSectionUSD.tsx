@@ -41,7 +41,7 @@ const HeroSectionUSD = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-2 normal-case"
+          className="font-body text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-2 normal-case whitespace-nowrap"
         >
           🇧🇷 Consultoria online para brasileiros que vivem nos Estados Unidos 🇺🇸
         </motion.p>
