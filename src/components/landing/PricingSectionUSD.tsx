@@ -325,6 +325,18 @@ const PricingSectionUSD = () => {
           <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
             Pagamento único — Sem assinatura
           </span>
+          <p className="text-sm text-muted-foreground font-body normal-case mt-4">
+            Não sabe qual plano escolher? Me chama no{" "}
+            <a
+              href="https://wa.me/55489995017233?text=Olá!%20Não%20sei%20qual%20plano%20escolher%2C%20pode%20me%20ajudar%3F"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#25D366] text-white hover:bg-[#128C7E] transition-colors"
+            >
+              WhatsApp
+            </a>{" "}
+            que eu te indico o ideal
+          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
