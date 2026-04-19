@@ -41,20 +41,30 @@ const HeroSectionUSD = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-4 normal-case"
+          className="font-body text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-2 normal-case"
         >
-          A metodologia de elite do Brasil, agora disponível para você nos EUA.
+          🇧🇷 Consultoria online para brasileiros que vivem nos Estados Unidos 🇺🇸
         </motion.p>
 
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="font-body text-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-8 normal-case"
+        >
+          Treino e dieta personalizados para sua rotina nos EUA.
+        </motion.p>
 
         <motion.a
-          href="#planos"
+          href="https://wa.me/55489995017233?text=Olá!%20Tenho%20interesse%20nos%20planos%20de%20consultoria."
+          target="_blank"
+          rel="noopener noreferrer"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
           className="inline-block bg-gradient-gold text-primary-foreground px-10 py-4 rounded-lg font-display text-lg font-bold tracking-wider uppercase hover:opacity-90 transition-opacity glow-gold"
         >
-          Iniciar Minha Transformação
+          Falar com o Coach no WhatsApp
         </motion.a>
       </div>
     </section>
