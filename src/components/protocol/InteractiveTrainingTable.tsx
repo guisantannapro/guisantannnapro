@@ -422,14 +422,17 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                           })}
                         </TableBody>
                       </Table>
-                    </div>
-                  )}
+                          </div>
+                        </div>
+                      </details>
+                    );
+                  })}
                 </div>
               );
             })}
           </div>
-        );
-      })}
+        </details>
+      </div>
     </div>
   );
 };
