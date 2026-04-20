@@ -296,28 +296,28 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                             </h5>
                             <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
                           </summary>
-                          <div className="p-3">
-                            <div className="border border-border rounded-lg overflow-hidden">
-                              <Table>
+                          <div className="p-2">
+                            <div className="border border-border rounded-lg overflow-x-auto">
+                              <Table className="w-full">
                                 <TableHeader>
                                   <TableRow className="bg-muted/50">
-                                    <TableHead className="text-xs font-bold h-9 w-[140px] min-w-[140px]">Exercício</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[110px]">Exercício</TableHead>
                                     {isComplementar ? (
                                       <>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[120px]">Método</TableHead>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[140px]">Carga/Rep</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">Método</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Carga/Rep</TableHead>
                                       </>
                                     ) : (
                                       <>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[130px]">Top Set (6–8)</TableHead>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[130px]">Back-off (8–10)</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off</TableHead>
                                       </>
                                     )}
                                     {!isComplementar && (
-                                      <TableHead className="text-xs font-bold h-9 min-w-[130px]">Resultado</TableHead>
+                                      <TableHead className="text-[11px] font-bold h-9 px-1.5">Result.</TableHead>
                                     )}
-                                    <TableHead className="text-xs font-bold h-9 min-w-[160px]">Obs Cliente</TableHead>
-                                    <TableHead className="text-xs font-bold h-9 w-[110px] min-w-[110px]">Obs (Coach)</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[80px]">Coach</TableHead>
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
