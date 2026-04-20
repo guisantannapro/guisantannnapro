@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { TrendingUp, Download, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Evolution {
@@ -464,23 +464,21 @@ const EvolutionSection = ({ evolutions }: EvolutionSectionProps) => {
   if (evolutions.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.07 }}
-      className="bg-card border border-border rounded-lg p-6"
-    >
-      <div className="flex items-center gap-3 mb-4">
-        <TrendingUp className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-bold uppercase text-foreground">Minha Evolução</h2>
-      </div>
-
-      <div className="space-y-5">
-        {evolutions.map((evo) => (
-          <EvolutionCard key={evo.id} evolution={evo} />
-        ))}
-      </div>
-    </motion.div>
+    <AccordionItem value="evolucao" className="bg-card border border-border rounded-lg px-6 border-b">
+      <AccordionTrigger className="hover:no-underline py-5">
+        <div className="flex items-center gap-3">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-bold uppercase text-foreground">Minha Evolução</h2>
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="pt-2 pb-6">
+        <div className="space-y-5">
+          {evolutions.map((evo) => (
+            <EvolutionCard key={evo.id} evolution={evo} />
+          ))}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 };
 
