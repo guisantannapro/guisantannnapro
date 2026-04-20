@@ -329,7 +329,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
                                     return (
                                       <TableRow key={ex.id} className="hover:bg-muted/30">
-                                        <TableCell className="text-sm font-medium py-2 min-w-[180px] whitespace-normal break-words">
+                                        <TableCell className="text-sm font-medium py-2 w-[140px] min-w-[140px] whitespace-normal break-words">
                                           {ex.exercise_name}
                                         </TableCell>
                                         {isComplementar ? (
