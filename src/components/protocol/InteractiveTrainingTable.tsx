@@ -210,6 +210,35 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
           <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+          <span
+            data-html2canvas-ignore="true"
+            className={`print:hidden inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border ${
+              !isOnline
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : syncing || pendingCount > 0
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-muted/40 text-muted-foreground"
+            }`}
+            title={
+              !isOnline
+                ? `Offline — ${pendingCount} edição(ões) na fila`
+                : syncing
+                ? "Sincronizando..."
+                : pendingCount > 0
+                ? `${pendingCount} pendente(s)`
+                : "Sincronizado"
+            }
+          >
+            {!isOnline ? (
+              <><CloudOff size={12} /> Offline{pendingCount > 0 ? ` (${pendingCount})` : ""}</>
+            ) : syncing ? (
+              <><RefreshCw size={12} className="animate-spin" /> Sincronizando</>
+            ) : pendingCount > 0 ? (
+              <><RefreshCw size={12} /> {pendingCount} pendente</>
+            ) : (
+              <><Cloud size={12} /> Sincronizado</>
+            )}
+          </span>
           <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
         </summary>
         <div className="pdf-section-body space-y-6">
