@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-// supabase ainda é usado no fetch inicial dos exercícios
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -8,9 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Loader2, CheckCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDayAccordion from "./MobileDayAccordion";
-import { enqueueUpdate } from "@/lib/offlineQueue";
-import { useOfflineSync } from "@/hooks/useOfflineSync";
-import SyncStatusBadge from "./SyncStatusBadge";
 
 interface ExerciseData {
   id: string;
@@ -44,7 +40,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
   const isMobile = useIsMobile();
-  const { status, pendingCount, triggerSync } = useOfflineSync();
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -72,18 +67,18 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
     const key = `${exerciseId}-${field}`;
     if (debounceTimers.current[key]) clearTimeout(debounceTimers.current[key]);
     debounceTimers.current[key] = setTimeout(async () => {
-      // Sempre persiste no IndexedDB primeiro — garante que não perde dado offline.
-      try {
-        await enqueueUpdate(exerciseId, field, value);
-        setSavedFields(prev => new Set(prev).add(key));
-        setTimeout(() => setSavedFields(prev => { const n = new Set(prev); n.delete(key); return n; }), 2000);
-        // Tenta enviar pro servidor agora; se offline, fica na fila.
-        void triggerSync();
-      } catch (err) {
-        console.error("Falha ao gravar edição offline:", err);
+      const { error } = await supabase
+        .from("protocol_exercises")
+        .update({ [field]: value } as any)
+        .eq("id", exerciseId);
+      if (error) {
+        console.error("Erro ao salvar:", error);
+        return;
       }
+      setSavedFields(prev => new Set(prev).add(key));
+      setTimeout(() => setSavedFields(prev => { const n = new Set(prev); n.delete(key); return n; }), 2000);
     }, 800);
-  }, [triggerSync]);
+  }, []);
 
   if (loading) {
     return (
@@ -126,9 +121,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
           <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
-          {!isAdmin && (
-            <SyncStatusBadge status={status} pendingCount={pendingCount} onClick={triggerSync} />
-          )}
           <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
         </summary>
         <div className="pdf-section-body space-y-6">
