@@ -4,9 +4,11 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, CloudOff, RefreshCw, Cloud } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDayAccordion from "./MobileDayAccordion";
+import { enqueueEdit, getAllQueued, removeQueued, queueSize } from "@/lib/offlineQueue";
+import { toast } from "sonner";
 
 interface ExerciseData {
   id: string;
