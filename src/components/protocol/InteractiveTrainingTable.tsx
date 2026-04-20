@@ -183,10 +183,10 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                               <Table>
                                 <TableHeader>
                                   <TableRow className="bg-muted/50">
-                                    <TableHead className="text-xs font-bold h-9">Exercício</TableHead>
+                                    <TableHead className="text-xs font-bold h-9 min-w-[180px]">Exercício</TableHead>
                                     {isComplementar ? (
                                       <>
-                                        <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                                        <TableHead className="text-xs font-bold h-9 min-w-[140px]">Método</TableHead>
                                         <TableHead className="text-xs font-bold h-9 w-32">Carga/Rep</TableHead>
                                       </>
                                     ) : (
@@ -198,8 +198,8 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                     {!isComplementar && (
                                       <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
                                     )}
-                                    <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
-                                    <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
+                                    <TableHead className="text-xs font-bold h-9 w-32">Obs Cliente</TableHead>
+                                    <TableHead className="text-xs font-bold h-9 min-w-[120px]">Obs (Coach)</TableHead>
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -211,7 +211,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
                                     return (
                                       <TableRow key={ex.id} className="hover:bg-muted/30">
-                                        <TableCell className="text-sm font-medium py-2">
+                                        <TableCell className="text-sm font-medium py-2 min-w-[180px] whitespace-normal break-words">
                                           {ex.exercise_name}
                                         </TableCell>
                                         {isComplementar ? (
