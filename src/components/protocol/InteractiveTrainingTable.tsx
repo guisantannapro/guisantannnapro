@@ -25,6 +25,7 @@ interface ExerciseData {
   client_back_off: string;
   client_resultado: string;
   client_obs: string;
+  client_carga_rep: string;
 }
 
 interface InteractiveTrainingTableProps {
@@ -182,14 +183,19 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                           <TableRow className="bg-muted/50">
                             <TableHead className="text-xs font-bold h-9">Exercício</TableHead>
                             {isComplementar ? (
-                              <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                              <>
+                                <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                                <TableHead className="text-xs font-bold h-9 w-32">Carga/Rep</TableHead>
+                              </>
                             ) : (
                               <>
                                 <TableHead className="text-xs font-bold h-9 w-28">Top Set (6–8)</TableHead>
                                 <TableHead className="text-xs font-bold h-9 w-28">Back-off (8–10)</TableHead>
                               </>
                             )}
-                            <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
+                            {!isComplementar && (
+                              <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
+                            )}
                             <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
                             <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
                           </TableRow>
@@ -207,9 +213,23 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                   {ex.exercise_name}
                                 </TableCell>
                                 {isComplementar ? (
-                                  <TableCell className="text-sm text-muted-foreground py-2">
-                                    {ex.metodo}
-                                  </TableCell>
+                                  <>
+                                    <TableCell className="text-sm text-muted-foreground py-2">
+                                      {ex.metodo}
+                                    </TableCell>
+                                    <TableCell className="py-1">
+                                      <div className="relative">
+                                        <Input
+                                          value={ex.client_carga_rep || ""}
+                                          onChange={(e) => handleClientFieldChange(ex.id, "client_carga_rep", e.target.value)}
+                                          placeholder="—"
+                                          className="h-8 text-xs border-muted bg-background"
+                                          readOnly={isAdmin}
+                                        />
+                                        {savedFields.has(`${ex.id}-client_carga_rep`) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                      </div>
+                                    </TableCell>
+                                  </>
                                 ) : (
                                   <>
                                     <TableCell className="py-1">
@@ -236,20 +256,20 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                         {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
                                       </div>
                                     </TableCell>
+                                    <TableCell className="py-1">
+                                      <div className="relative">
+                                        <Input
+                                          value={ex.client_resultado}
+                                          onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
+                                          placeholder="—"
+                                          className="h-8 text-xs border-muted bg-background"
+                                          readOnly={isAdmin}
+                                        />
+                                        {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                      </div>
+                                    </TableCell>
                                   </>
                                 )}
-                                <TableCell className="py-1">
-                                  <div className="relative">
-                                    <Input
-                                      value={ex.client_resultado}
-                                      onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
-                                      placeholder="—"
-                                      className="h-8 text-xs border-muted bg-background"
-                                      readOnly={isAdmin}
-                                    />
-                                    {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
-                                  </div>
-                                </TableCell>
                                 <TableCell className="py-1">
                                   <div className="relative">
                                     <Input

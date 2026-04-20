@@ -11,6 +11,7 @@ interface ExerciseData {
   client_top_set: string | null;
   client_back_off: string | null;
   client_obs: string | null;
+  client_carga_rep: string | null;
   table_type: string;
 }
 
@@ -88,20 +89,46 @@ const MobileDayAccordion = ({
             const backOffKey = `${ex.id}-client_back_off`;
 
             if (isComplementar) {
+              const cargaKey = `${ex.id}-client_carga_rep`;
               return (
                 <div
                   key={ex.id}
-                  className="border border-border/60 rounded-md p-2 space-y-1 bg-background/50"
+                  className="border border-border/60 rounded-md p-2 space-y-1.5 bg-background/50"
                 >
-                  <div className="text-xs font-semibold text-foreground">
-                    {ex.exercise_name}
-                  </div>
-                  {ex.metodo && (
-                    <div className="text-[11px] text-muted-foreground">
-                      <span className="font-semibold text-foreground/70">Método:</span>{" "}
-                      {ex.metodo}
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-foreground leading-tight">
+                        {ex.exercise_name}
+                      </div>
+                      {ex.metodo && (
+                        <div className="text-[10px] text-muted-foreground mt-0.5">
+                          {ex.metodo}
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <div className="w-24 shrink-0">
+                      <label className="text-[9px] font-bold uppercase text-muted-foreground block leading-none mb-0.5">
+                        Carga/Rep
+                      </label>
+                      <div className="relative">
+                        <Input
+                          value={ex.client_carga_rep || ""}
+                          onChange={(e) =>
+                            onFieldChange(ex.id, "client_carga_rep", e.target.value)
+                          }
+                          placeholder="—"
+                          className="h-7 text-[11px] px-1.5 border-muted bg-background"
+                          readOnly={isAdmin}
+                        />
+                        {savedFields.has(cargaKey) && (
+                          <CheckCircle
+                            size={10}
+                            className="absolute right-1 top-2 text-green-500"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   {ex.admin_obs && (
                     <div className="text-[10px] text-muted-foreground italic">
                       <span className="font-semibold text-foreground/70">Coach:</span>{" "}
