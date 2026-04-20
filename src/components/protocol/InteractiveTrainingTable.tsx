@@ -379,18 +379,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                                 {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
-                                            <TableCell className="py-1 px-1.5">
-                                              <div className="relative">
-                                                <Input
-                                                  value={ex.client_resultado}
-                                                  onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
-                                                  placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background px-2"
-                                                  readOnly={isAdmin}
-                                                />
-                                                {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
-                                              </div>
-                                            </TableCell>
                                           </>
                                         )}
                                         <TableCell className="py-1 px-1.5">
