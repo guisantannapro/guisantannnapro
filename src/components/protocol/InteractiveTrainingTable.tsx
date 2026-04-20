@@ -104,7 +104,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   };
 
   return (
-    <div className="space-y-8 w-full">
+    <div className="space-y-3 w-full">
       {regrasGerais && (
         <details className="pdf-section pdf-collapsible w-full" data-pdf-section data-pdf-collapsible>
           <summary className="pdf-section-header pdf-collapsible-summary">
