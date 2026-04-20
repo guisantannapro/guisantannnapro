@@ -183,14 +183,19 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                           <TableRow className="bg-muted/50">
                             <TableHead className="text-xs font-bold h-9">Exercício</TableHead>
                             {isComplementar ? (
-                              <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                              <>
+                                <TableHead className="text-xs font-bold h-9">Método</TableHead>
+                                <TableHead className="text-xs font-bold h-9 w-32">Carga/Rep</TableHead>
+                              </>
                             ) : (
                               <>
                                 <TableHead className="text-xs font-bold h-9 w-28">Top Set (6–8)</TableHead>
                                 <TableHead className="text-xs font-bold h-9 w-28">Back-off (8–10)</TableHead>
                               </>
                             )}
-                            <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
+                            {!isComplementar && (
+                              <TableHead className="text-xs font-bold h-9 w-28">Resultado</TableHead>
+                            )}
                             <TableHead className="text-xs font-bold h-9 w-28">Obs Cliente</TableHead>
                             <TableHead className="text-xs font-bold h-9 w-28">Obs (Coach)</TableHead>
                           </TableRow>
