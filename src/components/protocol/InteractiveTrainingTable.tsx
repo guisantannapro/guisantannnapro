@@ -327,7 +327,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                   {dayExercises.map(ex => {
                                     const topSetKey = `${ex.id}-client_top_set`;
                                     const backOffKey = `${ex.id}-client_back_off`;
-                                    const resultadoKey = `${ex.id}-client_resultado`;
+                                    
                                     const obsKey = `${ex.id}-client_obs`;
 
                                     return (
