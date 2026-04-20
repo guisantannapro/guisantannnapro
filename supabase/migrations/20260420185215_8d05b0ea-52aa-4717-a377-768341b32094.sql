@@ -1,0 +1,1 @@
+ALTER TABLE public.protocol_exercises ADD COLUMN IF NOT EXISTS client_carga_rep text DEFAULT '';

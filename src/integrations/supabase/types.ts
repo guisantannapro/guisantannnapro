@@ -227,6 +227,7 @@ export type Database = {
         Row: {
           admin_obs: string | null
           client_back_off: string | null
+          client_carga_rep: string | null
           client_obs: string | null
           client_resultado: string | null
           client_top_set: string | null
@@ -245,6 +246,7 @@ export type Database = {
         Insert: {
           admin_obs?: string | null
           client_back_off?: string | null
+          client_carga_rep?: string | null
           client_obs?: string | null
           client_resultado?: string | null
           client_top_set?: string | null
@@ -263,6 +265,7 @@ export type Database = {
         Update: {
           admin_obs?: string | null
           client_back_off?: string | null
+          client_carga_rep?: string | null
           client_obs?: string | null
           client_resultado?: string | null
           client_top_set?: string | null
