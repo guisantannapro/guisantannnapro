@@ -286,6 +286,8 @@
 .pdf-collapsible-summary:hover {
   background: linear-gradient(90deg, hsl(43 74% 49% / 0.14), transparent);
 }
+
+.pdf-section-icon {
   font-size: 18px;
 }
 
