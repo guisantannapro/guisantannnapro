@@ -11,6 +11,7 @@ interface ExerciseData {
   client_top_set: string | null;
   client_back_off: string | null;
   client_obs: string | null;
+  client_carga_rep: string | null;
   table_type: string;
 }
 
