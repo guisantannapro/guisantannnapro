@@ -125,61 +125,66 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
       </div>
 
       {protocolo.plano_alimentar && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
+        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
             <span className="pdf-section-icon">🍽</span>
             <h3 className="pdf-section-title">Plano Alimentar</h3>
-          </div>
-          <div className="pdf-section-body">{protocolo.plano_alimentar}</div>
-        </div>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>{protocolo.plano_alimentar}</div>
+        </details>
       )}
 
       {/* Observações Fixas */}
-      <div className="pdf-section" data-pdf-section>
-        <div className="pdf-section-header">
+      <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+        <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">📋</span>
           <h3 className="pdf-section-title">Observações</h3>
-        </div>
+          <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+        </summary>
         <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
           {OBSERVACOES_FIXAS}
         </div>
-      </div>
+      </details>
 
       {/* Suplementação */}
       {protocolo.suplementacao && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
+        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
             <span className="pdf-section-icon">💊</span>
             <h3 className="pdf-section-title">Suplementação</h3>
-          </div>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
           <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
             {protocolo.suplementacao}
           </div>
-        </div>
+        </details>
       )}
 
       {/* Cardio */}
       {protocolo.cardio && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
+        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
             <span className="pdf-section-icon">🏃</span>
             <h3 className="pdf-section-title">Cardio</h3>
-          </div>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
           <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
             {protocolo.cardio}
           </div>
-        </div>
+        </details>
       )}
 
       {/* Observações extras do admin */}
       {protocolo.observacoes && (
-        <div className="pdf-section" data-pdf-section>
-          <div className="pdf-section-header">
+        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
             <span className="pdf-section-icon">📝</span>
             <h3 className="pdf-section-title">Observações Adicionais</h3>
-          </div>
-          <div className="pdf-section-body">{protocolo.observacoes}</div>
-        </div>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>{protocolo.observacoes}</div>
+        </details>
       )}
 
       {/* Footer removed from here — now rendered at page bottom in Protocolo.tsx */}

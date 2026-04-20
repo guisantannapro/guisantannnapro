@@ -107,15 +107,16 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   return (
     <div className="space-y-8 w-full">
       {regrasGerais && (
-        <div className="pdf-section w-full" data-pdf-section>
-          <div className="pdf-section-header">
+        <details className="pdf-section pdf-collapsible w-full" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
             <span className="pdf-section-icon">📋</span>
             <h3 className="pdf-section-title">TREINO - REGRAS GERAIS</h3>
-          </div>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
           <div className="pdf-section-body text-sm" style={{ whiteSpace: "pre-line" }}>
             {regrasGerais}
           </div>
-        </div>
+        </details>
       )}
 
       <div className="pdf-section w-full" data-pdf-section>
@@ -158,7 +159,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                     exercises={dayExercises as any}
                     isAdmin={isAdmin}
                     savedFields={savedFields}
-                    defaultOpen={idx === 0}
+                    defaultOpen={false}
                     onFieldChange={handleClientFieldChange}
                   />
                 ))}
