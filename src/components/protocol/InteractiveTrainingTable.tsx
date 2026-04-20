@@ -309,12 +309,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                       </>
                                     ) : (
                                       <>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set</TableHead>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off</TableHead>
-                                      </>
-                                    )}
-                                    {!isComplementar && (
-                                      <>
                                         <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set (6 - 8)</TableHead>
                                         <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off (8 - 10)</TableHead>
                                       </>
