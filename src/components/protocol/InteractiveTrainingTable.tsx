@@ -314,9 +314,12 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                       </>
                                     )}
                                     {!isComplementar && (
-                                      <TableHead className="text-[11px] font-bold h-9 px-1.5">Result.</TableHead>
+                                      <>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set (6–8)</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off (8–10)</TableHead>
+                                      </>
                                     )}
-                                    <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs Cliente</TableHead>
                                     <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[80px]">Coach</TableHead>
                                   </TableRow>
                                 </TableHeader>
@@ -324,7 +327,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                   {dayExercises.map(ex => {
                                     const topSetKey = `${ex.id}-client_top_set`;
                                     const backOffKey = `${ex.id}-client_back_off`;
-                                    const resultadoKey = `${ex.id}-client_resultado`;
+                                    
                                     const obsKey = `${ex.id}-client_obs`;
 
                                     return (
@@ -374,18 +377,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                                   readOnly={isAdmin}
                                                 />
                                                 {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="py-1 px-1.5">
-                                              <div className="relative">
-                                                <Input
-                                                  value={ex.client_resultado}
-                                                  onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
-                                                  placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background px-2"
-                                                  readOnly={isAdmin}
-                                                />
-                                                {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
                                           </>
