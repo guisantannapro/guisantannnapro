@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ExerciseCard from "./ExerciseCard";
+import MobileDayAccordion from "./MobileDayAccordion";
 
 interface ExerciseData {
   id: string;
@@ -161,20 +161,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                     {dayLabel}
                   </h5>
 
-                  {isMobile ? (
-                    <div className="space-y-3">
-                      {dayExercises.map(ex => (
-                        <ExerciseCard
-                          key={ex.id}
-                          exercise={ex}
-                          isComplementar={isComplementar}
-                          isAdmin={isAdmin}
-                          savedFields={savedFields}
-                          onFieldChange={handleClientFieldChange}
-                        />
-                      ))}
-                    </div>
-                  ) : (
+                  {isMobile ? null : (
                     <div className="border border-border rounded-lg overflow-hidden">
                       <Table>
                         <TableHeader>
