@@ -249,5 +249,7 @@ export async function generateProtocolPdf(
     return false;
   } finally {
     element.classList.remove("pdf-export-light");
+    // Restaura o estado original (aberto/fechado) dos accordions
+    detailsEls.forEach((d, i) => { d.open = detailsPrevState[i]; });
   }
 }
