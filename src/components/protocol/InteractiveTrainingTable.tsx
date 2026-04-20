@@ -296,28 +296,28 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                             </h5>
                             <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
                           </summary>
-                          <div className="p-3">
-                            <div className="border border-border rounded-lg overflow-hidden">
-                              <Table>
+                          <div className="p-2">
+                            <div className="border border-border rounded-lg overflow-x-auto">
+                              <Table className="w-full">
                                 <TableHeader>
                                   <TableRow className="bg-muted/50">
-                                    <TableHead className="text-xs font-bold h-9 w-[140px] min-w-[140px]">Exercício</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[110px]">Exercício</TableHead>
                                     {isComplementar ? (
                                       <>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[120px]">Método</TableHead>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[140px]">Carga/Rep</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">Método</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Carga/Rep</TableHead>
                                       </>
                                     ) : (
                                       <>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[130px]">Top Set (6–8)</TableHead>
-                                        <TableHead className="text-xs font-bold h-9 min-w-[130px]">Back-off (8–10)</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off</TableHead>
                                       </>
                                     )}
                                     {!isComplementar && (
-                                      <TableHead className="text-xs font-bold h-9 min-w-[130px]">Resultado</TableHead>
+                                      <TableHead className="text-[11px] font-bold h-9 px-1.5">Result.</TableHead>
                                     )}
-                                    <TableHead className="text-xs font-bold h-9 min-w-[160px]">Obs Cliente</TableHead>
-                                    <TableHead className="text-xs font-bold h-9 w-[110px] min-w-[110px]">Obs (Coach)</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs</TableHead>
+                                    <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[80px]">Coach</TableHead>
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -329,80 +329,80 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
                                     return (
                                       <TableRow key={ex.id} className="hover:bg-muted/30">
-                                        <TableCell className="text-sm font-medium py-2 w-[140px] min-w-[140px] whitespace-normal break-words">
+                                        <TableCell className="text-xs font-medium py-2 px-1.5 w-[110px] whitespace-normal break-words leading-tight">
                                           {ex.exercise_name}
                                         </TableCell>
                                         {isComplementar ? (
                                           <>
-                                            <TableCell className="text-sm text-muted-foreground py-2">
+                                            <TableCell className="text-xs text-muted-foreground py-2 px-1.5 w-[90px] whitespace-normal break-words leading-tight">
                                               {ex.metodo}
                                             </TableCell>
-                                            <TableCell className="py-1">
+                                            <TableCell className="py-1 px-1.5">
                                               <div className="relative">
                                                 <Input
                                                   value={ex.client_carga_rep || ""}
                                                   onChange={(e) => handleClientFieldChange(ex.id, "client_carga_rep", e.target.value)}
                                                   placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background"
+                                                  className="h-8 text-xs border-muted bg-background px-2"
                                                   readOnly={isAdmin}
                                                 />
-                                                {savedFields.has(`${ex.id}-client_carga_rep`) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                                {savedFields.has(`${ex.id}-client_carga_rep`) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
                                           </>
                                         ) : (
                                           <>
-                                            <TableCell className="py-1">
+                                            <TableCell className="py-1 px-1.5">
                                               <div className="relative">
                                                 <Input
                                                   value={ex.client_top_set}
                                                   onChange={(e) => handleClientFieldChange(ex.id, "client_top_set", e.target.value)}
                                                   placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background"
+                                                  className="h-8 text-xs border-muted bg-background px-2"
                                                   readOnly={isAdmin}
                                                 />
-                                                {savedFields.has(topSetKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                                {savedFields.has(topSetKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
-                                            <TableCell className="py-1">
+                                            <TableCell className="py-1 px-1.5">
                                               <div className="relative">
                                                 <Input
                                                   value={ex.client_back_off}
                                                   onChange={(e) => handleClientFieldChange(ex.id, "client_back_off", e.target.value)}
                                                   placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background"
+                                                  className="h-8 text-xs border-muted bg-background px-2"
                                                   readOnly={isAdmin}
                                                 />
-                                                {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                                {savedFields.has(backOffKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
-                                            <TableCell className="py-1">
+                                            <TableCell className="py-1 px-1.5">
                                               <div className="relative">
                                                 <Input
                                                   value={ex.client_resultado}
                                                   onChange={(e) => handleClientFieldChange(ex.id, "client_resultado", e.target.value)}
                                                   placeholder="—"
-                                                  className="h-8 text-xs border-muted bg-background"
+                                                  className="h-8 text-xs border-muted bg-background px-2"
                                                   readOnly={isAdmin}
                                                 />
-                                                {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                                {savedFields.has(resultadoKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                               </div>
                                             </TableCell>
                                           </>
                                         )}
-                                        <TableCell className="py-1">
+                                        <TableCell className="py-1 px-1.5">
                                           <div className="relative">
                                             <Input
                                               value={ex.client_obs}
                                               onChange={(e) => handleClientFieldChange(ex.id, "client_obs", e.target.value)}
                                               placeholder="—"
-                                              className="h-8 text-xs border-muted bg-background"
+                                              className="h-8 text-xs border-muted bg-background px-2"
                                               readOnly={isAdmin}
                                             />
-                                            {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-2 top-2 text-green-500" />}
+                                            {savedFields.has(obsKey) && <CheckCircle size={12} className="absolute right-1.5 top-2 text-green-500" />}
                                           </div>
                                         </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground italic py-2">
+                                        <TableCell className="text-[11px] text-muted-foreground italic py-2 px-1.5 w-[80px] whitespace-normal break-words leading-tight">
                                           {ex.admin_obs || "—"}
                                         </TableCell>
                                       </TableRow>

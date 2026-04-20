@@ -149,8 +149,8 @@ const Protocolo = () => {
 
       <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
 
-      {/* Interactive Training Table — wrapper mais largo no desktop pra caber as colunas editáveis */}
-      <div className="w-full max-w-[700px] md:max-w-[1100px] mx-auto px-4 pb-8">
+      {/* Interactive Training Table */}
+      <div className="w-full max-w-[700px] mx-auto px-4 pb-8">
         <InteractiveTrainingTable protocoloId={id!} userId={protocolo.user_id} regrasGerais={protocolo.treino} />
       </div>
 
