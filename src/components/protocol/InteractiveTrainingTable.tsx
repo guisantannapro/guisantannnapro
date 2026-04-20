@@ -121,7 +121,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
       <details className="pdf-section pdf-collapsible w-full" data-pdf-section data-pdf-collapsible>
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
-          <h3 className="pdf-section-title">PROTOCOLO GUI SANT'ANNA PRO – LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+          <h3 className="pdf-section-title">TREINO - LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
           <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
         </summary>
         <div className="pdf-section-body space-y-6">
