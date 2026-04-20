@@ -4,9 +4,11 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, CloudOff, RefreshCw, Cloud } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDayAccordion from "./MobileDayAccordion";
+import { enqueueEdit, getAllQueued, removeQueued, queueSize } from "@/lib/offlineQueue";
+import { toast } from "sonner";
 
 interface ExerciseData {
   id: string;
@@ -38,8 +40,70 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
   const [loading, setLoading] = useState(true);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
+  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== "undefined" ? navigator.onLine : true);
+  const [pendingCount, setPendingCount] = useState<number>(0);
+  const [syncing, setSyncing] = useState<boolean>(false);
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
   const isMobile = useIsMobile();
+
+  const refreshPendingCount = useCallback(async () => {
+    try { setPendingCount(await queueSize()); } catch { /* ignore */ }
+  }, []);
+
+  // Sincroniza fila offline comparando timestamps com o servidor.
+  // Se o servidor for mais novo que a edição enfileirada → descarta (servidor venceu).
+  const flushQueue = useCallback(async () => {
+    if (!navigator.onLine) return;
+    const items = await getAllQueued();
+    if (items.length === 0) return;
+
+    setSyncing(true);
+    try {
+      const ids = [...new Set(items.map(i => i.exerciseId))];
+      const { data: serverRows, error: fetchErr } = await supabase
+        .from("protocol_exercises")
+        .select("id, updated_at")
+        .in("id", ids);
+
+      if (fetchErr) {
+        console.error("[offline-sync] fetch error", fetchErr);
+        return;
+      }
+
+      const serverMap = new Map<string, number>();
+      (serverRows || []).forEach((r: any) => {
+        serverMap.set(r.id, new Date(r.updated_at).getTime());
+      });
+
+      let applied = 0;
+      let discarded = 0;
+
+      for (const item of items) {
+        const serverTs = serverMap.get(item.exerciseId);
+        if (serverTs && serverTs > item.queuedAt) {
+          await removeQueued(item.key);
+          discarded++;
+          continue;
+        }
+        const { error } = await supabase
+          .from("protocol_exercises")
+          .update({ [item.field]: item.value } as any)
+          .eq("id", item.exerciseId);
+        if (!error) {
+          await removeQueued(item.key);
+          applied++;
+        } else {
+          console.error("[offline-sync] update error", error);
+        }
+      }
+
+      await refreshPendingCount();
+      if (applied > 0) toast.success(`${applied} edição(ões) sincronizada(s).`);
+      if (discarded > 0) toast.info(`${discarded} edição(ões) descartada(s) (servidor mais recente).`);
+    } finally {
+      setSyncing(false);
+    }
+  }, [refreshPendingCount]);
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -59,7 +123,21 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
       setLoading(false);
     };
     fetchExercises();
-  }, [protocoloId]);
+    refreshPendingCount();
+  }, [protocoloId, refreshPendingCount]);
+
+  // Listeners online/offline + flush ao voltar online
+  useEffect(() => {
+    const onOnline = () => { setIsOnline(true); flushQueue(); };
+    const onOffline = () => setIsOnline(false);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    if (navigator.onLine) flushQueue();
+    return () => {
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+    };
+  }, [flushQueue]);
 
   const handleClientFieldChange = useCallback((exerciseId: string, field: string, value: string) => {
     setExercises(prev => prev.map(e => e.id === exerciseId ? { ...e, [field]: value } : e));
@@ -67,18 +145,29 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
     const key = `${exerciseId}-${field}`;
     if (debounceTimers.current[key]) clearTimeout(debounceTimers.current[key]);
     debounceTimers.current[key] = setTimeout(async () => {
+      // Offline → enfileira (não envia)
+      if (!navigator.onLine) {
+        await enqueueEdit({ exerciseId, field, value });
+        await refreshPendingCount();
+        return;
+      }
+
       const { error } = await supabase
         .from("protocol_exercises")
         .update({ [field]: value } as any)
         .eq("id", exerciseId);
+
       if (error) {
-        console.error("Erro ao salvar:", error);
+        // Fallback: provavelmente caiu rede entre o check e o request
+        console.error("Erro ao salvar (vai pra fila offline):", error);
+        await enqueueEdit({ exerciseId, field, value });
+        await refreshPendingCount();
         return;
       }
       setSavedFields(prev => new Set(prev).add(key));
       setTimeout(() => setSavedFields(prev => { const n = new Set(prev); n.delete(key); return n; }), 2000);
     }, 800);
-  }, []);
+  }, [refreshPendingCount]);
 
   if (loading) {
     return (
@@ -121,6 +210,35 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
           <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+          <span
+            data-html2canvas-ignore="true"
+            className={`print:hidden inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border ${
+              !isOnline
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : syncing || pendingCount > 0
+                ? "border-primary/40 bg-primary/10 text-primary"
+                : "border-border bg-muted/40 text-muted-foreground"
+            }`}
+            title={
+              !isOnline
+                ? `Offline — ${pendingCount} edição(ões) na fila`
+                : syncing
+                ? "Sincronizando..."
+                : pendingCount > 0
+                ? `${pendingCount} pendente(s)`
+                : "Sincronizado"
+            }
+          >
+            {!isOnline ? (
+              <><CloudOff size={12} /> Offline{pendingCount > 0 ? ` (${pendingCount})` : ""}</>
+            ) : syncing ? (
+              <><RefreshCw size={12} className="animate-spin" /> Sincronizando</>
+            ) : pendingCount > 0 ? (
+              <><RefreshCw size={12} /> {pendingCount} pendente</>
+            ) : (
+              <><Cloud size={12} /> Sincronizado</>
+            )}
+          </span>
           <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
         </summary>
         <div className="pdf-section-body space-y-6">
