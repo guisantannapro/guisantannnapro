@@ -623,8 +623,6 @@ const PhotosSection = ({
   submissions: any[];
   getPhotoSignedUrl: (path: string) => Promise<string | null>;
 }) => {
-  const [showPhotos, setShowPhotos] = useState(false);
-
   const photoFields = ["photo_front", "photo_side", "photo_back", "photo_assessment"];
   const submissionsWithPhotos = submissions.filter((sub) => photoFields.some((f) => sub[f]));
   const totalPhotos = submissionsWithPhotos.reduce(
@@ -633,43 +631,30 @@ const PhotosSection = ({
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-      className="bg-card border border-border rounded-lg p-6"
-    >
-      <div className="flex items-center gap-3 mb-4">
-        <Camera className="w-5 h-5 text-primary" />
-        <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
-      </div>
-
-      {submissionsWithPhotos.length > 0 ? (
-        <>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPhotos(!showPhotos)}
-            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 mb-4"
-          >
-            {showPhotos ? <EyeOff size={14} /> : <Eye size={14} />}
-            {showPhotos ? "Ocultar fotos" : "Ver fotos"}
-          </Button>
-          <p className="text-muted-foreground text-xs mb-4">
-            {totalPhotos} {totalPhotos === 1 ? "foto disponível" : "fotos disponíveis"}.
-          </p>
-          {showPhotos && (
+    <AccordionItem value="fotos" className="bg-card border border-border rounded-lg px-6 border-b">
+      <AccordionTrigger className="hover:no-underline py-5">
+        <div className="flex items-center gap-3">
+          <Camera className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-bold uppercase text-foreground">Minhas Fotos</h2>
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="pt-2 pb-6">
+        {submissionsWithPhotos.length > 0 ? (
+          <>
+            <p className="text-muted-foreground text-xs mb-4">
+              {totalPhotos} {totalPhotos === 1 ? "foto disponível" : "fotos disponíveis"}.
+            </p>
             <div className="space-y-6">
               {submissionsWithPhotos.map((sub) => (
                 <SubmissionPhotos key={sub.id} submission={sub} getPhotoSignedUrl={getPhotoSignedUrl} />
               ))}
             </div>
-          )}
-        </>
-      ) : (
-        <p className="text-muted-foreground text-sm">Nenhuma foto enviada ainda.</p>
-      )}
-    </motion.div>
+          </>
+        ) : (
+          <p className="text-muted-foreground text-sm">Nenhuma foto enviada ainda.</p>
+        )}
+      </AccordionContent>
+    </AccordionItem>
   );
 };
 
