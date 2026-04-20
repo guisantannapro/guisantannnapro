@@ -105,6 +105,11 @@ export async function generateProtocolPdf(
 
   element.classList.add("pdf-export-light");
 
+  // Abre todos os <details> (accordions) e guarda o estado original para restaurar depois
+  const detailsEls = Array.from(element.querySelectorAll("details")) as HTMLDetailsElement[];
+  const detailsPrevState = detailsEls.map((d) => d.open);
+  detailsEls.forEach((d) => { d.open = true; });
+
   try {
     await waitForFonts();
     await waitForImages(element);
