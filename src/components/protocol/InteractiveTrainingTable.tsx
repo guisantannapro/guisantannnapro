@@ -25,6 +25,7 @@ interface ExerciseData {
   client_back_off: string;
   client_resultado: string;
   client_obs: string;
+  client_carga_rep: string;
 }
 
 interface InteractiveTrainingTableProps {
