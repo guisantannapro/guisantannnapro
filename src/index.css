@@ -257,7 +257,35 @@
   background: linear-gradient(90deg, hsl(43 74% 49% / 0.08), transparent);
 }
 
-.pdf-section-icon {
+/* Collapsible accordion sections (uses native <details>) */
+.pdf-collapsible {
+  padding: 0;
+}
+.pdf-collapsible-summary {
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.pdf-collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+.pdf-collapsible-summary::marker {
+  content: "";
+}
+.pdf-collapsible-chevron {
+  margin-left: auto;
+  font-size: 14px;
+  color: hsl(43 74% 49%);
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+.pdf-collapsible[open] > .pdf-collapsible-summary .pdf-collapsible-chevron {
+  transform: rotate(180deg);
+}
+.pdf-collapsible-summary:hover {
+  background: linear-gradient(90deg, hsl(43 74% 49% / 0.14), transparent);
+}
   font-size: 18px;
 }
 
