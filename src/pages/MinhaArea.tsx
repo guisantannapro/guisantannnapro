@@ -7,6 +7,7 @@ import { Loader2, LogOut, Download, Calendar, User, FileText, Camera, AlertTrian
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
