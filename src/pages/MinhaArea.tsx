@@ -433,74 +433,159 @@ const MinhaArea = () => {
           </motion.div>
         )}
 
-        <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
-
-        {protocols.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-card border border-border rounded-lg p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <FileText className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-bold uppercase text-foreground">Arquivos Enviados</h2>
-            </div>
-
-            <div className="space-y-3">
-              {protocols.map((protocol) => (
-                <div
-                  key={protocol.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
-                >
-                  <div>
-                    <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
-                    <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
+        <Accordion type="multiple" defaultValue={["protocolo"]} className="space-y-4">
+          <AccordionItem value="protocolo" className="bg-card border border-border rounded-lg px-6 border-b">
+            <AccordionTrigger className="hover:no-underline py-5">
+              <div className="flex items-center gap-3">
+                <ClipboardList className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-bold uppercase text-foreground">Meu Protocolo</h2>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-6">
+              {protocoloAtual ? (
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <Badge className="bg-primary text-primary-foreground text-sm px-3 py-1">
+                        {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
+                      </Badge>
+                      <span className="text-sm font-medium text-foreground">{protocoloAtual.nome}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
+                    </span>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => downloadProtocol(protocol)}
-                    className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
-                  >
-                    <Download size={14} />
-                    Baixar arquivo original
-                  </Button>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/protocolo/${protocoloAtual.id}`)}
+                      className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                    >
+                      <FileText size={14} />
+                      Abrir protocolo completo
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadPdf(protocoloAtual)}
+                      disabled={isDownloadingPdf}
+                      className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
+                    >
+                      {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                      {isDownloadingPdf ? "Gerando PDF..." : "Baixar PDF atualizado"}
+                    </Button>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+              ) : (
+                <p className="text-muted-foreground text-sm">Seu protocolo ainda não foi disponibilizado.</p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
 
-        {/* Check-in de Fotos e Peso */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12 }}
-          className="bg-card border border-border rounded-lg p-6"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <Scale className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold uppercase text-foreground">Check-in de Progresso</h2>
-          </div>
-          <p className="text-muted-foreground text-sm mb-4">
-            Envie suas fotos e peso atual para acompanhamento periódico.
-          </p>
-          {session?.user?.id && (
-            <CheckinForm userId={session.user.id} onSuccess={() => fetchData(session.user.id)} />
+          {protocolosHistorico.length > 0 && (
+            <AccordionItem value="historico" className="bg-card border border-border rounded-lg px-6 border-b">
+              <AccordionTrigger className="hover:no-underline py-5">
+                <div className="flex items-center gap-3">
+                  <History className="w-5 h-5 text-primary" />
+                  <h2 className="text-lg font-bold uppercase text-foreground">Histórico de Protocolos</h2>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-6">
+                <div className="space-y-3">
+                  {protocolosHistorico.map((proto) => (
+                    <div
+                      key={proto.id}
+                      className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <Badge variant="outline" className="text-xs px-2 py-0.5 w-fit">
+                          {tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}
+                        </Badge>
+                        <span className="text-sm font-medium text-foreground">{proto.nome}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/protocolo/${proto.id}`)}
+                        className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                      >
+                        <Eye size={14} />
+                        Ver
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           )}
-          {checkins.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-border">
-              <h3 className="text-sm font-bold uppercase text-foreground mb-3">Histórico de Check-ins</h3>
-              <CheckinHistory checkins={checkins} />
-            </div>
+
+          <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
+
+          {protocols.length > 0 && (
+            <AccordionItem value="arquivos" className="bg-card border border-border rounded-lg px-6 border-b">
+              <AccordionTrigger className="hover:no-underline py-5">
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <h2 className="text-lg font-bold uppercase text-foreground">Arquivos Enviados</h2>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-6">
+                <div className="space-y-3">
+                  {protocols.map((protocol) => (
+                    <div
+                      key={protocol.id}
+                      className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                    >
+                      <div>
+                        <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
+                        <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadProtocol(protocol)}
+                        className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                      >
+                        <Download size={14} />
+                        Baixar arquivo original
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           )}
-        </motion.div>
 
+          <AccordionItem value="checkin" className="bg-card border border-border rounded-lg px-6 border-b">
+            <AccordionTrigger className="hover:no-underline py-5">
+              <div className="flex items-center gap-3">
+                <Scale className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-bold uppercase text-foreground">Check-in de Progresso</h2>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-6">
+              <p className="text-muted-foreground text-sm mb-4">
+                Envie suas fotos e peso atual para acompanhamento periódico.
+              </p>
+              {session?.user?.id && (
+                <CheckinForm userId={session.user.id} onSuccess={() => fetchData(session.user.id)} />
+              )}
+              {checkins.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h3 className="text-sm font-bold uppercase text-foreground mb-3">Histórico de Check-ins</h3>
+                  <CheckinHistory checkins={checkins} />
+                </div>
+              )}
+            </AccordionContent>
+          </AccordionItem>
 
-
-
-        <EvolutionSection evolutions={evolutions} />
+          <EvolutionSection evolutions={evolutions} />
+        </Accordion>
       </main>
 
       {pdfProtocol && (
