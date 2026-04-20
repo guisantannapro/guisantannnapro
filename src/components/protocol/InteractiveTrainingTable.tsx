@@ -150,7 +150,21 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
               )}
             </div>
 
-            {[...dayMap.entries()].map(([dayLabel, dayExercises]) => {
+            {isMobile ? (
+              <div className="space-y-2">
+                {[...dayMap.entries()].map(([dayLabel, dayExercises], idx) => (
+                  <MobileDayAccordion
+                    key={dayLabel}
+                    dayLabel={dayLabel}
+                    exercises={dayExercises as any}
+                    isAdmin={isAdmin}
+                    savedFields={savedFields}
+                    defaultOpen={idx === 0}
+                    onFieldChange={handleClientFieldChange}
+                  />
+                ))}
+              </div>
+            ) : [...dayMap.entries()].map(([dayLabel, dayExercises]) => {
               const tableType = dayExercises[0]?.table_type || "standard";
               const isComplementar = tableType === "complementar";
 
