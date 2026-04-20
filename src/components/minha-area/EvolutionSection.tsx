@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { TrendingUp, Download, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Evolution {
