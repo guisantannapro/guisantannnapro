@@ -461,8 +461,6 @@ const EvolutionCard = ({ evolution }: { evolution: Evolution }) => {
 };
 
 const EvolutionSection = ({ evolutions }: EvolutionSectionProps) => {
-  if (evolutions.length === 0) return null;
-
   return (
     <AccordionItem value="evolucao" className="bg-card border border-border rounded-lg px-6 border-b">
       <AccordionTrigger className="hover:no-underline py-5">
@@ -472,11 +470,15 @@ const EvolutionSection = ({ evolutions }: EvolutionSectionProps) => {
         </div>
       </AccordionTrigger>
       <AccordionContent className="pt-2 pb-6">
-        <div className="space-y-5">
-          {evolutions.map((evo) => (
-            <EvolutionCard key={evo.id} evolution={evo} />
-          ))}
-        </div>
+        {evolutions.length > 0 ? (
+          <div className="space-y-5">
+            {evolutions.map((evo) => (
+              <EvolutionCard key={evo.id} evolution={evo} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">Sua evolução ainda não foi disponibilizada pelo coach.</p>
+        )}
       </AccordionContent>
     </AccordionItem>
   );

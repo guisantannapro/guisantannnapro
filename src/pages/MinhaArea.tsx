@@ -388,15 +388,15 @@ const MinhaArea = () => {
             </AccordionContent>
           </AccordionItem>
 
-          {protocolosHistorico.length > 0 && (
-            <AccordionItem value="historico" className="bg-card border border-border rounded-lg px-6 border-b">
-              <AccordionTrigger className="hover:no-underline py-5">
-                <div className="flex items-center gap-3">
-                  <History className="w-5 h-5 text-primary" />
-                  <h2 className="text-lg font-bold uppercase text-foreground">Histórico de Protocolos</h2>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-2 pb-6">
+          <AccordionItem value="historico" className="bg-card border border-border rounded-lg px-6 border-b">
+            <AccordionTrigger className="hover:no-underline py-5">
+              <div className="flex items-center gap-3">
+                <History className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-bold uppercase text-foreground">Histórico de Protocolos</h2>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-6">
+              {protocolosHistorico.length > 0 ? (
                 <div className="space-y-3">
                   {protocolosHistorico.map((proto) => (
                     <div
@@ -424,9 +424,12 @@ const MinhaArea = () => {
                     </div>
                   ))}
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          )}
+              ) : (
+                <p className="text-muted-foreground text-sm">Nenhum protocolo disponível ainda.</p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+
 
           <PhotosSection submissions={submissions} getPhotoSignedUrl={getPhotoSignedUrl} />
 
