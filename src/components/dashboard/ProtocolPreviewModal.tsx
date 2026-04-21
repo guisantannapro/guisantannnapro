@@ -272,7 +272,12 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border">
+      <DialogContent
+        className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className="text-2xl text-gradient-gold uppercase">
             {protocolType ? `Protocolo ${protocolTypeLabels[protocolType]}` : "Gerar Protocolo"} — {getField("fullName")}
