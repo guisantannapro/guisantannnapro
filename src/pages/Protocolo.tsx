@@ -135,15 +135,7 @@ const Protocolo = () => {
             </Button>
             <h1 className="text-2xl md:text-3xl font-bold uppercase text-gradient-gold">Meu Protocolo</h1>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadPdf}
-            className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
-          >
-            <Download size={14} />
-            Baixar PDF
-          </Button>
+          {/* Download de PDF temporariamente desabilitado */}
         </div>
       </header>
 

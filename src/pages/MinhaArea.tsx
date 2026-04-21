@@ -444,15 +444,7 @@ const MinhaArea = () => {
                         <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
                         <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => downloadProtocol(protocol)}
-                        className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
-                      >
-                        <Download size={14} />
-                        Baixar arquivo original
-                      </Button>
+                      {/* Download desabilitado temporariamente */}
                     </div>
                   ))}
                 </div>
