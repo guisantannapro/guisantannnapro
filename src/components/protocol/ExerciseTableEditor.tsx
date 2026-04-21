@@ -157,20 +157,18 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
         <h3 className="text-sm font-semibold uppercase text-primary">
           🏋️ Treino — Logbook (4 semanas)
         </h3>
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4].map((w) => (
-            <Button
-              key={w}
-              type="button"
-              variant={w === 1 ? "default" : "outline"}
-              size="sm"
-              className="h-7 px-3 text-xs"
-              disabled
-              title="As 4 semanas serão criadas automaticamente"
-            >
-              Semana {w}
-            </Button>
-          ))}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Semanas:</span>
+          <Select value={String(weeks)} onValueChange={(v) => onWeeksChange(Number(v))}>
+            <SelectTrigger className="w-20 h-8 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 2, 3, 4].map(n => (
+                <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
