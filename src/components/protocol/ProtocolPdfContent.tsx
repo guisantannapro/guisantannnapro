@@ -175,17 +175,7 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
         </details>
       )}
 
-      {/* Observações extras do admin */}
-      {protocolo.observacoes && (
-        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
-          <summary className="pdf-section-header pdf-collapsible-summary">
-            <span className="pdf-section-icon">📝</span>
-            <h3 className="pdf-section-title">Observações Adicionais</h3>
-            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
-          </summary>
-          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>{protocolo.observacoes}</div>
-        </details>
-      )}
+      {/* Observações Adicionais já renderizadas após o Plano Alimentar */}
 
       {/* Footer removed from here — now rendered at page bottom in Protocolo.tsx */}
     </div>
