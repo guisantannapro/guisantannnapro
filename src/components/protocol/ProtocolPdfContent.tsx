@@ -135,17 +135,17 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
         </details>
       )}
 
-      {/* Observações Fixas */}
-      <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
-        <summary className="pdf-section-header pdf-collapsible-summary">
-          <span className="pdf-section-icon">📋</span>
-          <h3 className="pdf-section-title">Observações</h3>
-          <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
-        </summary>
-        <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>
-          {OBSERVACOES_FIXAS}
-        </div>
-      </details>
+      {/* Observações Adicionais (movido para o lugar das Observações fixas) */}
+      {protocolo.observacoes && (
+        <details className="pdf-section pdf-collapsible" data-pdf-section data-pdf-collapsible>
+          <summary className="pdf-section-header pdf-collapsible-summary">
+            <span className="pdf-section-icon">📝</span>
+            <h3 className="pdf-section-title">Observações Adicionais</h3>
+            <span className="pdf-collapsible-chevron" aria-hidden="true">▾</span>
+          </summary>
+          <div className="pdf-section-body" style={{ whiteSpace: "pre-line" }}>{protocolo.observacoes}</div>
+        </details>
+      )}
 
       {/* Suplementação */}
       {protocolo.suplementacao && (
