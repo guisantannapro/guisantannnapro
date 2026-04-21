@@ -361,6 +361,20 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
 
             <Separator />
 
+            {/* Observações */}
+            <section>
+              <h3 className="text-sm font-semibold uppercase text-primary mb-3">📝 Observações</h3>
+              <Textarea
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={4}
+                placeholder="Adicione observações sobre o protocolo..."
+                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[100px]"
+              />
+            </section>
+
+            <Separator />
+
             {/* Suplementação */}
             <section>
               <h3 className="text-sm font-semibold uppercase text-primary mb-3">Suplementação</h3>
@@ -382,20 +396,6 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
                 onChange={(e) => setCardio(e.target.value)}
                 rows={8}
                 className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[150px]"
-              />
-            </section>
-
-            <Separator />
-
-            {/* Observações */}
-            <section>
-              <h3 className="text-sm font-semibold uppercase text-primary mb-3">📝 Observações</h3>
-              <Textarea
-                value={observacoes}
-                onChange={(e) => setObservacoes(e.target.value)}
-                rows={4}
-                placeholder="Adicione observações sobre o protocolo..."
-                className="bg-muted/50 border-border text-sm text-foreground resize-y min-h-[100px]"
               />
             </section>
 
