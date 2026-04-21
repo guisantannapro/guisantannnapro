@@ -153,10 +153,25 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-sm font-semibold uppercase text-primary">
           🏋️ Treino — Logbook (4 semanas)
         </h3>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4].map((w) => (
+            <Button
+              key={w}
+              type="button"
+              variant={w === 1 ? "default" : "outline"}
+              size="sm"
+              className="h-7 px-3 text-xs"
+              disabled
+              title="As 4 semanas serão criadas automaticamente"
+            >
+              Semana {w}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {days.map((day, dayIdx) => (
