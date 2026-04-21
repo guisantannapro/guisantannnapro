@@ -370,8 +370,16 @@ const MinhaArea = () => {
                       <FileText size={14} />
                       Abrir protocolo completo
                     </Button>
-                    {/* Download de PDF temporariamente desabilitado */}
-
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadPdf(protocoloAtual)}
+                      disabled={isDownloadingPdf}
+                      className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                    >
+                      <Download size={14} />
+                      {isDownloadingPdf ? "Gerando..." : "Baixar PDF atualizado"}
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -444,7 +452,15 @@ const MinhaArea = () => {
                         <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
                         <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
                       </div>
-                      {/* Download desabilitado temporariamente */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadProtocol(protocol)}
+                        className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5"
+                      >
+                        <Download size={14} />
+                        Baixar arquivo
+                      </Button>
                     </div>
                   ))}
                 </div>
