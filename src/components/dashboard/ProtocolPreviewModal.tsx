@@ -177,8 +177,7 @@ Multivitamínico 1 caps - 1x ao dia junto a primeira refeição
 Vit C - 1g ao dia junto a primeira refeição
 Vita D - 30mil ui 1x na semana
 Vita E - 400ui ao dia junto a primeira refeição
-Zinco - 50mg ao dia junto a ultima refeição
-Os molhos, caldas, temperos zero liberados com moderação`;
+Zinco - 50mg ao dia junto a ultima refeição`;
 
 const defaultCardio = `Semana: 7x qualquer horário
 Intensidade: média/moderada
