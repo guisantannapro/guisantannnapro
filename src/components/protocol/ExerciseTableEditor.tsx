@@ -155,7 +155,7 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-sm font-semibold uppercase text-primary">
-          🏋️ Treino — Logbook (4 semanas)
+          🏋️ Treino — Logbook ({weeks} semana{weeks > 1 ? "s" : ""})
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Semanas:</span>
