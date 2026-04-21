@@ -370,16 +370,8 @@ const MinhaArea = () => {
                       <FileText size={14} />
                       Abrir protocolo completo
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownloadPdf(protocoloAtual)}
-                      disabled={isDownloadingPdf}
-                      className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 disabled:opacity-80"
-                    >
-                      {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
-                      {isDownloadingPdf ? "Gerando PDF..." : "Baixar PDF atualizado"}
-                    </Button>
+                    {/* Download de PDF temporariamente desabilitado */}
+
                   </div>
                 </div>
               ) : (
