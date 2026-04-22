@@ -271,10 +271,10 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                       onChange={(e) => setSelectedWeek(Number(e.target.value))}
                       onClick={(e) => e.stopPropagation()}
                       data-html2canvas-ignore="true"
-                      className="print:hidden h-8 rounded-md border border-primary/40 bg-background text-foreground text-xs font-semibold uppercase px-2 cursor-pointer hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      className="print:hidden h-9 rounded-md border-2 border-primary bg-primary/10 text-primary text-xs font-bold uppercase px-3 cursor-pointer hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm"
                     >
                       {weeks.map(w => (
-                        <option key={w} value={w}>Semana {w}</option>
+                        <option key={w} value={w}>📅 Semana {w}</option>
                       ))}
                     </select>
                   )}
