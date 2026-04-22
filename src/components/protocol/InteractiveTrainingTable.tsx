@@ -209,7 +209,20 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
       <details className="pdf-section pdf-collapsible w-full" data-pdf-section data-pdf-collapsible>
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
-          <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK {weeks.length} SEMANA{weeks.length > 1 ? "S" : ""}</h3>
+          <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK</h3>
+          {weeks.length > 1 && (
+            <select
+              value={selectedWeek}
+              onChange={(e) => setSelectedWeek(Number(e.target.value))}
+              onClick={(e) => e.stopPropagation()}
+              data-html2canvas-ignore="true"
+              className="print:hidden h-7 rounded-md border border-primary/40 bg-background text-foreground text-[11px] font-semibold uppercase px-2 cursor-pointer hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
+              {weeks.map(w => (
+                <option key={w} value={w}>Semana {w}</option>
+              ))}
+            </select>
+          )}
           <span
             data-html2canvas-ignore="true"
             className={`print:hidden inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border ${
