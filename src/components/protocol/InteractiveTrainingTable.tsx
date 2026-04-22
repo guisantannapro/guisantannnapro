@@ -210,17 +210,6 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         <summary className="pdf-section-header pdf-collapsible-summary">
           <span className="pdf-section-icon">🏋️</span>
           <h3 className="pdf-section-title flex-1">TREINO - LOGBOOK</h3>
-          <select
-            value={selectedWeek}
-            onChange={(e) => setSelectedWeek(Number(e.target.value))}
-            onClick={(e) => e.stopPropagation()}
-            data-html2canvas-ignore="true"
-            className="print:hidden h-8 rounded-md border-2 border-primary bg-primary/10 text-primary text-[11px] font-bold uppercase px-2 cursor-pointer hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm"
-          >
-            {weeks.map(w => (
-              <option key={w} value={w}>📅 Semana {w}</option>
-            ))}
-          </select>
           <span
             data-html2canvas-ignore="true"
             className={`print:hidden inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-md border ${
@@ -259,23 +248,36 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
             return (
               <div key={weekNum} className="space-y-4" data-pdf-section>
-                <div className="flex items-center justify-between gap-3 border-b border-primary/20 pb-2">
-                  <h4 className="text-lg font-bold uppercase text-primary">
-                    📅 SEMANA {weekNum}
-                  </h4>
-                  {weeks.length > 1 && (
-                    <select
-                      value={selectedWeek}
-                      onChange={(e) => setSelectedWeek(Number(e.target.value))}
-                      onClick={(e) => e.stopPropagation()}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary/20 pb-2">
+                  <div className="flex items-center gap-3">
+                    <h4 className="text-lg font-bold uppercase text-primary">
+                      📅 SEMANA {weekNum}
+                    </h4>
+                    <div
                       data-html2canvas-ignore="true"
-                      className="print:hidden h-9 rounded-md border-2 border-primary bg-primary/10 text-primary text-xs font-bold uppercase px-3 cursor-pointer hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm"
+                      className="print:hidden inline-flex items-center gap-1 rounded-md border border-primary/30 bg-muted/40 p-1"
                     >
-                      {weeks.map(w => (
-                        <option key={w} value={w}>📅 Semana {w}</option>
-                      ))}
-                    </select>
-                  )}
+                      {weeks.map((w) => {
+                        const isActive = selectedWeek === w;
+
+                        return (
+                          <button
+                            key={w}
+                            type="button"
+                            onClick={() => setSelectedWeek(w)}
+                            className={`min-w-8 rounded-sm px-2 py-1 text-[11px] font-bold uppercase transition-colors ${
+                              isActive
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-primary hover:bg-primary/10"
+                            }`}
+                            aria-pressed={isActive}
+                          >
+                            {w}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
 
                 {isMobile ? (
