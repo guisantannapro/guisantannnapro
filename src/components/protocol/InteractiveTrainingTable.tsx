@@ -4,7 +4,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Loader2, CheckCircle, CloudOff, RefreshCw, Cloud } from "lucide-react";
+import { Loader2, CheckCircle, CloudOff, RefreshCw, Cloud, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileDayAccordion from "./MobileDayAccordion";
 import { enqueueEdit, getAllQueued, removeQueued, queueSize } from "@/lib/offlineQueue";
@@ -248,35 +254,35 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
             return (
               <div key={weekNum} className="space-y-4" data-pdf-section>
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary/20 pb-2">
-                  <div className="flex items-center gap-3">
-                    <h4 className="text-lg font-bold uppercase text-primary">
-                      📅 SEMANA {weekNum}
-                    </h4>
-                    <div
-                      data-html2canvas-ignore="true"
-                      className="print:hidden inline-flex items-center gap-1 rounded-md border border-primary/30 bg-muted/40 p-1"
-                    >
-                      {weeks.map((w) => {
-                        const isActive = selectedWeek === w;
-
-                        return (
-                          <button
+                <div className="flex items-center justify-between gap-3 border-b border-primary/20 pb-2">
+                  <h4 className="text-lg font-bold uppercase text-primary">
+                    📅 SEMANA {weekNum}
+                  </h4>
+                  <div data-html2canvas-ignore="true" className="print:hidden ml-auto">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-2 rounded-md border-2 border-primary bg-primary text-primary-foreground px-3 py-1.5 text-xs font-bold uppercase shadow-sm hover:bg-primary/90 transition-colors"
+                        >
+                          Semana {selectedWeek}
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="min-w-[10rem]">
+                        {weeks.map((w) => (
+                          <DropdownMenuItem
                             key={w}
-                            type="button"
                             onClick={() => setSelectedWeek(w)}
-                            className={`min-w-8 rounded-sm px-2 py-1 text-[11px] font-bold uppercase transition-colors ${
-                              isActive
-                                ? "bg-primary text-primary-foreground shadow-sm"
-                                : "text-primary hover:bg-primary/10"
+                            className={`font-bold uppercase text-xs cursor-pointer ${
+                              selectedWeek === w ? "bg-primary/10 text-primary" : ""
                             }`}
-                            aria-pressed={isActive}
                           >
-                            {w}
-                          </button>
-                        );
-                      })}
-                    </div>
+                            📅 Semana {w}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
