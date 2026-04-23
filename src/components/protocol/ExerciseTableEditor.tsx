@@ -8,6 +8,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 export interface ExerciseRow {
   id: string;
@@ -27,11 +28,11 @@ export interface DayBlock {
 }
 
 interface ExerciseTableEditorProps {
-  days: DayBlock[];
-  onChange: (days: DayBlock[]) => void;
-  weeks: number;
-  onWeeksChange: (w: number) => void;
+  weeklyDays: DayBlock[][];           // 4 semanas — uma lista de dias por semana
+  onWeeklyDaysChange: (weeklyDays: DayBlock[][]) => void;
 }
+
+const TOTAL_WEEKS = 4;
 
 const uid = () => crypto.randomUUID();
 
@@ -100,15 +101,32 @@ const DEFAULT_DAYS: DayBlock[] = [
 
 export { DEFAULT_DAYS };
 
-const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseTableEditorProps) => {
+const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEditorProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [activeWeek, setActiveWeek] = useState<number>(1); // 1..4
+
+  // Garante que sempre temos 4 semanas inicializadas
+  const safeWeekly: DayBlock[][] = (() => {
+    const out: DayBlock[][] = [];
+    for (let i = 0; i < TOTAL_WEEKS; i++) {
+      out.push(weeklyDays[i] || []);
+    }
+    return out;
+  })();
+
+  const days = safeWeekly[activeWeek - 1] || [];
+
+  const updateActiveWeekDays = (newDays: DayBlock[]) => {
+    const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? newDays : w));
+    onWeeklyDaysChange(next);
+  };
 
   const toggleCollapse = (dayId: string) => {
     setCollapsed(prev => ({ ...prev, [dayId]: !prev[dayId] }));
   };
 
   const updateDay = (dayId: string, field: keyof DayBlock, value: any) => {
-    onChange(days.map(d => d.id === dayId ? { ...d, [field]: value } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, [field]: value } : d));
   };
 
   const addExercise = (dayId: string) => {
@@ -123,15 +141,15 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
       admin_obs: "",
       table_type: day.table_type,
     };
-    onChange(days.map(d => d.id === dayId ? { ...d, exercises: [...d.exercises, newEx] } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, exercises: [...d.exercises, newEx] } : d));
   };
 
   const removeExercise = (dayId: string, exId: string) => {
-    onChange(days.map(d => d.id === dayId ? { ...d, exercises: d.exercises.filter(e => e.id !== exId) } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, exercises: d.exercises.filter(e => e.id !== exId) } : d));
   };
 
   const updateExercise = (dayId: string, exId: string, field: keyof ExerciseRow, value: string) => {
-    onChange(days.map(d => d.id === dayId ? {
+    updateActiveWeekDays(days.map(d => d.id === dayId ? {
       ...d,
       exercises: d.exercises.map(e => e.id === exId ? { ...e, [field]: value } : e),
     } : d));
@@ -144,23 +162,64 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
       table_type: "standard",
       exercises: [],
     };
-    onChange([...days, newDay]);
+    updateActiveWeekDays([...days, newDay]);
   };
 
   const removeDay = (dayId: string) => {
-    onChange(days.filter(d => d.id !== dayId));
+    updateActiveWeekDays(days.filter(d => d.id !== dayId));
+  };
+
+  const applyToAllWeeks = () => {
+    const cloneDays = (src: DayBlock[]): DayBlock[] =>
+      src.map(d => ({
+        ...d,
+        id: uid(),
+        exercises: d.exercises.map(e => ({ ...e, id: uid() })),
+      }));
+    const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? w : cloneDays(days)));
+    onWeeklyDaysChange(next);
+    toast.success(`Semana ${activeWeek} aplicada às outras 3 semanas`);
   };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-sm font-semibold uppercase text-primary">
-          🏋️ Treino — Logbook (4 semanas)
-        </h3>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-          Os exercícios definidos aqui são replicados nas 4 semanas
-        </span>
+      <div className="flex items-center justify-between flex-wrap gap-3 border-b border-primary/20 pb-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h3 className="text-sm font-semibold uppercase text-primary">
+            🏋️ Treino — Logbook
+          </h3>
+          <div className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-muted/40 p-1">
+            {[1, 2, 3, 4].map((w) => (
+              <button
+                key={w}
+                type="button"
+                onClick={() => setActiveWeek(w)}
+                className={`min-w-9 rounded-sm px-2.5 py-1 text-[11px] font-bold uppercase transition ${
+                  activeWeek === w
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-primary hover:bg-primary/10"
+                }`}
+              >
+                Sem {w}
+              </button>
+            ))}
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={applyToAllWeeks}
+          className="gap-1.5 text-xs h-8"
+        >
+          <Copy size={12} />
+          Aplicar Sem {activeWeek} a todas
+        </Button>
       </div>
+
+      <p className="text-[11px] text-muted-foreground -mt-2">
+        Editando <strong className="text-primary">Semana {activeWeek}</strong> — as 4 semanas começam idênticas. Edite só se quiser personalizar uma semana.
+      </p>
 
       {days.map((day, dayIdx) => (
         <div key={day.id} className="border border-border rounded-lg overflow-hidden">
@@ -182,7 +241,7 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
               onValueChange={(v) => {
                 updateDay(day.id, "table_type", v);
                 // Update all exercises in this day
-                onChange(days.map(d => d.id === day.id ? {
+                updateActiveWeekDays(days.map(d => d.id === day.id ? {
                   ...d,
                   table_type: v as "standard" | "complementar",
                   exercises: d.exercises.map(e => ({ ...e, table_type: v as "standard" | "complementar" })),

@@ -410,21 +410,38 @@ export type Database = {
         Args: { _old_user_id: string; _submission_id: string }
         Returns: undefined
       }
-      create_structured_protocol: {
-        Args: {
-          _cardio?: string
-          _exercise_days?: Json
-          _exercise_weeks?: number
-          _nome: string
-          _observacoes?: string
-          _plano_alimentar?: string
-          _suplementacao?: string
-          _tipo_protocolo: string
-          _treino?: string
-          _user_id: string
-        }
-        Returns: string
-      }
+      create_structured_protocol:
+        | {
+            Args: {
+              _cardio?: string
+              _exercise_days?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+              _user_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _cardio?: string
+              _exercise_days?: Json
+              _exercise_days_per_week?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+              _user_id: string
+            }
+            Returns: string
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -433,21 +450,38 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
-      update_structured_protocol: {
-        Args: {
-          _cardio?: string
-          _exercise_days?: Json
-          _exercise_weeks?: number
-          _nome: string
-          _observacoes?: string
-          _plano_alimentar?: string
-          _protocolo_id: string
-          _suplementacao?: string
-          _tipo_protocolo: string
-          _treino?: string
-        }
-        Returns: string
-      }
+      update_structured_protocol:
+        | {
+            Args: {
+              _cardio?: string
+              _exercise_days?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _protocolo_id: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _cardio?: string
+              _exercise_days?: Json
+              _exercise_days_per_week?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _protocolo_id: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+            }
+            Returns: string
+          }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

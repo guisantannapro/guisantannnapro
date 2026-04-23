@@ -209,9 +209,16 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
   const [observacoes, setObservacoes] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Exercise table state
-  const [exerciseDays, setExerciseDays] = useState<DayBlock[]>(DEFAULT_DAYS);
-  const [exerciseWeeks, setExerciseWeeks] = useState(4);
+  // Exercise table state — 4 semanas independentes
+  const buildDefaultWeeks = (): DayBlock[][] =>
+    [0, 1, 2, 3].map(() =>
+      DEFAULT_DAYS.map(d => ({
+        ...d,
+        id: crypto.randomUUID(),
+        exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+      }))
+    );
+  const [weeklyDays, setWeeklyDays] = useState<DayBlock[][]>(buildDefaultWeeks);
 
   const getField = (field: string) => client.form_data?.[field] || "—";
   const plan = client.plan || client.profile?.plan || "";
@@ -231,18 +238,21 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       setCardio(existingProtocol.cardio || "");
       setObservacoes(existingProtocol.observacoes || "");
 
-      // Carrega exercícios da semana 1 para reconstruir a estrutura de dias
+      // Carrega exercícios de TODAS as semanas para reconstruir as 4 semanas
       (async () => {
         const { data: rows } = await supabase
           .from("protocol_exercises")
           .select("week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
           .eq("protocolo_id", existingProtocol.id)
-          .eq("week_number", 1)
+          .order("week_number", { ascending: true })
           .order("sort_order", { ascending: true });
 
         if (rows && rows.length > 0) {
-          const dayMap = new Map<string, DayBlock>();
+          // Agrupa por semana
+          const weekMap = new Map<number, Map<string, DayBlock>>();
           for (const r of rows) {
+            if (!weekMap.has(r.week_number)) weekMap.set(r.week_number, new Map());
+            const dayMap = weekMap.get(r.week_number)!;
             if (!dayMap.has(r.day_label)) {
               dayMap.set(r.day_label, {
                 id: crypto.randomUUID(),
@@ -261,18 +271,27 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               table_type: (r.table_type as "standard" | "complementar") || "standard",
             });
           }
-          setExerciseDays(Array.from(dayMap.values()));
-        }
 
-        // Determina nº de semanas pelo max week_number existente
-        const { data: weekRows } = await supabase
-          .from("protocol_exercises")
-          .select("week_number")
-          .eq("protocolo_id", existingProtocol.id)
-          .order("week_number", { ascending: false })
-          .limit(1);
-        if (weekRows && weekRows.length > 0) {
-          setExerciseWeeks(weekRows[0].week_number || 4);
+          // Monta as 4 semanas — se faltar alguma, replica a última disponível
+          const built: DayBlock[][] = [];
+          let lastWeekDays: DayBlock[] = [];
+          for (let w = 1; w <= 4; w++) {
+            const dayMap = weekMap.get(w);
+            if (dayMap && dayMap.size > 0) {
+              lastWeekDays = Array.from(dayMap.values());
+              built.push(lastWeekDays);
+            } else {
+              // Clona a última semana disponível com novos ids
+              built.push(
+                lastWeekDays.map(d => ({
+                  ...d,
+                  id: crypto.randomUUID(),
+                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+                }))
+              );
+            }
+          }
+          setWeeklyDays(built);
         }
       })();
     }
@@ -286,8 +305,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
-      setExerciseDays(DEFAULT_DAYS.map(d => ({ ...d, id: crypto.randomUUID(), exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })) })));
-      setExerciseWeeks(4);
+      setWeeklyDays(buildDefaultWeeks());
     }
   }, [protocolType, isEditMode]);
 
@@ -309,15 +327,33 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
 
-      const daysPayload = exerciseDays.map(d => ({
-        day_label: d.day_label,
-        table_type: d.table_type,
-        exercises: d.exercises.map(e => ({
-          exercise_name: e.exercise_name,
-          metodo: e.metodo || "",
-          admin_obs: e.admin_obs || "",
-        })),
-      }));
+      // Monta payload por semana (4 semanas)
+      const mapDays = (dayList: DayBlock[]) =>
+        dayList.map(d => ({
+          day_label: d.day_label,
+          table_type: d.table_type,
+          exercises: d.exercises.map(e => ({
+            exercise_name: e.exercise_name,
+            metodo: e.metodo || "",
+            admin_obs: e.admin_obs || "",
+          })),
+        }));
+
+      // Garante 4 semanas; se alguma estiver vazia, usa a anterior (fallback)
+      const safeWeekly: DayBlock[][] = [];
+      let lastFilled: DayBlock[] = [];
+      for (let i = 0; i < 4; i++) {
+        const w = weeklyDays[i];
+        if (w && w.length > 0) {
+          lastFilled = w;
+          safeWeekly.push(w);
+        } else if (lastFilled.length > 0) {
+          safeWeekly.push(lastFilled);
+        } else {
+          safeWeekly.push([]);
+        }
+      }
+      const perWeekPayload = safeWeekly.map(mapDays);
 
       const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
       const rpcArgs: Record<string, any> = isEditMode
@@ -331,7 +367,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
-            _exercise_days: daysPayload,
+            _exercise_days: perWeekPayload[0] || [],
+            _exercise_days_per_week: perWeekPayload,
           }
         : {
             _user_id: client.user_id,
@@ -343,7 +380,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
-            _exercise_days: daysPayload,
+            _exercise_days: perWeekPayload[0] || [],
+            _exercise_days_per_week: perWeekPayload,
           };
 
       const { error } = await supabase.rpc(rpcName as any, rpcArgs);
@@ -534,10 +572,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             {/* Exercise Table Editor */}
             <section>
               <ExerciseTableEditor
-                days={exerciseDays}
-                onChange={setExerciseDays}
-                weeks={exerciseWeeks}
-                onWeeksChange={setExerciseWeeks}
+                weeklyDays={weeklyDays}
+                onWeeklyDaysChange={setWeeklyDays}
               />
             </section>
 
