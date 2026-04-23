@@ -199,7 +199,8 @@ Média de 200-300 Kcals por sessão
 Frequência Cardíaca Média: 120-130bpm
 Tipo: Qualquer um de sua preferência. O importante é manter a frequência cardíaca indicada (intensidade elevada) durante a sessão. O elíptico (transfer) é uma ótima opção por não envolver nenhum tipo de impacto ou estresse nos ligamentos (joelhos)`;
 
-const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewModalProps) => {
+const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, onSaved }: ProtocolPreviewModalProps) => {
+  const isEditMode = !!existingProtocol;
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
   const [regrasGerais, setRegrasGerais] = useState("");
@@ -218,7 +219,67 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
     ? client.form_data.mainGoal.join(", ")
     : getField("mainGoal");
 
+  // Hidrata estado a partir de protocolo existente quando em modo edição
   useEffect(() => {
+    if (!open) return;
+    if (isEditMode && existingProtocol) {
+      const t = (existingProtocol.tipo_protocolo as ProtocolType) || "bulking";
+      setProtocolType(t);
+      setPlanoAlimentar(existingProtocol.plano_alimentar || "");
+      setRegrasGerais(existingProtocol.treino || "");
+      setSuplementacao(existingProtocol.suplementacao || "");
+      setCardio(existingProtocol.cardio || "");
+      setObservacoes(existingProtocol.observacoes || "");
+
+      // Carrega exercícios da semana 1 para reconstruir a estrutura de dias
+      (async () => {
+        const { data: rows } = await supabase
+          .from("protocol_exercises")
+          .select("week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .eq("protocolo_id", existingProtocol.id)
+          .eq("week_number", 1)
+          .order("sort_order", { ascending: true });
+
+        if (rows && rows.length > 0) {
+          const dayMap = new Map<string, DayBlock>();
+          for (const r of rows) {
+            if (!dayMap.has(r.day_label)) {
+              dayMap.set(r.day_label, {
+                id: crypto.randomUUID(),
+                day_label: r.day_label,
+                table_type: (r.table_type as "standard" | "complementar") || "standard",
+                exercises: [],
+              });
+            }
+            dayMap.get(r.day_label)!.exercises.push({
+              id: crypto.randomUUID(),
+              exercise_name: r.exercise_name,
+              top_set: "",
+              back_off: "",
+              metodo: r.metodo || "",
+              admin_obs: r.admin_obs || "",
+              table_type: (r.table_type as "standard" | "complementar") || "standard",
+            });
+          }
+          setExerciseDays(Array.from(dayMap.values()));
+        }
+
+        // Determina nº de semanas pelo max week_number existente
+        const { data: weekRows } = await supabase
+          .from("protocol_exercises")
+          .select("week_number")
+          .eq("protocolo_id", existingProtocol.id)
+          .order("week_number", { ascending: false })
+          .limit(1);
+        if (weekRows && weekRows.length > 0) {
+          setExerciseWeeks(weekRows[0].week_number || 4);
+        }
+      })();
+    }
+  }, [open, isEditMode, existingProtocol]);
+
+  useEffect(() => {
+    if (isEditMode) return; // não sobrescreve em modo edição
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
       setRegrasGerais(defaultRegrasGerais);
@@ -228,7 +289,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client }: ProtocolPreviewMod
       setExerciseDays(DEFAULT_DAYS.map(d => ({ ...d, id: crypto.randomUUID(), exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })) })));
       setExerciseWeeks(4);
     }
-  }, [protocolType]);
+  }, [protocolType, isEditMode]);
 
   const handleClose = (value: boolean) => {
     if (!value) {
