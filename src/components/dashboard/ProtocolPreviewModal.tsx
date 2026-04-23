@@ -548,7 +548,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               className="w-full gap-2"
             >
               <Save size={16} />
-              {saving ? "Salvando..." : "Salvar Protocolo"}
+              {saving ? "Salvando..." : (isEditMode ? "Salvar Alterações" : "Salvar Protocolo")}
             </Button>
           </div>
         )}
