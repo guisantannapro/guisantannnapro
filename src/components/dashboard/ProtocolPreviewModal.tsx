@@ -209,9 +209,16 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
   const [observacoes, setObservacoes] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Exercise table state
-  const [exerciseDays, setExerciseDays] = useState<DayBlock[]>(DEFAULT_DAYS);
-  const [exerciseWeeks, setExerciseWeeks] = useState(4);
+  // Exercise table state — 4 semanas independentes
+  const buildDefaultWeeks = (): DayBlock[][] =>
+    [0, 1, 2, 3].map(() =>
+      DEFAULT_DAYS.map(d => ({
+        ...d,
+        id: crypto.randomUUID(),
+        exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+      }))
+    );
+  const [weeklyDays, setWeeklyDays] = useState<DayBlock[][]>(buildDefaultWeeks);
 
   const getField = (field: string) => client.form_data?.[field] || "—";
   const plan = client.plan || client.profile?.plan || "";
