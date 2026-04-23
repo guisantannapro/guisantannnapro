@@ -389,7 +389,9 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       >
         <DialogHeader>
           <DialogTitle className="text-2xl text-gradient-gold uppercase">
-            {protocolType ? `Protocolo ${protocolTypeLabels[protocolType]}` : "Gerar Protocolo"} — {getField("fullName")}
+            {isEditMode
+              ? `Editar Protocolo${protocolType ? ` ${protocolTypeLabels[protocolType]}` : ""}`
+              : (protocolType ? `Protocolo ${protocolTypeLabels[protocolType]}` : "Gerar Protocolo")} — {getField("fullName")}
           </DialogTitle>
         </DialogHeader>
 
