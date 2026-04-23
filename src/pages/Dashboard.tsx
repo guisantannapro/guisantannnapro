@@ -838,22 +838,43 @@ const Dashboard = () => {
                 {/* Evolution Manager */}
                 <EvolutionManager clientUserId={selectedClient.user_id} />
 
-                {/* Generate Protocol Preview */}
-                <div className="border-t border-border pt-4">
+                {/* Generate / Edit Protocol */}
+                <div className="border-t border-border pt-4 space-y-2">
+                  {currentClientProtocolo && (
+                    <Button
+                      onClick={() => {
+                        setEditingProtocol(currentClientProtocolo);
+                        setProtocolPreviewOpen(true);
+                      }}
+                      className="w-full gap-2"
+                      disabled={loadingCurrentProtocolo}
+                    >
+                      <ClipboardList size={16} />
+                      Editar Protocolo Atual
+                    </Button>
+                  )}
                   <Button
-                    onClick={() => setProtocolPreviewOpen(true)}
+                    onClick={() => {
+                      setEditingProtocol(null);
+                      setProtocolPreviewOpen(true);
+                    }}
                     className="w-full gap-2"
                     variant="outline"
                   >
                     <ClipboardList size={16} />
-                    Gerar Protocolo
+                    {currentClientProtocolo ? "Gerar Novo Protocolo" : "Gerar Protocolo"}
                   </Button>
                 </div>
 
                 <ProtocolPreviewModal
                   open={protocolPreviewOpen}
-                  onOpenChange={setProtocolPreviewOpen}
+                  onOpenChange={(v) => {
+                    setProtocolPreviewOpen(v);
+                    if (!v) setEditingProtocol(null);
+                  }}
                   client={selectedClient}
+                  existingProtocol={editingProtocol}
+                  onSaved={() => fetchCurrentProtocolo(selectedClient.user_id)}
                 />
 
                 {/* Actions */}
