@@ -28,11 +28,11 @@ export interface DayBlock {
 }
 
 interface ExerciseTableEditorProps {
-  days: DayBlock[];
-  onChange: (days: DayBlock[]) => void;
-  weeks: number;
-  onWeeksChange: (w: number) => void;
+  weeklyDays: DayBlock[][];           // 4 semanas — uma lista de dias por semana
+  onWeeklyDaysChange: (weeklyDays: DayBlock[][]) => void;
 }
+
+const TOTAL_WEEKS = 4;
 
 const uid = () => crypto.randomUUID();
 
