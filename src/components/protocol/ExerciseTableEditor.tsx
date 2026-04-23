@@ -101,15 +101,32 @@ const DEFAULT_DAYS: DayBlock[] = [
 
 export { DEFAULT_DAYS };
 
-const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseTableEditorProps) => {
+const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEditorProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [activeWeek, setActiveWeek] = useState<number>(1); // 1..4
+
+  // Garante que sempre temos 4 semanas inicializadas
+  const safeWeekly: DayBlock[][] = (() => {
+    const out: DayBlock[][] = [];
+    for (let i = 0; i < TOTAL_WEEKS; i++) {
+      out.push(weeklyDays[i] || []);
+    }
+    return out;
+  })();
+
+  const days = safeWeekly[activeWeek - 1] || [];
+
+  const updateActiveWeekDays = (newDays: DayBlock[]) => {
+    const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? newDays : w));
+    onWeeklyDaysChange(next);
+  };
 
   const toggleCollapse = (dayId: string) => {
     setCollapsed(prev => ({ ...prev, [dayId]: !prev[dayId] }));
   };
 
   const updateDay = (dayId: string, field: keyof DayBlock, value: any) => {
-    onChange(days.map(d => d.id === dayId ? { ...d, [field]: value } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, [field]: value } : d));
   };
 
   const addExercise = (dayId: string) => {
@@ -124,15 +141,15 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
       admin_obs: "",
       table_type: day.table_type,
     };
-    onChange(days.map(d => d.id === dayId ? { ...d, exercises: [...d.exercises, newEx] } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, exercises: [...d.exercises, newEx] } : d));
   };
 
   const removeExercise = (dayId: string, exId: string) => {
-    onChange(days.map(d => d.id === dayId ? { ...d, exercises: d.exercises.filter(e => e.id !== exId) } : d));
+    updateActiveWeekDays(days.map(d => d.id === dayId ? { ...d, exercises: d.exercises.filter(e => e.id !== exId) } : d));
   };
 
   const updateExercise = (dayId: string, exId: string, field: keyof ExerciseRow, value: string) => {
-    onChange(days.map(d => d.id === dayId ? {
+    updateActiveWeekDays(days.map(d => d.id === dayId ? {
       ...d,
       exercises: d.exercises.map(e => e.id === exId ? { ...e, [field]: value } : e),
     } : d));
@@ -145,11 +162,23 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
       table_type: "standard",
       exercises: [],
     };
-    onChange([...days, newDay]);
+    updateActiveWeekDays([...days, newDay]);
   };
 
   const removeDay = (dayId: string) => {
-    onChange(days.filter(d => d.id !== dayId));
+    updateActiveWeekDays(days.filter(d => d.id !== dayId));
+  };
+
+  const applyToAllWeeks = () => {
+    const cloneDays = (src: DayBlock[]): DayBlock[] =>
+      src.map(d => ({
+        ...d,
+        id: uid(),
+        exercises: d.exercises.map(e => ({ ...e, id: uid() })),
+      }));
+    const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? w : cloneDays(days)));
+    onWeeklyDaysChange(next);
+    toast.success(`Semana ${activeWeek} aplicada às outras 3 semanas`);
   };
 
   return (
