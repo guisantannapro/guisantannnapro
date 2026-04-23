@@ -330,7 +330,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _suplementacao: suplementacao,
             _cardio: cardio,
             _observacoes: observacoes,
-            _exercise_weeks: exerciseWeeks,
+            _exercise_weeks: 4,
             _exercise_days: daysPayload,
           }
         : {
@@ -342,7 +342,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _suplementacao: suplementacao,
             _cardio: cardio,
             _observacoes: observacoes,
-            _exercise_weeks: exerciseWeeks,
+            _exercise_weeks: 4,
             _exercise_days: daysPayload,
           };
 
