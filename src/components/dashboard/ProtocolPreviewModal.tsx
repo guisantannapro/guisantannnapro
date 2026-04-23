@@ -331,6 +331,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
+            _exercise_days: daysPayload,
+          }
         : {
             _user_id: client.user_id,
             _nome: nome,
@@ -341,6 +343,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
+            _exercise_days: daysPayload,
+          };
 
       const { error } = await supabase.rpc(rpcName as any, rpcArgs);
 
