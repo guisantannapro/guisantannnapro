@@ -241,7 +241,7 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
               onValueChange={(v) => {
                 updateDay(day.id, "table_type", v);
                 // Update all exercises in this day
-                onChange(days.map(d => d.id === day.id ? {
+                updateActiveWeekDays(days.map(d => d.id === day.id ? {
                   ...d,
                   table_type: v as "standard" | "complementar",
                   exercises: d.exercises.map(e => ({ ...e, table_type: v as "standard" | "complementar" })),
