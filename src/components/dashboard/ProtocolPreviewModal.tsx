@@ -327,15 +327,33 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
 
-      const daysPayload = exerciseDays.map(d => ({
-        day_label: d.day_label,
-        table_type: d.table_type,
-        exercises: d.exercises.map(e => ({
-          exercise_name: e.exercise_name,
-          metodo: e.metodo || "",
-          admin_obs: e.admin_obs || "",
-        })),
-      }));
+      // Monta payload por semana (4 semanas)
+      const mapDays = (dayList: DayBlock[]) =>
+        dayList.map(d => ({
+          day_label: d.day_label,
+          table_type: d.table_type,
+          exercises: d.exercises.map(e => ({
+            exercise_name: e.exercise_name,
+            metodo: e.metodo || "",
+            admin_obs: e.admin_obs || "",
+          })),
+        }));
+
+      // Garante 4 semanas; se alguma estiver vazia, usa a anterior (fallback)
+      const safeWeekly: DayBlock[][] = [];
+      let lastFilled: DayBlock[] = [];
+      for (let i = 0; i < 4; i++) {
+        const w = weeklyDays[i];
+        if (w && w.length > 0) {
+          lastFilled = w;
+          safeWeekly.push(w);
+        } else if (lastFilled.length > 0) {
+          safeWeekly.push(lastFilled);
+        } else {
+          safeWeekly.push([]);
+        }
+      }
+      const perWeekPayload = safeWeekly.map(mapDays);
 
       const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
       const rpcArgs: Record<string, any> = isEditMode
@@ -349,7 +367,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
-            _exercise_days: daysPayload,
+            _exercise_days: perWeekPayload[0] || [],
+            _exercise_days_per_week: perWeekPayload,
           }
         : {
             _user_id: client.user_id,
@@ -361,7 +380,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _cardio: cardio,
             _observacoes: observacoes,
             _exercise_weeks: 4,
-            _exercise_days: daysPayload,
+            _exercise_days: perWeekPayload[0] || [],
+            _exercise_days_per_week: perWeekPayload,
           };
 
       const { error } = await supabase.rpc(rpcName as any, rpcArgs);
@@ -552,10 +572,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             {/* Exercise Table Editor */}
             <section>
               <ExerciseTableEditor
-                days={exerciseDays}
-                onChange={setExerciseDays}
-                weeks={exerciseWeeks}
-                onWeeksChange={setExerciseWeeks}
+                weeklyDays={weeklyDays}
+                onWeeklyDaysChange={setWeeklyDays}
               />
             </section>
 
