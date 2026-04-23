@@ -260,9 +260,38 @@ const Dashboard = () => {
     setClientProtocols(data || []);
   }, []);
 
+  const fetchCurrentProtocolo = useCallback(async (userId: string) => {
+    setLoadingCurrentProtocolo(true);
+    try {
+      const { data: protos } = await supabase
+        .from("protocolos")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (!protos || protos.length === 0) {
+        setCurrentClientProtocolo(null);
+        return;
+      }
+
+      const ids = protos.map((p) => p.id);
+      const { data: exRows } = await supabase
+        .from("protocol_exercises")
+        .select("protocolo_id")
+        .in("protocolo_id", ids);
+
+      const structured = new Set((exRows || []).map((r) => r.protocolo_id));
+      const current = protos.find((p) => structured.has(p.id)) || protos[0];
+      setCurrentClientProtocolo(current);
+    } finally {
+      setLoadingCurrentProtocolo(false);
+    }
+  }, []);
+
   const handleSelectClient = (client: ClientData) => {
     setSelectedClient(client);
     fetchClientProtocols(client.user_id);
+    fetchCurrentProtocolo(client.user_id);
   };
 
   const getField = (client: ClientData, field: string) => {
