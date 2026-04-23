@@ -319,22 +319,39 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
         })),
       }));
 
-      const { data, error } = await supabase.rpc("create_structured_protocol", {
-        _user_id: client.user_id,
-        _nome: nome,
-        _tipo_protocolo: protocolType,
-        _plano_alimentar: planoAlimentar,
-        _treino: regrasGerais,
-        _suplementacao: suplementacao,
-        _cardio: cardio,
-        _observacoes: observacoes,
-        _exercise_weeks: exerciseWeeks,
-        _exercise_days: daysPayload as any,
-      });
+      const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
+      const rpcArgs: Record<string, any> = isEditMode
+        ? {
+            _protocolo_id: existingProtocol!.id,
+            _nome: nome,
+            _tipo_protocolo: protocolType,
+            _plano_alimentar: planoAlimentar,
+            _treino: regrasGerais,
+            _suplementacao: suplementacao,
+            _cardio: cardio,
+            _observacoes: observacoes,
+            _exercise_weeks: exerciseWeeks,
+            _exercise_days: daysPayload,
+          }
+        : {
+            _user_id: client.user_id,
+            _nome: nome,
+            _tipo_protocolo: protocolType,
+            _plano_alimentar: planoAlimentar,
+            _treino: regrasGerais,
+            _suplementacao: suplementacao,
+            _cardio: cardio,
+            _observacoes: observacoes,
+            _exercise_weeks: exerciseWeeks,
+            _exercise_days: daysPayload,
+          };
+
+      const { error } = await supabase.rpc(rpcName as any, rpcArgs);
 
       if (error) throw error;
 
-      toast.success("Protocolo salvo com sucesso!");
+      toast.success(isEditMode ? "Protocolo atualizado com sucesso!" : "Protocolo salvo com sucesso!");
+      onSaved?.();
       handleClose(false);
     } catch (err: any) {
       console.error("Error saving protocol:", err);
