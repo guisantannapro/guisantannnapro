@@ -30,10 +30,23 @@ const protocolTypeLabels: Record<ProtocolType, string> = {
   recomp: "Recomposição Corporal",
 };
 
+interface ExistingProtocol {
+  id: string;
+  nome: string;
+  tipo_protocolo: string;
+  plano_alimentar: string;
+  treino: string;
+  suplementacao: string;
+  cardio: string;
+  observacoes: string | null;
+}
+
 interface ProtocolPreviewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   client: ClientData;
+  existingProtocol?: ExistingProtocol | null;
+  onSaved?: () => void;
 }
 
 const dietTextTemplates: Record<ProtocolType, string> = {
