@@ -155,21 +155,11 @@ const ExerciseTableEditor = ({ days, onChange, weeks, onWeeksChange }: ExerciseT
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-sm font-semibold uppercase text-primary">
-          🏋️ Treino — Logbook ({weeks} semana{weeks > 1 ? "s" : ""})
+          🏋️ Treino — Logbook (4 semanas)
         </h3>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Semanas:</span>
-          <Select value={String(weeks)} onValueChange={(v) => onWeeksChange(Number(v))}>
-            <SelectTrigger className="w-20 h-8 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {[1, 2, 3, 4].map(n => (
-                <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+          Os exercícios definidos aqui são replicados nas 4 semanas
+        </span>
       </div>
 
       {days.map((day, dayIdx) => (
