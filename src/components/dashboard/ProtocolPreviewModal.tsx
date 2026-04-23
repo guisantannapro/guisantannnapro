@@ -429,9 +429,11 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
           <div className="space-y-6 mt-4 text-foreground">
             <div className="flex items-center gap-3">
               <Badge className="bg-primary text-primary-foreground">{protocolTypeLabels[protocolType]}</Badge>
-              <Button variant="ghost" size="sm" onClick={() => setProtocolType(null)} className="text-xs text-muted-foreground">
-                Alterar tipo
-              </Button>
+              {!isEditMode && (
+                <Button variant="ghost" size="sm" onClick={() => setProtocolType(null)} className="text-xs text-muted-foreground">
+                  Alterar tipo
+                </Button>
+              )}
             </div>
 
             {/* Dados do Aluno */}
