@@ -238,18 +238,21 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       setCardio(existingProtocol.cardio || "");
       setObservacoes(existingProtocol.observacoes || "");
 
-      // Carrega exercícios da semana 1 para reconstruir a estrutura de dias
+      // Carrega exercícios de TODAS as semanas para reconstruir as 4 semanas
       (async () => {
         const { data: rows } = await supabase
           .from("protocol_exercises")
           .select("week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
           .eq("protocolo_id", existingProtocol.id)
-          .eq("week_number", 1)
+          .order("week_number", { ascending: true })
           .order("sort_order", { ascending: true });
 
         if (rows && rows.length > 0) {
-          const dayMap = new Map<string, DayBlock>();
+          // Agrupa por semana
+          const weekMap = new Map<number, Map<string, DayBlock>>();
           for (const r of rows) {
+            if (!weekMap.has(r.week_number)) weekMap.set(r.week_number, new Map());
+            const dayMap = weekMap.get(r.week_number)!;
             if (!dayMap.has(r.day_label)) {
               dayMap.set(r.day_label, {
                 id: crypto.randomUUID(),
@@ -268,18 +271,27 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               table_type: (r.table_type as "standard" | "complementar") || "standard",
             });
           }
-          setExerciseDays(Array.from(dayMap.values()));
-        }
 
-        // Determina nº de semanas pelo max week_number existente
-        const { data: weekRows } = await supabase
-          .from("protocol_exercises")
-          .select("week_number")
-          .eq("protocolo_id", existingProtocol.id)
-          .order("week_number", { ascending: false })
-          .limit(1);
-        if (weekRows && weekRows.length > 0) {
-          setExerciseWeeks(weekRows[0].week_number || 4);
+          // Monta as 4 semanas — se faltar alguma, replica a última disponível
+          const built: DayBlock[][] = [];
+          let lastWeekDays: DayBlock[] = [];
+          for (let w = 1; w <= 4; w++) {
+            const dayMap = weekMap.get(w);
+            if (dayMap && dayMap.size > 0) {
+              lastWeekDays = Array.from(dayMap.values());
+              built.push(lastWeekDays);
+            } else {
+              // Clona a última semana disponível com novos ids
+              built.push(
+                lastWeekDays.map(d => ({
+                  ...d,
+                  id: crypto.randomUUID(),
+                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+                }))
+              );
+            }
+          }
+          setWeeklyDays(built);
         }
       })();
     }
@@ -293,8 +305,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       setSuplementacao(defaultSupplementacao);
       setCardio(defaultCardio);
       setObservacoes("");
-      setExerciseDays(DEFAULT_DAYS.map(d => ({ ...d, id: crypto.randomUUID(), exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })) })));
-      setExerciseWeeks(4);
+      setWeeklyDays(buildDefaultWeeks());
     }
   }, [protocolType, isEditMode]);
 
