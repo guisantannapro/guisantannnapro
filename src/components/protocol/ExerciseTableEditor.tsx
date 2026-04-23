@@ -183,14 +183,43 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <h3 className="text-sm font-semibold uppercase text-primary">
-          🏋️ Treino — Logbook (4 semanas)
-        </h3>
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-          Os exercícios definidos aqui são replicados nas 4 semanas
-        </span>
+      <div className="flex items-center justify-between flex-wrap gap-3 border-b border-primary/20 pb-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h3 className="text-sm font-semibold uppercase text-primary">
+            🏋️ Treino — Logbook
+          </h3>
+          <div className="inline-flex items-center gap-1 rounded-md border border-primary/30 bg-muted/40 p-1">
+            {[1, 2, 3, 4].map((w) => (
+              <button
+                key={w}
+                type="button"
+                onClick={() => setActiveWeek(w)}
+                className={`min-w-9 rounded-sm px-2.5 py-1 text-[11px] font-bold uppercase transition ${
+                  activeWeek === w
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-primary hover:bg-primary/10"
+                }`}
+              >
+                Sem {w}
+              </button>
+            ))}
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={applyToAllWeeks}
+          className="gap-1.5 text-xs h-8"
+        >
+          <Copy size={12} />
+          Aplicar Sem {activeWeek} a todas
+        </Button>
       </div>
+
+      <p className="text-[11px] text-muted-foreground -mt-2">
+        Editando <strong className="text-primary">Semana {activeWeek}</strong> — as 4 semanas começam idênticas. Edite só se quiser personalizar uma semana.
+      </p>
 
       {days.map((day, dayIdx) => (
         <div key={day.id} className="border border-border rounded-lg overflow-hidden">
