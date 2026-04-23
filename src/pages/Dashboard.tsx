@@ -138,6 +138,9 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [clientProtocols, setClientProtocols] = useState<any[]>([]);
   const [protocolPreviewOpen, setProtocolPreviewOpen] = useState(false);
+  const [editingProtocol, setEditingProtocol] = useState<any | null>(null);
+  const [currentClientProtocolo, setCurrentClientProtocolo] = useState<any | null>(null);
+  const [loadingCurrentProtocolo, setLoadingCurrentProtocolo] = useState(false);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
@@ -257,9 +260,38 @@ const Dashboard = () => {
     setClientProtocols(data || []);
   }, []);
 
+  const fetchCurrentProtocolo = useCallback(async (userId: string) => {
+    setLoadingCurrentProtocolo(true);
+    try {
+      const { data: protos } = await supabase
+        .from("protocolos")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (!protos || protos.length === 0) {
+        setCurrentClientProtocolo(null);
+        return;
+      }
+
+      const ids = protos.map((p) => p.id);
+      const { data: exRows } = await supabase
+        .from("protocol_exercises")
+        .select("protocolo_id")
+        .in("protocolo_id", ids);
+
+      const structured = new Set((exRows || []).map((r) => r.protocolo_id));
+      const current = protos.find((p) => structured.has(p.id)) || protos[0];
+      setCurrentClientProtocolo(current);
+    } finally {
+      setLoadingCurrentProtocolo(false);
+    }
+  }, []);
+
   const handleSelectClient = (client: ClientData) => {
     setSelectedClient(client);
     fetchClientProtocols(client.user_id);
+    fetchCurrentProtocolo(client.user_id);
   };
 
   const getField = (client: ClientData, field: string) => {
@@ -806,22 +838,43 @@ const Dashboard = () => {
                 {/* Evolution Manager */}
                 <EvolutionManager clientUserId={selectedClient.user_id} />
 
-                {/* Generate Protocol Preview */}
-                <div className="border-t border-border pt-4">
+                {/* Generate / Edit Protocol */}
+                <div className="border-t border-border pt-4 space-y-2">
+                  {currentClientProtocolo && (
+                    <Button
+                      onClick={() => {
+                        setEditingProtocol(currentClientProtocolo);
+                        setProtocolPreviewOpen(true);
+                      }}
+                      className="w-full gap-2"
+                      disabled={loadingCurrentProtocolo}
+                    >
+                      <ClipboardList size={16} />
+                      Editar Protocolo Atual
+                    </Button>
+                  )}
                   <Button
-                    onClick={() => setProtocolPreviewOpen(true)}
+                    onClick={() => {
+                      setEditingProtocol(null);
+                      setProtocolPreviewOpen(true);
+                    }}
                     className="w-full gap-2"
                     variant="outline"
                   >
                     <ClipboardList size={16} />
-                    Gerar Protocolo
+                    {currentClientProtocolo ? "Gerar Novo Protocolo" : "Gerar Protocolo"}
                   </Button>
                 </div>
 
                 <ProtocolPreviewModal
                   open={protocolPreviewOpen}
-                  onOpenChange={setProtocolPreviewOpen}
+                  onOpenChange={(v) => {
+                    setProtocolPreviewOpen(v);
+                    if (!v) setEditingProtocol(null);
+                  }}
                   client={selectedClient}
+                  existingProtocol={editingProtocol}
+                  onSaved={() => fetchCurrentProtocolo(selectedClient.user_id)}
                 />
 
                 {/* Actions */}
