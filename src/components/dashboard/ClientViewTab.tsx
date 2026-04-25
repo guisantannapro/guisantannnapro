@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import EvolutionSection from "@/components/minha-area/EvolutionSection";
+import { Accordion } from "@/components/ui/accordion";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
@@ -428,7 +429,9 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
 
       {/* Evolução */}
       {evolutions.length > 0 ? (
-        <EvolutionSection evolutions={evolutions} />
+        <Accordion type="multiple" defaultValue={["evolucao"]}>
+          <EvolutionSection evolutions={evolutions} />
+        </Accordion>
       ) : (
         <div className="border border-border rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
