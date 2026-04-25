@@ -282,229 +282,262 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         )}
       </div>
 
-      {/* Protocolo Atual */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <ClipboardList className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Protocolo Atual</h3>
-        </div>
-        {protocoloAtual ? (
-          <div className="space-y-2">
+      <Accordion type="multiple" defaultValue={["protocolo"]} className="space-y-3">
+        {/* Protocolo Atual (inclui Regras Gerais + Logbook) */}
+        <AccordionItem value="protocolo" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
             <div className="flex items-center gap-2">
-              <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
-                {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
-              </Badge>
-              <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+              <ClipboardList className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Protocolo Atual</h3>
             </div>
-            <span className="text-xs text-muted-foreground block">
-              Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleDownloadPdf(protocoloAtual)}
-              disabled={isDownloadingPdf}
-              className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 text-xs h-7"
-            >
-              {isDownloadingPdf ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
-              {isDownloadingPdf ? "Gerando..." : "Baixar PDF"}
-            </Button>
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-xs">Protocolo ainda não disponibilizado.</p>
-        )}
-      </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {protocoloAtual ? (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
+                      {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
+                    </Badge>
+                    <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground block">
+                    Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDownloadPdf(protocoloAtual)}
+                    disabled={isDownloadingPdf}
+                    className="border-primary/30 text-primary hover:bg-primary/10 gap-1.5 text-xs h-7"
+                  >
+                    {isDownloadingPdf ? <Loader2 size={12} className="animate-spin" /> : <Download size={12} />}
+                    {isDownloadingPdf ? "Gerando..." : "Baixar PDF"}
+                  </Button>
+                </div>
 
-      {/* Logbook — Exercícios do Cliente */}
-      {protocoloAtual && (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Dumbbell className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Logbook do Cliente</h3>
-          </div>
-          <InteractiveTrainingTable
-            protocoloId={protocoloAtual.id}
-            userId={userId}
-            isAdmin={true}
-            regrasGerais={protocoloAtual.treino}
-          />
-        </div>
-      )}
+                {protocoloAtual.treino && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Regras Gerais do Treino</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.treino}</pre>
+                  </div>
+                )}
 
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <History className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Histórico de Protocolos</h3>
-        </div>
-        {protocolosHistorico.length > 0 ? (
-          <div className="space-y-2">
-            {protocolosHistorico.map((proto) => (
-              <div key={proto.id} className="flex items-center justify-between p-2 border border-border rounded-md text-xs">
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs px-1.5 py-0">{tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}</Badge>
-                  <span className="font-medium text-foreground">{proto.nome}</span>
-                  <span className="text-muted-foreground">{new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}</span>
+                <div className="border-t border-border pt-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Dumbbell className="w-4 h-4 text-primary" />
+                    <h4 className="text-xs font-bold uppercase text-foreground">Logbook do Cliente</h4>
+                  </div>
+                  <InteractiveTrainingTable
+                    protocoloId={protocoloAtual.id}
+                    userId={userId}
+                    isAdmin={true}
+                    regrasGerais={protocoloAtual.treino}
+                  />
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-xs">Nenhum protocolo anterior.</p>
-        )}
-      </div>
+            ) : (
+              <p className="text-muted-foreground text-xs">Protocolo ainda não disponibilizado.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Arquivos Enviados */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <FileText className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Arquivos Enviados</h3>
-        </div>
-        {protocols.length > 0 ? (
-          <div className="space-y-2">
-            {protocols.map((protocol) => (
-              <div key={protocol.id} className="flex items-center justify-between p-2 border border-border rounded-md">
-                <div>
-                  <p className="text-foreground text-xs font-medium">{protocol.file_name}</p>
-                  <p className="text-muted-foreground text-xs">{new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={() => downloadProtocol(protocol)} className="text-primary h-7 text-xs gap-1">
-                  <Download size={12} />
-                  Baixar
-                </Button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-xs">Nenhum arquivo enviado.</p>
-        )}
-      </div>
-
-      {/* Fotos */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Eye className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Fotos ({totalPhotos})</h3>
-          </div>
-          {totalPhotos > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowPhotos(!showPhotos)}
-              className="text-xs text-muted-foreground h-7 gap-1"
-            >
-              {showPhotos ? <EyeOff size={12} /> : <Eye size={12} />}
-              {showPhotos ? "Ocultar" : "Mostrar"}
-            </Button>
-          )}
-        </div>
-        {totalPhotos > 0 ? (
-          showPhotos && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {submissionsWithPhotos.map((sub) =>
-                photoFields.map((field) => {
-                  if (!sub[field]) return null;
-                  const key = `${sub.id}-${field}`;
-                  const url = photoUrls[key];
-                  return (
-                    <div key={key} className="space-y-1">
-                      <span className="text-xs text-muted-foreground">{photoLabels[field]}</span>
-                      {url ? (
-                        <a href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={url} alt={photoLabels[field]} className="w-full aspect-[3/4] object-cover rounded-md border border-border" />
-                        </a>
-                      ) : (
-                        <div className="w-full aspect-[3/4] rounded-md border border-border bg-muted animate-pulse" />
-                      )}
+        {/* Histórico de Protocolos */}
+        <AccordionItem value="historico" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <History className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Histórico de Protocolos</h3>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {protocolosHistorico.length > 0 ? (
+              <div className="space-y-2">
+                {protocolosHistorico.map((proto) => (
+                  <div key={proto.id} className="flex items-center justify-between p-2 border border-border rounded-md text-xs">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs px-1.5 py-0">{tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}</Badge>
+                      <span className="font-medium text-foreground">{proto.nome}</span>
+                      <span className="text-muted-foreground">{new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}</span>
                     </div>
-                  );
-                })
-              )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-xs">Nenhum protocolo anterior.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Arquivos Enviados */}
+        <AccordionItem value="arquivos" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Arquivos Enviados</h3>
             </div>
-          )
-        ) : (
-          <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
-        )}
-      </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {protocols.length > 0 ? (
+              <div className="space-y-2">
+                {protocols.map((protocol) => (
+                  <div key={protocol.id} className="flex items-center justify-between p-2 border border-border rounded-md">
+                    <div>
+                      <p className="text-foreground text-xs font-medium">{protocol.file_name}</p>
+                      <p className="text-muted-foreground text-xs">{new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => downloadProtocol(protocol)} className="text-primary h-7 text-xs gap-1">
+                      <Download size={12} />
+                      Baixar
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-xs">Nenhum arquivo enviado.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Evolução */}
-      {evolutions.length > 0 ? (
-        <Accordion type="multiple" defaultValue={["evolucao"]}>
-          <EvolutionSection evolutions={evolutions} />
-        </Accordion>
-      ) : (
-        <div className="border border-border rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
-          </div>
-          <p className="text-muted-foreground text-xs">Nenhuma evolução registrada.</p>
-        </div>
-      )}
-
-      {/* Check-ins de Progresso */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Scale className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
-        </div>
-        {checkins.length > 0 ? (
-          <div className="space-y-3">
-            {checkins.map((checkin: any) => {
-              const hasPhotos = checkin.photo_front || checkin.photo_side || checkin.photo_back;
-              return (
-                <div key={checkin.id} className="border border-border rounded-md p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(checkin.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
-                    </span>
-                    {checkin.weight && (
-                      <div className="flex items-center gap-1 text-xs font-medium text-foreground">
-                        <Scale size={12} className="text-primary" />
-                        {checkin.weight} kg
-                      </div>
+        {/* Fotos */}
+        <AccordionItem value="fotos" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <Eye className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Fotos ({totalPhotos})</h3>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {totalPhotos > 0 ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPhotos(!showPhotos)}
+                  className="text-xs text-muted-foreground h-7 gap-1 mb-2"
+                >
+                  {showPhotos ? <EyeOff size={12} /> : <Eye size={12} />}
+                  {showPhotos ? "Ocultar" : "Mostrar"}
+                </Button>
+                {showPhotos && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {submissionsWithPhotos.map((sub) =>
+                      photoFields.map((field) => {
+                        if (!sub[field]) return null;
+                        const key = `${sub.id}-${field}`;
+                        const url = photoUrls[key];
+                        return (
+                          <div key={key} className="space-y-1">
+                            <span className="text-xs text-muted-foreground">{photoLabels[field]}</span>
+                            {url ? (
+                              <a href={url} target="_blank" rel="noopener noreferrer">
+                                <img src={url} alt={photoLabels[field]} className="w-full aspect-[3/4] object-cover rounded-md border border-border" />
+                              </a>
+                            ) : (
+                              <div className="w-full aspect-[3/4] rounded-md border border-border bg-muted animate-pulse" />
+                            )}
+                          </div>
+                        );
+                      })
                     )}
                   </div>
-                  {checkin.notes && <p className="text-xs text-muted-foreground">{checkin.notes}</p>}
-                  {hasPhotos && <CheckinPhotos checkin={checkin} />}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-xs">Nenhum check-in registrado.</p>
-        )}
-      </div>
+                )}
+              </>
+            ) : (
+              <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Feedbacks */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <MessageSquare className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
-        </div>
-        {feedbacks.length > 0 ? (
-          <div className="space-y-3">
-            {feedbacks.map((fb: any) => (
-              <div key={fb.id} className="border border-border rounded-md p-3 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(fb.created_at).toLocaleDateString("pt-BR")}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Star size={12} className={fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"} />
-                    <span className={`text-xs font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
-                      {fb.rating}/10
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xs text-foreground">{fb.message}</p>
-              </div>
-            ))}
-          </div>
+        {/* Evolução */}
+        {evolutions.length > 0 ? (
+          <EvolutionSection evolutions={evolutions} />
         ) : (
-          <p className="text-muted-foreground text-xs">Nenhum feedback recebido.</p>
+          <AccordionItem value="evolucao" className="bg-card border border-border rounded-lg px-4 border-b">
+            <AccordionTrigger className="hover:no-underline py-3">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-1 pb-4">
+              <p className="text-muted-foreground text-xs">Nenhuma evolução registrada.</p>
+            </AccordionContent>
+          </AccordionItem>
         )}
-      </div>
+
+        {/* Check-ins */}
+        <AccordionItem value="checkins" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <Scale className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Check-ins ({checkins.length})</h3>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {checkins.length > 0 ? (
+              <div className="space-y-3">
+                {checkins.map((checkin: any) => {
+                  const hasPhotos = checkin.photo_front || checkin.photo_side || checkin.photo_back;
+                  return (
+                    <div key={checkin.id} className="border border-border rounded-md p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(checkin.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                        </span>
+                        {checkin.weight && (
+                          <div className="flex items-center gap-1 text-xs font-medium text-foreground">
+                            <Scale size={12} className="text-primary" />
+                            {checkin.weight} kg
+                          </div>
+                        )}
+                      </div>
+                      {checkin.notes && <p className="text-xs text-muted-foreground">{checkin.notes}</p>}
+                      {hasPhotos && <CheckinPhotos checkin={checkin} />}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-xs">Nenhum check-in registrado.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Feedbacks */}
+        <AccordionItem value="feedbacks" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Feedbacks ({feedbacks.length})</h3>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {feedbacks.length > 0 ? (
+              <div className="space-y-3">
+                {feedbacks.map((fb: any) => (
+                  <div key={fb.id} className="border border-border rounded-md p-3 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(fb.created_at).toLocaleDateString("pt-BR")}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <Star size={12} className={fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"} />
+                        <span className={`text-xs font-bold ${fb.rating <= 3 ? "text-destructive" : fb.rating <= 6 ? "text-yellow-500" : "text-green-500"}`}>
+                          {fb.rating}/10
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-foreground">{fb.message}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-xs">Nenhum feedback recebido.</p>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {pdfProtocol && (
         <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
