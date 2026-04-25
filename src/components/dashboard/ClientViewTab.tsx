@@ -5,7 +5,7 @@ import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History,
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import EvolutionSection from "@/components/minha-area/EvolutionSection";
+import { EvolutionCard } from "@/components/minha-area/EvolutionSection";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
@@ -316,6 +316,13 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                   </Button>
                 </div>
 
+                {protocoloAtual.plano_alimentar && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Plano Alimentar</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.plano_alimentar}</pre>
+                  </div>
+                )}
+
                 {protocoloAtual.treino && (
                   <div className="border-t border-border pt-3">
                     <h4 className="text-xs font-bold uppercase text-foreground mb-2">Regras Gerais do Treino</h4>
@@ -335,6 +342,27 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                     regrasGerais={protocoloAtual.treino}
                   />
                 </div>
+
+                {protocoloAtual.suplementacao && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Suplementação</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.suplementacao}</pre>
+                  </div>
+                )}
+
+                {protocoloAtual.cardio && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Cardio</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.cardio}</pre>
+                  </div>
+                )}
+
+                {protocoloAtual.observacoes && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Observações</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.observacoes}</pre>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-muted-foreground text-xs">Protocolo ainda não disponibilizado.</p>
@@ -450,21 +478,25 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
         </AccordionItem>
 
         {/* Evolução */}
-        {evolutions.length > 0 ? (
-          <EvolutionSection evolutions={evolutions} />
-        ) : (
-          <AccordionItem value="evolucao" className="bg-card border border-border rounded-lg px-4 border-b">
-            <AccordionTrigger className="hover:no-underline py-3">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
+        <AccordionItem value="evolucao" className="bg-card border border-border rounded-lg px-4 border-b">
+          <AccordionTrigger className="hover:no-underline py-3">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-bold uppercase text-foreground">Evolução</h3>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="pt-1 pb-4">
+            {evolutions.length > 0 ? (
+              <div className="space-y-5">
+                {evolutions.map((evo) => (
+                  <EvolutionCard key={evo.id} evolution={evo} />
+                ))}
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-1 pb-4">
+            ) : (
               <p className="text-muted-foreground text-xs">Nenhuma evolução registrada.</p>
-            </AccordionContent>
-          </AccordionItem>
-        )}
+            )}
+          </AccordionContent>
+        </AccordionItem>
 
         {/* Check-ins */}
         <AccordionItem value="checkins" className="bg-card border border-border rounded-lg px-4 border-b">

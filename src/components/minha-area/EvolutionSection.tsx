@@ -484,4 +484,5 @@ const EvolutionSection = ({ evolutions }: EvolutionSectionProps) => {
   );
 };
 
+export { EvolutionCard };
 export default EvolutionSection;
