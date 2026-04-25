@@ -5,7 +5,7 @@ import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History,
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import EvolutionSection, { EvolutionCard } from "@/components/minha-area/EvolutionSection";
+import { EvolutionCard } from "@/components/minha-area/EvolutionSection";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
