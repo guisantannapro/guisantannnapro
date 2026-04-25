@@ -316,6 +316,13 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                   </Button>
                 </div>
 
+                {protocoloAtual.plano_alimentar && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Plano Alimentar</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.plano_alimentar}</pre>
+                  </div>
+                )}
+
                 {protocoloAtual.treino && (
                   <div className="border-t border-border pt-3">
                     <h4 className="text-xs font-bold uppercase text-foreground mb-2">Regras Gerais do Treino</h4>
@@ -335,6 +342,27 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
                     regrasGerais={protocoloAtual.treino}
                   />
                 </div>
+
+                {protocoloAtual.suplementacao && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Suplementação</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.suplementacao}</pre>
+                  </div>
+                )}
+
+                {protocoloAtual.cardio && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Cardio</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.cardio}</pre>
+                  </div>
+                )}
+
+                {protocoloAtual.observacoes && (
+                  <div className="border-t border-border pt-3">
+                    <h4 className="text-xs font-bold uppercase text-foreground mb-2">Observações</h4>
+                    <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{protocoloAtual.observacoes}</pre>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-muted-foreground text-xs">Protocolo ainda não disponibilizado.</p>
