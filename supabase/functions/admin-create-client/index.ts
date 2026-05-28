@@ -65,9 +65,9 @@ serve(async (req) => {
     return new Response(JSON.stringify({ success: true, user_id: userId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    console.error("admin-create-client error:", msg);
+  } catch (e: any) {
+    const msg = e?.message || JSON.stringify(e);
+    console.error("admin-create-client error:", msg, e);
     return new Response(JSON.stringify({ error: msg }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
