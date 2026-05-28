@@ -24,14 +24,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
+    let userId: string;
     const { data: userData, error: userErr } = await admin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
       user_metadata: { full_name },
     });
-    if (userErr) throw userErr;
-    const userId = userData.user!.id;
+    if (userErr) {
+      // Try to find existing user
+      const { data: list } = await admin.auth.admin.listUsers();
+      const existing = list?.users?.find((u) => u.email === email);
+      if (!existing) throw userErr;
+      userId = existing.id;
+    } else {
+      userId = userData.user!.id;
+    }
 
     const periodMonths: Record<string, number> = { mensal: 1, trimestral: 3, semestral: 6 };
     const months = periodMonths[period?.toLowerCase()] ?? 1;
