@@ -425,7 +425,16 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                           </div>
                                         </TableCell>
                                         <TableCell className="text-[11px] text-muted-foreground italic py-2 px-1.5 w-[80px] whitespace-normal break-words leading-tight">
-                                          {ex.admin_obs || "—"}
+                                          {isAdmin ? (
+                                            <Input
+                                              value={ex.admin_obs || ""}
+                                              onChange={(e) => handleClientFieldChange(ex.id, "admin_obs", e.target.value)}
+                                              placeholder="—"
+                                              className="h-8 text-xs border-muted bg-background px-2"
+                                            />
+                                          ) : (
+                                            ex.admin_obs || "—"
+                                          )}
                                         </TableCell>
                                       </TableRow>
                                     );
