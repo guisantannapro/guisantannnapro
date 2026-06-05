@@ -173,7 +173,16 @@ const MobileDayAccordion = ({
                 className="grid grid-cols-12 gap-1.5 items-center py-1 border-b border-border/30 last:border-0"
               >
                 <div className="col-span-4 text-[11px] font-medium text-foreground leading-tight">
-                  {ex.exercise_name}
+                  {isAdmin ? (
+                    <Input
+                      value={ex.exercise_name}
+                      onChange={(e) => onFieldChange(ex.id, "exercise_name", e.target.value)}
+                      placeholder="Nome"
+                      className="h-7 text-[11px] px-1.5 border-muted bg-background"
+                    />
+                  ) : (
+                    ex.exercise_name
+                  )}
                 </div>
                 <div className="col-span-3">
                   <div className="relative">
@@ -214,7 +223,16 @@ const MobileDayAccordion = ({
                   </div>
                 </div>
                 <div className="col-span-2 text-[10px] text-muted-foreground italic leading-tight">
-                  {ex.admin_obs || "—"}
+                  {isAdmin ? (
+                    <Input
+                      value={ex.admin_obs || ""}
+                      onChange={(e) => onFieldChange(ex.id, "admin_obs", e.target.value)}
+                      placeholder="—"
+                      className="h-7 text-[10px] px-1 border-muted bg-background"
+                    />
+                  ) : (
+                    ex.admin_obs || "—"
+                  )}
                 </div>
               </div>
             );
