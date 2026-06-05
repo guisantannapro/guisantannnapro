@@ -96,14 +96,33 @@ const MobileDayAccordion = ({
                   className="border border-border/60 rounded-md p-2 space-y-1.5 bg-background/50"
                 >
                   <div className="flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-semibold text-foreground leading-tight">
-                        {ex.exercise_name}
-                      </div>
-                      {ex.metodo && (
-                        <div className="text-[10px] text-muted-foreground mt-0.5">
-                          {ex.metodo}
-                        </div>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      {isAdmin ? (
+                        <>
+                          <Input
+                            value={ex.exercise_name}
+                            onChange={(e) => onFieldChange(ex.id, "exercise_name", e.target.value)}
+                            placeholder="Nome do exercício"
+                            className="h-7 text-[11px] px-1.5 border-muted bg-background"
+                          />
+                          <Input
+                            value={ex.metodo || ""}
+                            onChange={(e) => onFieldChange(ex.id, "metodo", e.target.value)}
+                            placeholder="Método"
+                            className="h-7 text-[10px] px-1.5 border-muted bg-background"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-xs font-semibold text-foreground leading-tight">
+                            {ex.exercise_name}
+                          </div>
+                          {ex.metodo && (
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              {ex.metodo}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                     <div className="w-24 shrink-0">
@@ -129,11 +148,20 @@ const MobileDayAccordion = ({
                       </div>
                     </div>
                   </div>
-                  {ex.admin_obs && (
-                    <div className="text-[10px] text-muted-foreground italic">
-                      <span className="font-semibold text-foreground/70">Coach:</span>{" "}
-                      {ex.admin_obs}
-                    </div>
+                  {isAdmin ? (
+                    <Input
+                      value={ex.admin_obs || ""}
+                      onChange={(e) => onFieldChange(ex.id, "admin_obs", e.target.value)}
+                      placeholder="Obs Coach"
+                      className="h-7 text-[10px] px-1.5 border-muted bg-background"
+                    />
+                  ) : (
+                    ex.admin_obs && (
+                      <div className="text-[10px] text-muted-foreground italic">
+                        <span className="font-semibold text-foreground/70">Coach:</span>{" "}
+                        {ex.admin_obs}
+                      </div>
+                    )
                   )}
                 </div>
               );
@@ -145,7 +173,16 @@ const MobileDayAccordion = ({
                 className="grid grid-cols-12 gap-1.5 items-center py-1 border-b border-border/30 last:border-0"
               >
                 <div className="col-span-4 text-[11px] font-medium text-foreground leading-tight">
-                  {ex.exercise_name}
+                  {isAdmin ? (
+                    <Input
+                      value={ex.exercise_name}
+                      onChange={(e) => onFieldChange(ex.id, "exercise_name", e.target.value)}
+                      placeholder="Nome"
+                      className="h-7 text-[11px] px-1.5 border-muted bg-background"
+                    />
+                  ) : (
+                    ex.exercise_name
+                  )}
                 </div>
                 <div className="col-span-3">
                   <div className="relative">
@@ -186,7 +223,16 @@ const MobileDayAccordion = ({
                   </div>
                 </div>
                 <div className="col-span-2 text-[10px] text-muted-foreground italic leading-tight">
-                  {ex.admin_obs || "—"}
+                  {isAdmin ? (
+                    <Input
+                      value={ex.admin_obs || ""}
+                      onChange={(e) => onFieldChange(ex.id, "admin_obs", e.target.value)}
+                      placeholder="—"
+                      className="h-7 text-[10px] px-1 border-muted bg-background"
+                    />
+                  ) : (
+                    ex.admin_obs || "—"
+                  )}
                 </div>
               </div>
             );
