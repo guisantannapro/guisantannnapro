@@ -24,7 +24,9 @@ const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], struct
 interface ClientViewTabProps {
   userId: string;
   clientName: string;
+  onPlanUpdated?: () => void | Promise<void>;
 }
+
 
 const planLabels: Record<string, string> = {
   base: "Base",
@@ -47,7 +49,7 @@ const periodLabels: Record<string, string> = {
   semestral: "Semestral",
 };
 
-const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
+const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -261,8 +263,12 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
             userId={userId}
             currentPlan={resolvedPlan}
             currentPeriod={resolvedPeriod}
-            onSaved={fetchData}
+            onSaved={async () => {
+              await fetchData();
+              await onPlanUpdated?.();
+            }}
           />
+
         </div>
         {resolvedPlan ? (
           <div className="space-y-2">

@@ -244,12 +244,15 @@ const Dashboard = () => {
       }));
 
       setClients(enriched);
+      return enriched;
     } catch (err) {
       console.error("Error fetching clients:", err);
+      return [];
     } finally {
       setLoading(false);
     }
   };
+
 
   const fetchClientProtocols = useCallback(async (userId: string) => {
     const { data } = await supabase
@@ -901,8 +904,16 @@ const Dashboard = () => {
                 <ClientViewTab
                   userId={selectedClient.user_id}
                   clientName={getField(selectedClient, "fullName")}
+                  onPlanUpdated={async () => {
+                    const updated = await fetchClients();
+                    if (selectedClient?.user_id) {
+                      const refreshed = updated.find((c) => c.user_id === selectedClient.user_id);
+                      if (refreshed) setSelectedClient(refreshed);
+                    }
+                  }}
                 />
               </TabsContent>
+
             </Tabs>
             </>
           )}
