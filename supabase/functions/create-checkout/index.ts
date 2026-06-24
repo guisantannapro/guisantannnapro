@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -53,6 +54,34 @@ serve(async (req) => {
       else if (priceKey.includes("treino")) modality = "treino";
     }
 
+    // Identify the authenticated user (required for renewals — used by activate-plan)
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader) {
+      try {
+        const supabaseClient = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+        );
+        const token = authHeader.replace("Bearer ", "");
+        const { data } = await supabaseClient.auth.getUser(token);
+        if (data?.user) {
+          userId = data.user.id;
+          userEmail = data.user.email ?? null;
+        }
+      } catch (_) {
+        // ignore — guest checkout for first purchase
+      }
+    }
+
+    if (renewal && !userId) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required for renewal" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -60,13 +89,24 @@ serve(async (req) => {
     const successParams = new URLSearchParams({ plan: planType, period });
     if (modality) successParams.set("modality", modality);
     if (renewal) successParams.set("renewal", "true");
+    // Stripe replaces this placeholder with the actual session id on redirect
+    successParams.set("session_id", "{CHECKOUT_SESSION_ID}");
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [{ price: PRICE_MAP[priceKey], quantity: 1 }],
       mode: "payment",
+      customer_email: userEmail ?? undefined,
       success_url: `${req.headers.get("origin")}/pagamento-sucesso?${successParams.toString()}`,
       cancel_url: `${req.headers.get("origin")}/#planos`,
+      metadata: {
+        plan: planType,
+        period,
+        modality,
+        renewal: renewal ? "true" : "false",
+        user_id: userId ?? "",
+        price_key: priceKey,
+      },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
