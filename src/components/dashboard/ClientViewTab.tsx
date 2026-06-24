@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
@@ -587,11 +586,8 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps
         </AccordionItem>
       </Accordion>
 
-      {pdfProtocol && typeof document !== "undefined" && createPortal(
-        <div
-          style={{ position: "fixed", left: "-10000px", top: 0, width: "700px", background: "#ffffff", zIndex: -1 }}
-          aria-hidden="true"
-        >
+      {pdfProtocol && (
+        <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
           <ProtocolPdfContent
             wrapperId="protocolo-content-client-view"
             protocolo={pdfProtocol}
@@ -604,8 +600,7 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps
             }}
             planInfo={{ plan: resolvedPlan || undefined, duration: resolvedPeriod || undefined }}
           />
-        </div>,
-        document.body
+        </div>
       )}
     </div>
   );
