@@ -52,7 +52,7 @@ const SetPlanDialog = ({ userId, currentPlan, currentPeriod, onSaved }: SetPlanD
       const { error } = await supabase
         .from("profiles")
         .update({
-          plan,
+          plan: plan as "base" | "transformacao" | "elite",
           plan_duration: period,
           plan_activated_at: now.toISOString(),
           plan_expires_at: expires.toISOString(),
