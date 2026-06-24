@@ -346,30 +346,12 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                     return (
                                       <TableRow key={ex.id} className="hover:bg-muted/30">
                                         <TableCell className="text-xs font-medium py-2 px-1.5 w-[110px] whitespace-normal break-words leading-tight">
-                                          {isAdmin ? (
-                                            <Input
-                                              value={ex.exercise_name}
-                                              onChange={(e) => handleClientFieldChange(ex.id, "exercise_name", e.target.value)}
-                                              placeholder="Nome do exercício"
-                                              className="h-8 text-xs border-muted bg-background px-2"
-                                            />
-                                          ) : (
-                                            ex.exercise_name
-                                          )}
+                                          {ex.exercise_name}
                                         </TableCell>
                                         {isComplementar ? (
                                           <>
                                             <TableCell className="text-xs text-muted-foreground py-2 px-1.5 w-[90px] whitespace-normal break-words leading-tight">
-                                              {isAdmin ? (
-                                                <Input
-                                                  value={ex.metodo}
-                                                  onChange={(e) => handleClientFieldChange(ex.id, "metodo", e.target.value)}
-                                                  placeholder="Método"
-                                                  className="h-8 text-xs border-muted bg-background px-2"
-                                                />
-                                              ) : (
-                                                ex.metodo
-                                              )}
+                                              {ex.metodo}
                                             </TableCell>
                                             <TableCell className="py-1 px-1.5">
                                               <div className="relative">
@@ -425,16 +407,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                           </div>
                                         </TableCell>
                                         <TableCell className="text-[11px] text-muted-foreground italic py-2 px-1.5 w-[80px] whitespace-normal break-words leading-tight">
-                                          {isAdmin ? (
-                                            <Input
-                                              value={ex.admin_obs || ""}
-                                              onChange={(e) => handleClientFieldChange(ex.id, "admin_obs", e.target.value)}
-                                              placeholder="—"
-                                              className="h-8 text-xs border-muted bg-background px-2"
-                                            />
-                                          ) : (
-                                            ex.admin_obs || "—"
-                                          )}
+                                          {ex.admin_obs || "—"}
                                         </TableCell>
                                       </TableRow>
                                     );
