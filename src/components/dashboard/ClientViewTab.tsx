@@ -10,6 +10,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
+import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -251,9 +252,17 @@ const ClientViewTab = ({ userId, clientName }: ClientViewTabProps) => {
     <div className="space-y-5">
       {/* Plano */}
       <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <User className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-bold uppercase text-foreground">Plano</h3>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-bold uppercase text-foreground">Plano</h3>
+          </div>
+          <SetPlanDialog
+            userId={userId}
+            currentPlan={resolvedPlan}
+            currentPeriod={resolvedPeriod}
+            onSaved={fetchData}
+          />
         </div>
         {resolvedPlan ? (
           <div className="space-y-2">
