@@ -11,6 +11,7 @@ const PaymentSuccess = () => {
   const period = searchParams.get("period");
   const modality = searchParams.get("modality");
   const isRenewal = searchParams.get("renewal") === "true";
+  const sessionId = searchParams.get("session_id");
   const [activating, setActivating] = useState(false);
   const [activated, setActivated] = useState(false);
   const [renewalStartsAt, setRenewalStartsAt] = useState<string | null>(null);
@@ -21,15 +22,15 @@ const PaymentSuccess = () => {
     if (modality) localStorage.setItem("purchased_modality", modality);
   }, [plan, period, modality]);
 
-  // Auto-activate plan on renewal
+  // Auto-activate plan on renewal — backend verifies Stripe payment via session_id
   useEffect(() => {
-    if (!isRenewal || !plan || activated || activating) return;
+    if (!isRenewal || !sessionId || activated || activating) return;
 
     const activatePlan = async () => {
       setActivating(true);
       try {
         const { data, error } = await supabase.functions.invoke("activate-plan", {
-          body: { plan, period: period || "mensal" },
+          body: { session_id: sessionId },
         });
 
         if (error) {
@@ -51,7 +52,7 @@ const PaymentSuccess = () => {
     };
 
     activatePlan();
-  }, [isRenewal, plan, period, activated, activating]);
+  }, [isRenewal, sessionId, activated, activating]);
 
   const formatDate = (iso: string) => new Date(iso).toLocaleDateString("pt-BR");
 
