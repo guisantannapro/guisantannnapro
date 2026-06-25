@@ -242,7 +242,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       (async () => {
         const { data: rows } = await supabase
           .from("protocol_exercises")
-          .select("week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .select("id, week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
           .eq("protocolo_id", existingProtocol.id)
           .order("week_number", { ascending: true })
           .order("sort_order", { ascending: true });
@@ -263,6 +263,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             }
             dayMap.get(r.day_label)!.exercises.push({
               id: crypto.randomUUID(),
+              db_id: r.id,
               exercise_name: r.exercise_name,
               top_set: "",
               back_off: "",
