@@ -334,6 +334,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
           day_label: d.day_label,
           table_type: d.table_type,
           exercises: d.exercises.map(e => ({
+            db_id: isEditMode ? (e.db_id ?? null) : null,
             exercise_name: e.exercise_name,
             metodo: e.metodo || "",
             admin_obs: e.admin_obs || "",
