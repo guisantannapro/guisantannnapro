@@ -242,7 +242,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       (async () => {
         const { data: rows } = await supabase
           .from("protocol_exercises")
-          .select("week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .select("id, week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
           .eq("protocolo_id", existingProtocol.id)
           .order("week_number", { ascending: true })
           .order("sort_order", { ascending: true });
@@ -263,6 +263,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             }
             dayMap.get(r.day_label)!.exercises.push({
               id: crypto.randomUUID(),
+              db_id: r.id,
               exercise_name: r.exercise_name,
               top_set: "",
               back_off: "",
@@ -281,12 +282,12 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               lastWeekDays = Array.from(dayMap.values());
               built.push(lastWeekDays);
             } else {
-              // Clona a última semana disponível com novos ids
+              // Clona a última semana disponível com novos ids (db_id=null pois são novas linhas)
               built.push(
                 lastWeekDays.map(d => ({
                   ...d,
                   id: crypto.randomUUID(),
-                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID(), db_id: null })),
                 }))
               );
             }
@@ -333,6 +334,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
           day_label: d.day_label,
           table_type: d.table_type,
           exercises: d.exercises.map(e => ({
+            db_id: isEditMode ? (e.db_id ?? null) : null,
             exercise_name: e.exercise_name,
             metodo: e.metodo || "",
             admin_obs: e.admin_obs || "",

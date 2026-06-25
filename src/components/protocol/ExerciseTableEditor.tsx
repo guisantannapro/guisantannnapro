@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 export interface ExerciseRow {
   id: string;
+  db_id?: string | null;
   exercise_name: string;
   top_set: string;
   back_off: string;
@@ -174,7 +175,7 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
       src.map(d => ({
         ...d,
         id: uid(),
-        exercises: d.exercises.map(e => ({ ...e, id: uid() })),
+        exercises: d.exercises.map(e => ({ ...e, id: uid(), db_id: null })),
       }));
     const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? w : cloneDays(days)));
     onWeeklyDaysChange(next);
