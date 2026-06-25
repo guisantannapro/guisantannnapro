@@ -282,12 +282,12 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               lastWeekDays = Array.from(dayMap.values());
               built.push(lastWeekDays);
             } else {
-              // Clona a última semana disponível com novos ids
+              // Clona a última semana disponível com novos ids (db_id=null pois são novas linhas)
               built.push(
                 lastWeekDays.map(d => ({
                   ...d,
                   id: crypto.randomUUID(),
-                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID() })),
+                  exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID(), db_id: null })),
                 }))
               );
             }
