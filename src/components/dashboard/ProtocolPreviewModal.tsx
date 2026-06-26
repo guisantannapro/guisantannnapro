@@ -201,7 +201,7 @@ Média de 200-300 Kcals por sessão
 Frequência Cardíaca Média: 120-130bpm
 Tipo: Qualquer um de sua preferência. O importante é manter a frequência cardíaca indicada (intensidade elevada) durante a sessão. O elíptico (transfer) é uma ótima opção por não envolver nenhum tipo de impacto ou estresse nos ligamentos (joelhos)`;
 
-const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, onSaved }: ProtocolPreviewModalProps) => {
+const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, previousProtocol, onSaved }: ProtocolPreviewModalProps) => {
   const isEditMode = !!existingProtocol;
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
