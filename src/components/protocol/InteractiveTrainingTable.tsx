@@ -43,6 +43,7 @@ interface InteractiveTrainingTableProps {
 
 const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regrasGerais }: InteractiveTrainingTableProps) => {
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
+  const [columnLabels, setColumnLabels] = useState<Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }>>({});
   const [loading, setLoading] = useState(true);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
