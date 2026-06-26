@@ -368,6 +368,20 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       }
       const perWeekPayload = safeWeekly.map(mapDays);
 
+      // Coleta column_labels por day_label (último valor encontrado vence; deve ser consistente entre semanas)
+      const columnLabelsByDay: Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }> = {};
+      for (const week of safeWeekly) {
+        for (const d of week) {
+          const cl = d.column_labels;
+          if (cl && (cl.col_topset_metodo || cl.col_backoff_cargarep)) {
+            columnLabelsByDay[d.day_label] = {
+              ...(cl.col_topset_metodo ? { col_topset_metodo: cl.col_topset_metodo } : {}),
+              ...(cl.col_backoff_cargarep ? { col_backoff_cargarep: cl.col_backoff_cargarep } : {}),
+            };
+          }
+        }
+      }
+
       const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
       const rpcArgs: Record<string, any> = isEditMode
         ? {
@@ -382,6 +396,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _exercise_weeks: 4,
             _exercise_days: perWeekPayload[0] || [],
             _exercise_days_per_week: perWeekPayload,
+            _column_labels: columnLabelsByDay,
           }
         : {
             _user_id: client.user_id,
@@ -395,6 +410,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
             _exercise_weeks: 4,
             _exercise_days: perWeekPayload[0] || [],
             _exercise_days_per_week: perWeekPayload,
+            _column_labels: columnLabelsByDay,
           };
 
       const { error } = await supabase.rpc(rpcName as any, rpcArgs);
