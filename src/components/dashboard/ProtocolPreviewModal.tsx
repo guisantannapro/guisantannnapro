@@ -311,8 +311,14 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     }
   }, [open, isEditMode, existingProtocol]);
 
+  const isLoadingPreviousRef = useRef(false);
+
   useEffect(() => {
     if (isEditMode) return; // não sobrescreve em modo edição
+    if (isLoadingPreviousRef.current) {
+      isLoadingPreviousRef.current = false;
+      return;
+    }
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
       setRegrasGerais(defaultRegrasGerais);
@@ -322,6 +328,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
       setWeeklyDays(buildDefaultWeeks());
     }
   }, [protocolType, isEditMode]);
+
 
   const [loadingPrevious, setLoadingPrevious] = useState(false);
 
