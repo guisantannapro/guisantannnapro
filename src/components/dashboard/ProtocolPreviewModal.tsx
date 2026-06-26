@@ -311,8 +311,14 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     }
   }, [open, isEditMode, existingProtocol]);
 
+  const isLoadingPreviousRef = useRef(false);
+
   useEffect(() => {
     if (isEditMode) return; // não sobrescreve em modo edição
+    if (isLoadingPreviousRef.current) {
+      isLoadingPreviousRef.current = false;
+      return;
+    }
     if (protocolType) {
       setPlanoAlimentar(dietTextTemplates[protocolType]);
       setRegrasGerais(defaultRegrasGerais);
@@ -323,6 +329,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     }
   }, [protocolType, isEditMode]);
 
+
   const [loadingPrevious, setLoadingPrevious] = useState(false);
 
   // Carrega os campos a partir de um protocolo anterior, como base para um NOVO protocolo.
@@ -332,7 +339,9 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     setLoadingPrevious(true);
     try {
       const t = (previousProtocol.tipo_protocolo as ProtocolType) || "bulking";
+      isLoadingPreviousRef.current = true;
       setProtocolType(t);
+
       setPlanoAlimentar(previousProtocol.plano_alimentar || "");
       setRegrasGerais(previousProtocol.treino || "");
       setSuplementacao(previousProtocol.suplementacao || "");
