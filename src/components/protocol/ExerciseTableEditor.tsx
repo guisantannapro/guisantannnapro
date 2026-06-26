@@ -21,11 +21,17 @@ export interface ExerciseRow {
   table_type: "standard" | "complementar";
 }
 
+export interface DayColumnLabels {
+  col_topset_metodo?: string;
+  col_backoff_cargarep?: string;
+}
+
 export interface DayBlock {
   id: string;
   day_label: string;
   table_type: "standard" | "complementar";
   exercises: ExerciseRow[];
+  column_labels?: DayColumnLabels;
 }
 
 interface ExerciseTableEditorProps {

@@ -294,6 +294,7 @@ export type Database = {
       protocolos: {
         Row: {
           cardio: string
+          column_labels: Json
           created_at: string
           id: string
           nome: string
@@ -307,6 +308,7 @@ export type Database = {
         }
         Insert: {
           cardio?: string
+          column_labels?: Json
           created_at?: string
           id?: string
           nome: string
@@ -320,6 +322,7 @@ export type Database = {
         }
         Update: {
           cardio?: string
+          column_labels?: Json
           created_at?: string
           id?: string
           nome?: string
@@ -442,6 +445,23 @@ export type Database = {
             }
             Returns: string
           }
+        | {
+            Args: {
+              _cardio?: string
+              _column_labels?: Json
+              _exercise_days?: Json
+              _exercise_days_per_week?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+              _user_id: string
+            }
+            Returns: string
+          }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -469,6 +489,23 @@ export type Database = {
         | {
             Args: {
               _cardio?: string
+              _exercise_days?: Json
+              _exercise_days_per_week?: Json
+              _exercise_weeks?: number
+              _nome: string
+              _observacoes?: string
+              _plano_alimentar?: string
+              _protocolo_id: string
+              _suplementacao?: string
+              _tipo_protocolo: string
+              _treino?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              _cardio?: string
+              _column_labels?: Json
               _exercise_days?: Json
               _exercise_days_per_week?: Json
               _exercise_weeks?: number
