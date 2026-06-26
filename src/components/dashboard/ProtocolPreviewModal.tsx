@@ -565,6 +565,30 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
               <p className="text-sm text-foreground mt-1">{clientGoal}</p>
             </div>
 
+            {!isEditMode && previousProtocol && (
+              <div className="border border-primary/30 bg-primary/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Tem um protocolo anterior — quer usá-lo como base?
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Preenche todos os campos com o conteúdo de <strong>{previousProtocol.nome}</strong>
+                    {previousProtocol.created_at && ` (de ${new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")})`}.
+                    Os exercícios entram como novos — o histórico do cliente no protocolo antigo continua intacto.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={loadFromPrevious}
+                  disabled={loadingPrevious}
+                  className="gap-2 shrink-0"
+                >
+                  <Copy size={14} />
+                  {loadingPrevious ? "Carregando..." : "Carregar do anterior"}
+                </Button>
+              </div>
+            )}
+
             <div>
               <h3 className="text-sm font-semibold uppercase text-foreground mb-3">
                 Selecione o tipo de protocolo <span className="text-destructive">*</span>
