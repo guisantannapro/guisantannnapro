@@ -323,6 +323,100 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     }
   }, [protocolType, isEditMode]);
 
+  const [loadingPrevious, setLoadingPrevious] = useState(false);
+
+  // Carrega os campos a partir de um protocolo anterior, como base para um NOVO protocolo.
+  // Diferente do modo edição: todos os exercícios entram com db_id=null (são linhas novas).
+  const loadFromPrevious = async () => {
+    if (!previousProtocol || isEditMode) return;
+    setLoadingPrevious(true);
+    try {
+      const t = (previousProtocol.tipo_protocolo as ProtocolType) || "bulking";
+      setProtocolType(t);
+      setPlanoAlimentar(previousProtocol.plano_alimentar || "");
+      setRegrasGerais(previousProtocol.treino || "");
+      setSuplementacao(previousProtocol.suplementacao || "");
+      setCardio(previousProtocol.cardio || "");
+      setObservacoes(previousProtocol.observacoes || "");
+
+      const [{ data: rows }, { data: protoRow }] = await Promise.all([
+        supabase
+          .from("protocol_exercises")
+          .select("id, week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .eq("protocolo_id", previousProtocol.id)
+          .order("week_number", { ascending: true })
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("protocolos")
+          .select("column_labels")
+          .eq("id", previousProtocol.id)
+          .maybeSingle(),
+      ]);
+
+      const columnLabelsMap: Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }> =
+        (protoRow?.column_labels as any) || {};
+
+      if (rows && rows.length > 0) {
+        const weekMap = new Map<number, Map<string, DayBlock>>();
+        for (const r of rows) {
+          if (!weekMap.has(r.week_number)) weekMap.set(r.week_number, new Map());
+          const dayMap = weekMap.get(r.week_number)!;
+          if (!dayMap.has(r.day_label)) {
+            dayMap.set(r.day_label, {
+              id: crypto.randomUUID(),
+              day_label: r.day_label,
+              table_type: (r.table_type as "standard" | "complementar") || "standard",
+              exercises: [],
+              column_labels: columnLabelsMap[r.day_label] || {},
+            });
+          }
+          dayMap.get(r.day_label)!.exercises.push({
+            id: crypto.randomUUID(),
+            db_id: null, // sempre nova linha — não vincula ao histórico do anterior
+            exercise_name: r.exercise_name,
+            top_set: "",
+            back_off: "",
+            metodo: r.metodo || "",
+            admin_obs: r.admin_obs || "",
+            table_type: (r.table_type as "standard" | "complementar") || "standard",
+          });
+        }
+
+        const built: DayBlock[][] = [];
+        let lastWeekDays: DayBlock[] = [];
+        for (let w = 1; w <= 4; w++) {
+          const dayMap = weekMap.get(w);
+          if (dayMap && dayMap.size > 0) {
+            lastWeekDays = Array.from(dayMap.values());
+            built.push(lastWeekDays);
+          } else {
+            built.push(
+              lastWeekDays.map(d => ({
+                ...d,
+                id: crypto.randomUUID(),
+                exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID(), db_id: null })),
+              }))
+            );
+          }
+        }
+        setWeeklyDays(built);
+      }
+
+      const dateLabel = previousProtocol.created_at
+        ? new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")
+        : "anterior";
+      toast.success(`Campos preenchidos com base no protocolo de ${dateLabel} — ajuste o que mudou antes de salvar.`, {
+        duration: 6000,
+      });
+    } catch (err: any) {
+      console.error("Error loading previous protocol:", err);
+      toast.error("Erro ao carregar protocolo anterior.");
+    } finally {
+      setLoadingPrevious(false);
+    }
+  };
+
+
   const handleClose = (value: boolean) => {
     if (!value) {
       setProtocolType(null);
