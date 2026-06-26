@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { ClipboardList, Save } from "lucide-react";
+import { ClipboardList, Save, Copy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ExerciseTableEditor, { DayBlock, DEFAULT_DAYS } from "@/components/protocol/ExerciseTableEditor";
@@ -39,6 +39,7 @@ interface ExistingProtocol {
   suplementacao: string;
   cardio: string;
   observacoes: string | null;
+  created_at?: string;
 }
 
 interface ProtocolPreviewModalProps {
@@ -46,6 +47,7 @@ interface ProtocolPreviewModalProps {
   onOpenChange: (open: boolean) => void;
   client: ClientData;
   existingProtocol?: ExistingProtocol | null;
+  previousProtocol?: ExistingProtocol | null;
   onSaved?: () => void;
 }
 
@@ -199,7 +201,7 @@ Média de 200-300 Kcals por sessão
 Frequência Cardíaca Média: 120-130bpm
 Tipo: Qualquer um de sua preferência. O importante é manter a frequência cardíaca indicada (intensidade elevada) durante a sessão. O elíptico (transfer) é uma ótima opção por não envolver nenhum tipo de impacto ou estresse nos ligamentos (joelhos)`;
 
-const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, onSaved }: ProtocolPreviewModalProps) => {
+const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, previousProtocol, onSaved }: ProtocolPreviewModalProps) => {
   const isEditMode = !!existingProtocol;
   const [protocolType, setProtocolType] = useState<ProtocolType | null>(null);
   const [planoAlimentar, setPlanoAlimentar] = useState("");
@@ -320,6 +322,100 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
       setWeeklyDays(buildDefaultWeeks());
     }
   }, [protocolType, isEditMode]);
+
+  const [loadingPrevious, setLoadingPrevious] = useState(false);
+
+  // Carrega os campos a partir de um protocolo anterior, como base para um NOVO protocolo.
+  // Diferente do modo edição: todos os exercícios entram com db_id=null (são linhas novas).
+  const loadFromPrevious = async () => {
+    if (!previousProtocol || isEditMode) return;
+    setLoadingPrevious(true);
+    try {
+      const t = (previousProtocol.tipo_protocolo as ProtocolType) || "bulking";
+      setProtocolType(t);
+      setPlanoAlimentar(previousProtocol.plano_alimentar || "");
+      setRegrasGerais(previousProtocol.treino || "");
+      setSuplementacao(previousProtocol.suplementacao || "");
+      setCardio(previousProtocol.cardio || "");
+      setObservacoes(previousProtocol.observacoes || "");
+
+      const [{ data: rows }, { data: protoRow }] = await Promise.all([
+        supabase
+          .from("protocol_exercises")
+          .select("id, week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .eq("protocolo_id", previousProtocol.id)
+          .order("week_number", { ascending: true })
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("protocolos")
+          .select("column_labels")
+          .eq("id", previousProtocol.id)
+          .maybeSingle(),
+      ]);
+
+      const columnLabelsMap: Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }> =
+        (protoRow?.column_labels as any) || {};
+
+      if (rows && rows.length > 0) {
+        const weekMap = new Map<number, Map<string, DayBlock>>();
+        for (const r of rows) {
+          if (!weekMap.has(r.week_number)) weekMap.set(r.week_number, new Map());
+          const dayMap = weekMap.get(r.week_number)!;
+          if (!dayMap.has(r.day_label)) {
+            dayMap.set(r.day_label, {
+              id: crypto.randomUUID(),
+              day_label: r.day_label,
+              table_type: (r.table_type as "standard" | "complementar") || "standard",
+              exercises: [],
+              column_labels: columnLabelsMap[r.day_label] || {},
+            });
+          }
+          dayMap.get(r.day_label)!.exercises.push({
+            id: crypto.randomUUID(),
+            db_id: null, // sempre nova linha — não vincula ao histórico do anterior
+            exercise_name: r.exercise_name,
+            top_set: "",
+            back_off: "",
+            metodo: r.metodo || "",
+            admin_obs: r.admin_obs || "",
+            table_type: (r.table_type as "standard" | "complementar") || "standard",
+          });
+        }
+
+        const built: DayBlock[][] = [];
+        let lastWeekDays: DayBlock[] = [];
+        for (let w = 1; w <= 4; w++) {
+          const dayMap = weekMap.get(w);
+          if (dayMap && dayMap.size > 0) {
+            lastWeekDays = Array.from(dayMap.values());
+            built.push(lastWeekDays);
+          } else {
+            built.push(
+              lastWeekDays.map(d => ({
+                ...d,
+                id: crypto.randomUUID(),
+                exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID(), db_id: null })),
+              }))
+            );
+          }
+        }
+        setWeeklyDays(built);
+      }
+
+      const dateLabel = previousProtocol.created_at
+        ? new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")
+        : "anterior";
+      toast.success(`Campos preenchidos com base no protocolo de ${dateLabel} — ajuste o que mudou antes de salvar.`, {
+        duration: 6000,
+      });
+    } catch (err: any) {
+      console.error("Error loading previous protocol:", err);
+      toast.error("Erro ao carregar protocolo anterior.");
+    } finally {
+      setLoadingPrevious(false);
+    }
+  };
+
 
   const handleClose = (value: boolean) => {
     if (!value) {
@@ -468,6 +564,30 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, on
               <span className="text-xs text-muted-foreground uppercase">Objetivo informado pelo cliente (referência)</span>
               <p className="text-sm text-foreground mt-1">{clientGoal}</p>
             </div>
+
+            {!isEditMode && previousProtocol && (
+              <div className="border border-primary/30 bg-primary/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Tem um protocolo anterior — quer usá-lo como base?
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Preenche todos os campos com o conteúdo de <strong>{previousProtocol.nome}</strong>
+                    {previousProtocol.created_at && ` (de ${new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")})`}.
+                    Os exercícios entram como novos — o histórico do cliente no protocolo antigo continua intacto.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={loadFromPrevious}
+                  disabled={loadingPrevious}
+                  className="gap-2 shrink-0"
+                >
+                  <Copy size={14} />
+                  {loadingPrevious ? "Carregando..." : "Carregar do anterior"}
+                </Button>
+              </div>
+            )}
 
             <div>
               <h3 className="text-sm font-semibold uppercase text-foreground mb-3">
