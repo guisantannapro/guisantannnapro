@@ -22,6 +22,10 @@ interface MobileDayAccordionProps {
   savedFields: Set<string>;
   defaultOpen?: boolean;
   onFieldChange: (id: string, field: string, value: string) => void;
+  columnLabels?: {
+    col_topset_metodo?: string;
+    col_backoff_cargarep?: string;
+  };
 }
 
 const MobileDayAccordion = ({
@@ -31,6 +35,7 @@ const MobileDayAccordion = ({
   savedFields,
   defaultOpen = false,
   onFieldChange,
+  columnLabels,
 }: MobileDayAccordionProps) => {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -73,10 +78,10 @@ const MobileDayAccordion = ({
                 Exercício
               </div>
               <div className="col-span-3 text-[9px] font-bold uppercase text-muted-foreground">
-                Top Set 6–8
+                {columnLabels?.col_topset_metodo || "Top Set 6–8"}
               </div>
               <div className="col-span-3 text-[9px] font-bold uppercase text-muted-foreground">
-                Back-off 8–10
+                {columnLabels?.col_backoff_cargarep || "Back-off 8–10"}
               </div>
               <div className="col-span-2 text-[9px] font-bold uppercase text-muted-foreground">
                 Coach
@@ -108,7 +113,7 @@ const MobileDayAccordion = ({
                     </div>
                     <div className="w-24 shrink-0">
                       <label className="text-[9px] font-bold uppercase text-muted-foreground block leading-none mb-0.5">
-                        Carga/Rep
+                        {columnLabels?.col_backoff_cargarep || "Carga/Rep"}
                       </label>
                       <div className="relative">
                         <Input

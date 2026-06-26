@@ -43,6 +43,7 @@ interface InteractiveTrainingTableProps {
 
 const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regrasGerais }: InteractiveTrainingTableProps) => {
   const [exercises, setExercises] = useState<ExerciseData[]>([]);
+  const [columnLabels, setColumnLabels] = useState<Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }>>({});
   const [loading, setLoading] = useState(true);
   const [savedFields, setSavedFields] = useState<Set<string>>(new Set());
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
@@ -113,12 +114,19 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
   useEffect(() => {
     const fetchExercises = async () => {
-      const { data, error } = await supabase
-        .from("protocol_exercises")
-        .select("*")
-        .eq("protocolo_id", protocoloId)
-        .order("week_number")
-        .order("sort_order");
+      const [{ data, error }, { data: protoRow }] = await Promise.all([
+        supabase
+          .from("protocol_exercises")
+          .select("*")
+          .eq("protocolo_id", protocoloId)
+          .order("week_number")
+          .order("sort_order"),
+        supabase
+          .from("protocolos")
+          .select("column_labels")
+          .eq("id", protocoloId)
+          .maybeSingle(),
+      ]);
 
       if (error) {
         console.error("Error fetching exercises:", error);
@@ -126,6 +134,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         return;
       }
       setExercises((data as any[]) || []);
+      setColumnLabels(((protoRow?.column_labels as any) || {}) as Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }>);
       setLoading(false);
     };
     fetchExercises();
@@ -297,6 +306,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                         savedFields={savedFields}
                         defaultOpen={false}
                         onFieldChange={handleClientFieldChange}
+                        columnLabels={columnLabels[dayLabel]}
                       />
                     ))}
                   </div>
@@ -305,6 +315,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                     {[...dayMap.entries()].map(([dayLabel, dayExercises]) => {
                       const tableType = dayExercises[0]?.table_type || "standard";
                       const isComplementar = tableType === "complementar";
+                      const dayLabels = columnLabels[dayLabel] || {};
 
                       return (
                         <details key={dayLabel} className="border border-border rounded-lg overflow-hidden bg-card/40">
@@ -323,13 +334,13 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                     <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[110px]">Exercício</TableHead>
                                     {isComplementar ? (
                                       <>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">Método</TableHead>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Carga/Rep</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">{dayLabels.col_topset_metodo || "Método"}</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_backoff_cargarep || "Carga/Rep"}</TableHead>
                                       </>
                                     ) : (
                                       <>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set (6 - 8)</TableHead>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off (8 - 10)</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_topset_metodo || "Top Set (6 - 8)"}</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_backoff_cargarep || "Back-off (8 - 10)"}</TableHead>
                                       </>
                                     )}
                                     <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs Cliente</TableHead>

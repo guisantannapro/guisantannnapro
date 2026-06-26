@@ -21,11 +21,17 @@ export interface ExerciseRow {
   table_type: "standard" | "complementar";
 }
 
+export interface DayColumnLabels {
+  col_topset_metodo?: string;
+  col_backoff_cargarep?: string;
+}
+
 export interface DayBlock {
   id: string;
   day_label: string;
   table_type: "standard" | "complementar";
   exercises: ExerciseRow[];
+  column_labels?: DayColumnLabels;
 }
 
 interface ExerciseTableEditorProps {
@@ -265,17 +271,33 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
           {/* Exercises table */}
           {!collapsed[day.id] && (
             <div className="p-2">
+              {/* Cabeçalhos personalizados (admin) — sobrescreve o texto padrão das duas colunas do meio */}
+              <div className="flex flex-wrap items-center gap-2 mb-2 px-1">
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">Cabeçalhos:</span>
+                <Input
+                  value={day.column_labels?.col_topset_metodo || ""}
+                  onChange={(e) => updateDay(day.id, "column_labels", { ...(day.column_labels || {}), col_topset_metodo: e.target.value })}
+                  placeholder={day.table_type === "standard" ? "Top Set (6–8)" : "Método"}
+                  className="h-7 text-xs border-muted w-40"
+                />
+                <Input
+                  value={day.column_labels?.col_backoff_cargarep || ""}
+                  onChange={(e) => updateDay(day.id, "column_labels", { ...(day.column_labels || {}), col_backoff_cargarep: e.target.value })}
+                  placeholder={day.table_type === "standard" ? "Back-off (8–10)" : "Carga/Rep"}
+                  className="h-7 text-xs border-muted w-40"
+                />
+              </div>
               <Table>
                 <TableHeader>
                   <TableRow className="text-xs">
                     <TableHead className="h-8 text-xs">Exercício</TableHead>
                     {day.table_type === "standard" ? (
                       <>
-                        <TableHead className="h-8 text-xs w-28">Top Set (6–8)</TableHead>
-                        <TableHead className="h-8 text-xs w-28">Back-off (8–10)</TableHead>
+                        <TableHead className="h-8 text-xs w-28">{day.column_labels?.col_topset_metodo || "Top Set (6–8)"}</TableHead>
+                        <TableHead className="h-8 text-xs w-28">{day.column_labels?.col_backoff_cargarep || "Back-off (8–10)"}</TableHead>
                       </>
                     ) : (
-                      <TableHead className="h-8 text-xs w-40">Método</TableHead>
+                      <TableHead className="h-8 text-xs w-40">{day.column_labels?.col_topset_metodo || "Método"}</TableHead>
                     )}
                     <TableHead className="h-8 text-xs w-28">Obs (Coach)</TableHead>
                     <TableHead className="h-8 text-xs w-10"></TableHead>
