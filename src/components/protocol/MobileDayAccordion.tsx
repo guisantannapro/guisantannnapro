@@ -78,10 +78,10 @@ const MobileDayAccordion = ({
                 Exercício
               </div>
               <div className="col-span-3 text-[9px] font-bold uppercase text-muted-foreground">
-                Top Set 6–8
+                {columnLabels?.col_topset_metodo || "Top Set 6–8"}
               </div>
               <div className="col-span-3 text-[9px] font-bold uppercase text-muted-foreground">
-                Back-off 8–10
+                {columnLabels?.col_backoff_cargarep || "Back-off 8–10"}
               </div>
               <div className="col-span-2 text-[9px] font-bold uppercase text-muted-foreground">
                 Coach
