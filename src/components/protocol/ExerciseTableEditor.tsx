@@ -292,6 +292,11 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
                   size="sm"
                   onClick={() => {
                     const labels = day.column_labels || {};
+                    const hasAny = (labels.col_topset_metodo || "").trim() !== "" || (labels.col_backoff_cargarep || "").trim() !== "";
+                    if (!hasAny) {
+                      toast.warning("Preencha ao menos um cabeçalho antes de aplicar");
+                      return;
+                    }
                     const newDays = days.map(d =>
                       d.id !== day.id && d.table_type === day.table_type
                         ? { ...d, column_labels: { ...labels } }
