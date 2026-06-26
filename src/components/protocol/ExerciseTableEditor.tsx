@@ -286,6 +286,26 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
                   placeholder={day.table_type === "standard" ? "Back-off (8–10)" : "Carga/Rep"}
                   className="h-7 text-xs border-muted w-40"
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const labels = day.column_labels || {};
+                    const newDays = days.map(d =>
+                      d.id !== day.id && d.table_type === day.table_type
+                        ? { ...d, column_labels: { ...labels } }
+                        : d
+                    );
+                    const next = safeWeekly.map((w, i) => (i === activeWeek - 1 ? newDays : w));
+                    onWeeklyDaysChange(next);
+                    toast.success("Cabeçalho aplicado aos dias desta semana");
+                  }}
+                  className="gap-1.5 text-[10px] h-7"
+                >
+                  <Copy size={10} />
+                  Aplicar aos outros dias
+                </Button>
               </div>
               <Table>
                 <TableHeader>
