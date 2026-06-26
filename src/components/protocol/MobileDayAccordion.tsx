@@ -113,7 +113,7 @@ const MobileDayAccordion = ({
                     </div>
                     <div className="w-24 shrink-0">
                       <label className="text-[9px] font-bold uppercase text-muted-foreground block leading-none mb-0.5">
-                        Carga/Rep
+                        {columnLabels?.col_backoff_cargarep || "Carga/Rep"}
                       </label>
                       <div className="relative">
                         <Input
