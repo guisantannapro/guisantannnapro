@@ -339,7 +339,9 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     setLoadingPrevious(true);
     try {
       const t = (previousProtocol.tipo_protocolo as ProtocolType) || "bulking";
+      isLoadingPreviousRef.current = true;
       setProtocolType(t);
+
       setPlanoAlimentar(previousProtocol.plano_alimentar || "");
       setRegrasGerais(previousProtocol.treino || "");
       setSuplementacao(previousProtocol.suplementacao || "");
