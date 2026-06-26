@@ -39,6 +39,7 @@ interface ExistingProtocol {
   suplementacao: string;
   cardio: string;
   observacoes: string | null;
+  created_at?: string;
 }
 
 interface ProtocolPreviewModalProps {
@@ -46,6 +47,7 @@ interface ProtocolPreviewModalProps {
   onOpenChange: (open: boolean) => void;
   client: ClientData;
   existingProtocol?: ExistingProtocol | null;
+  previousProtocol?: ExistingProtocol | null;
   onSaved?: () => void;
 }
 
