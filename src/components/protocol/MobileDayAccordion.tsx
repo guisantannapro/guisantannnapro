@@ -22,6 +22,10 @@ interface MobileDayAccordionProps {
   savedFields: Set<string>;
   defaultOpen?: boolean;
   onFieldChange: (id: string, field: string, value: string) => void;
+  columnLabels?: {
+    col_topset_metodo?: string;
+    col_backoff_cargarep?: string;
+  };
 }
 
 const MobileDayAccordion = ({
@@ -31,6 +35,7 @@ const MobileDayAccordion = ({
   savedFields,
   defaultOpen = false,
   onFieldChange,
+  columnLabels,
 }: MobileDayAccordionProps) => {
   const [open, setOpen] = useState(defaultOpen);
 
