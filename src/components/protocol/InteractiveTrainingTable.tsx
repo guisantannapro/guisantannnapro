@@ -114,12 +114,19 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
 
   useEffect(() => {
     const fetchExercises = async () => {
-      const { data, error } = await supabase
-        .from("protocol_exercises")
-        .select("*")
-        .eq("protocolo_id", protocoloId)
-        .order("week_number")
-        .order("sort_order");
+      const [{ data, error }, { data: protoRow }] = await Promise.all([
+        supabase
+          .from("protocol_exercises")
+          .select("*")
+          .eq("protocolo_id", protocoloId)
+          .order("week_number")
+          .order("sort_order"),
+        supabase
+          .from("protocolos")
+          .select("column_labels")
+          .eq("id", protocoloId)
+          .maybeSingle(),
+      ]);
 
       if (error) {
         console.error("Error fetching exercises:", error);
@@ -127,6 +134,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
         return;
       }
       setExercises((data as any[]) || []);
+      setColumnLabels(((protoRow?.column_labels as any) || {}) as Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }>);
       setLoading(false);
     };
     fetchExercises();
