@@ -306,6 +306,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                         savedFields={savedFields}
                         defaultOpen={false}
                         onFieldChange={handleClientFieldChange}
+                        columnLabels={columnLabels[dayLabel]}
                       />
                     ))}
                   </div>
@@ -314,6 +315,7 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                     {[...dayMap.entries()].map(([dayLabel, dayExercises]) => {
                       const tableType = dayExercises[0]?.table_type || "standard";
                       const isComplementar = tableType === "complementar";
+                      const dayLabels = columnLabels[dayLabel] || {};
 
                       return (
                         <details key={dayLabel} className="border border-border rounded-lg overflow-hidden bg-card/40">
@@ -332,13 +334,13 @@ const InteractiveTrainingTable = ({ protocoloId, userId, isAdmin = false, regras
                                     <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[110px]">Exercício</TableHead>
                                     {isComplementar ? (
                                       <>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">Método</TableHead>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Carga/Rep</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5 w-[90px]">{dayLabels.col_topset_metodo || "Método"}</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_backoff_cargarep || "Carga/Rep"}</TableHead>
                                       </>
                                     ) : (
                                       <>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Top Set (6 - 8)</TableHead>
-                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">Back-off (8 - 10)</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_topset_metodo || "Top Set (6 - 8)"}</TableHead>
+                                        <TableHead className="text-[11px] font-bold h-9 px-1.5">{dayLabels.col_backoff_cargarep || "Back-off (8 - 10)"}</TableHead>
                                       </>
                                     )}
                                     <TableHead className="text-[11px] font-bold h-9 px-1.5">Obs Cliente</TableHead>
