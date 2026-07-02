@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
@@ -65,8 +65,8 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const fetchData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
@@ -103,13 +103,23 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
     } catch (err) {
       console.error("Error fetching client view data:", err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, [userId]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, protocolSavedAt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchData]);
+
+  const isFirstProtocolSavedRef = useRef(true);
+  useEffect(() => {
+    if (isFirstProtocolSavedRef.current) {
+      isFirstProtocolSavedRef.current = false;
+      return;
+    }
+    fetchData(true);
+  }, [protocolSavedAt, fetchData]);
 
   const getPhotoSignedUrl = async (path: string): Promise<string | null> => {
     const { data } = await supabase.storage.from("client-photos").createSignedUrl(path, 3600);
