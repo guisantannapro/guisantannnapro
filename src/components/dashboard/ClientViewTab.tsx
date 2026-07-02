@@ -25,6 +25,7 @@ interface ClientViewTabProps {
   userId: string;
   clientName: string;
   onPlanUpdated?: () => void | Promise<void>;
+  protocolSavedAt?: Date | null;
 }
 
 
