@@ -141,6 +141,7 @@ const Dashboard = () => {
   const [editingProtocol, setEditingProtocol] = useState<any | null>(null);
   const [currentClientProtocolo, setCurrentClientProtocolo] = useState<any | null>(null);
   const [loadingCurrentProtocolo, setLoadingCurrentProtocolo] = useState(false);
+  const [protocolSavedAt, setProtocolSavedAt] = useState<Date | null>(null);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
@@ -878,7 +879,10 @@ const Dashboard = () => {
                   client={selectedClient}
                   existingProtocol={editingProtocol}
                   previousProtocol={!editingProtocol ? currentClientProtocolo : null}
-                  onSaved={() => fetchCurrentProtocolo(selectedClient.user_id)}
+                  onSaved={() => {
+                    fetchCurrentProtocolo(selectedClient.user_id);
+                    setProtocolSavedAt(new Date());
+                  }}
                 />
 
                 {/* Actions */}
@@ -912,6 +916,7 @@ const Dashboard = () => {
                       if (refreshed) setSelectedClient(refreshed);
                     }
                   }}
+                  protocolSavedAt={protocolSavedAt}
                 />
               </TabsContent>
 

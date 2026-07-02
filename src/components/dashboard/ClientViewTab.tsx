@@ -25,6 +25,7 @@ interface ClientViewTabProps {
   userId: string;
   clientName: string;
   onPlanUpdated?: () => void | Promise<void>;
+  protocolSavedAt?: Date | null;
 }
 
 
@@ -49,7 +50,7 @@ const periodLabels: Record<string, string> = {
   semestral: "Semestral",
 };
 
-const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps) => {
+const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: ClientViewTabProps) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -108,7 +109,7 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, protocolSavedAt]);
 
   const getPhotoSignedUrl = async (path: string): Promise<string | null> => {
     const { data } = await supabase.storage.from("client-photos").createSignedUrl(path, 3600);
