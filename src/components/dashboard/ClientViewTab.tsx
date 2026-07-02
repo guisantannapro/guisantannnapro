@@ -598,7 +598,7 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
         </AccordionItem>
       </Accordion>
 
-      {pdfProtocol && (
+      {pdfProtocol && typeof document !== "undefined" && createPortal(
         <div className="fixed -left-[200vw] top-0 opacity-0 pointer-events-none" aria-hidden="true">
           <ProtocolPdfContent
             wrapperId="protocolo-content-client-view"
@@ -612,7 +612,8 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
             }}
             planInfo={{ plan: resolvedPlan || undefined, duration: resolvedPeriod || undefined }}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
