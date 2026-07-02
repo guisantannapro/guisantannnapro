@@ -141,6 +141,7 @@ const Dashboard = () => {
   const [editingProtocol, setEditingProtocol] = useState<any | null>(null);
   const [currentClientProtocolo, setCurrentClientProtocolo] = useState<any | null>(null);
   const [loadingCurrentProtocolo, setLoadingCurrentProtocolo] = useState(false);
+  const [protocolSavedAt, setProtocolSavedAt] = useState<Date | null>(null);
   const navigate = useNavigate();
   const ITEMS_PER_PAGE = 20;
 
