@@ -437,6 +437,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     created_at: string;
     client_name: string;
   }>>([]);
+  const [otherMatchedClients, setOtherMatchedClients] = useState(0);
   const [otherSearching, setOtherSearching] = useState(false);
   const [loadingOther, setLoadingOther] = useState(false);
 
