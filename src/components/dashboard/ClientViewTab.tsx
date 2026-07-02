@@ -109,7 +109,7 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, protocolSavedAt]);
 
   const getPhotoSignedUrl = async (path: string): Promise<string | null> => {
     const { data } = await supabase.storage.from("client-photos").createSignedUrl(path, 3600);
