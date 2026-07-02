@@ -446,6 +446,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     const term = otherSearch.trim();
     if (term.length < 2) {
       setOtherResults([]);
+      setOtherMatchedClients(0);
       return;
     }
     setOtherSearching(true);
@@ -457,6 +458,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
           .ilike("full_name", `%${term}%`)
           .limit(20);
         const ids = (profs || []).map((p: any) => p.id);
+        setOtherMatchedClients(ids.length);
         if (ids.length === 0) {
           setOtherResults([]);
           return;
