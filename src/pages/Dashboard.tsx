@@ -879,7 +879,10 @@ const Dashboard = () => {
                   client={selectedClient}
                   existingProtocol={editingProtocol}
                   previousProtocol={!editingProtocol ? currentClientProtocolo : null}
-                  onSaved={() => fetchCurrentProtocolo(selectedClient.user_id)}
+                  onSaved={() => {
+                    fetchCurrentProtocolo(selectedClient.user_id);
+                    setProtocolSavedAt(new Date());
+                  }}
                 />
 
                 {/* Actions */}
