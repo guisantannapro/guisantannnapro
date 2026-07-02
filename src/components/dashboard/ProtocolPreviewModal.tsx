@@ -427,6 +427,159 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     }
   };
 
+  // Busca de protocolos de outros clientes
+  const [otherPopoverOpen, setOtherPopoverOpen] = useState(false);
+  const [otherSearch, setOtherSearch] = useState("");
+  const [otherResults, setOtherResults] = useState<Array<{
+    id: string;
+    nome: string;
+    tipo_protocolo: string;
+    created_at: string;
+    client_name: string;
+  }>>([]);
+  const [otherSearching, setOtherSearching] = useState(false);
+  const [loadingOther, setLoadingOther] = useState(false);
+
+  useEffect(() => {
+    if (!otherPopoverOpen) return;
+    const term = otherSearch.trim();
+    if (term.length < 2) {
+      setOtherResults([]);
+      return;
+    }
+    setOtherSearching(true);
+    const handle = setTimeout(async () => {
+      try {
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .ilike("full_name", `%${term}%`)
+          .limit(20);
+        const ids = (profs || []).map((p: any) => p.id);
+        if (ids.length === 0) {
+          setOtherResults([]);
+          return;
+        }
+        const nameById = new Map<string, string>(
+          (profs || []).map((p: any) => [p.id, p.full_name || ""])
+        );
+        const { data: protos } = await supabase
+          .from("protocolos")
+          .select("id, nome, tipo_protocolo, created_at, user_id")
+          .in("user_id", ids)
+          .order("created_at", { ascending: false })
+          .limit(8);
+        setOtherResults(
+          (protos || []).map((p: any) => ({
+            id: p.id,
+            nome: p.nome,
+            tipo_protocolo: p.tipo_protocolo,
+            created_at: p.created_at,
+            client_name: nameById.get(p.user_id) || "",
+          }))
+        );
+      } catch (err) {
+        console.error("Erro na busca de protocolos:", err);
+      } finally {
+        setOtherSearching(false);
+      }
+    }, 400);
+    return () => clearTimeout(handle);
+  }, [otherSearch, otherPopoverOpen]);
+
+  const loadFromOtherClient = async (protoId: string, clientName: string) => {
+    if (isEditMode) return;
+    setLoadingOther(true);
+    try {
+      const [{ data: protoRow }, { data: rows }] = await Promise.all([
+        supabase
+          .from("protocolos")
+          .select("tipo_protocolo, plano_alimentar, treino, suplementacao, cardio, observacoes, column_labels")
+          .eq("id", protoId)
+          .maybeSingle(),
+        supabase
+          .from("protocol_exercises")
+          .select("id, week_number, day_label, sort_order, table_type, exercise_name, metodo, admin_obs")
+          .eq("protocolo_id", protoId)
+          .order("week_number", { ascending: true })
+          .order("sort_order", { ascending: true }),
+      ]);
+
+      if (!protoRow) {
+        toast.error("Protocolo não encontrado.");
+        return;
+      }
+
+      const t = (protoRow.tipo_protocolo as ProtocolType) || "bulking";
+      isLoadingPreviousRef.current = true;
+      setProtocolType(t);
+
+      setPlanoAlimentar(protoRow.plano_alimentar || "");
+      setRegrasGerais(protoRow.treino || "");
+      setSuplementacao(protoRow.suplementacao || "");
+      setCardio(protoRow.cardio || "");
+      setObservacoes(protoRow.observacoes || "");
+
+      const columnLabelsMap: Record<string, { col_topset_metodo?: string; col_backoff_cargarep?: string }> =
+        (protoRow.column_labels as any) || {};
+
+      if (rows && rows.length > 0) {
+        const weekMap = new Map<number, Map<string, DayBlock>>();
+        for (const r of rows) {
+          if (!weekMap.has(r.week_number)) weekMap.set(r.week_number, new Map());
+          const dayMap = weekMap.get(r.week_number)!;
+          if (!dayMap.has(r.day_label)) {
+            dayMap.set(r.day_label, {
+              id: crypto.randomUUID(),
+              day_label: r.day_label,
+              table_type: (r.table_type as "standard" | "complementar") || "standard",
+              exercises: [],
+              column_labels: columnLabelsMap[r.day_label] || {},
+            });
+          }
+          dayMap.get(r.day_label)!.exercises.push({
+            id: crypto.randomUUID(),
+            db_id: null,
+            exercise_name: r.exercise_name,
+            top_set: "",
+            back_off: "",
+            metodo: r.metodo || "",
+            admin_obs: r.admin_obs || "",
+            table_type: (r.table_type as "standard" | "complementar") || "standard",
+          });
+        }
+        const built: DayBlock[][] = [];
+        let lastWeekDays: DayBlock[] = [];
+        for (let w = 1; w <= 4; w++) {
+          const dayMap = weekMap.get(w);
+          if (dayMap && dayMap.size > 0) {
+            lastWeekDays = Array.from(dayMap.values());
+            built.push(lastWeekDays);
+          } else {
+            built.push(
+              lastWeekDays.map(d => ({
+                ...d,
+                id: crypto.randomUUID(),
+                exercises: d.exercises.map(e => ({ ...e, id: crypto.randomUUID(), db_id: null })),
+              }))
+            );
+          }
+        }
+        setWeeklyDays(built);
+      }
+
+      setOtherPopoverOpen(false);
+      setOtherSearch("");
+      setOtherResults([]);
+      toast.success(`Protocolo de ${clientName} carregado como base.`, { duration: 6000 });
+    } catch (err: any) {
+      console.error("Erro ao carregar protocolo de outro cliente:", err);
+      toast.error("Erro ao carregar protocolo.");
+    } finally {
+      setLoadingOther(false);
+    }
+  };
+
 
   const handleClose = (value: boolean) => {
     if (!value) {
