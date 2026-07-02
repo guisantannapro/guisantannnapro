@@ -916,6 +916,7 @@ const Dashboard = () => {
                       if (refreshed) setSelectedClient(refreshed);
                     }
                   }}
+                  protocolSavedAt={protocolSavedAt}
                 />
               </TabsContent>
 
