@@ -645,6 +645,18 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
         }
       }
 
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        await supabase.auth.refreshSession();
+        const { data: { session: refreshed } } = await supabase.auth.getSession();
+        if (!refreshed) {
+          toast.error("Sessão expirada. Faça login novamente.");
+          setSaving(false);
+          return;
+        }
+      }
+
       const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
       const rpcArgs: Record<string, any> = isEditMode
         ? {
