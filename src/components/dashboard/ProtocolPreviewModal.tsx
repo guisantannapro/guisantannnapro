@@ -791,7 +791,11 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
                         ) : otherSearching ? (
                           <p className="text-xs text-muted-foreground px-1 py-2">Buscando...</p>
                         ) : otherResults.length === 0 ? (
-                          <p className="text-xs text-muted-foreground px-1 py-2">Nenhum protocolo encontrado.</p>
+                          <p className="text-xs text-muted-foreground px-1 py-2">
+                            {otherMatchedClients > 0
+                              ? `Cliente(s) encontrado(s), mas nenhum possui protocolo estruturado ainda.`
+                              : "Nenhum cliente encontrado."}
+                          </p>
                         ) : (
                           <ul className="space-y-1">
                             {otherResults.map((r) => (
