@@ -50,7 +50,7 @@ const periodLabels: Record<string, string> = {
   semestral: "Semestral",
 };
 
-const ClientViewTab = ({ userId, clientName, onPlanUpdated }: ClientViewTabProps) => {
+const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: ClientViewTabProps) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
