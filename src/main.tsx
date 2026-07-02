@@ -187,6 +187,11 @@ if (!rootElement) {
   throw new Error("Root element #root não encontrado");
 }
 
+// Remove o loader estático do index.html antes do React assumir o container.
+// Filhos pré-existentes em #root causam NotFoundError (removeChild) durante
+// commits do React, derrubando a página inteira.
+rootElement.replaceChildren();
+
 createRoot(rootElement).render(
   <RootErrorBoundary>
     <App />
