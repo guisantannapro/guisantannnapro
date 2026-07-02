@@ -437,6 +437,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     created_at: string;
     client_name: string;
   }>>([]);
+  const [otherMatchedClients, setOtherMatchedClients] = useState(0);
   const [otherSearching, setOtherSearching] = useState(false);
   const [loadingOther, setLoadingOther] = useState(false);
 
@@ -445,6 +446,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     const term = otherSearch.trim();
     if (term.length < 2) {
       setOtherResults([]);
+      setOtherMatchedClients(0);
       return;
     }
     setOtherSearching(true);
@@ -456,6 +458,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
           .ilike("full_name", `%${term}%`)
           .limit(20);
         const ids = (profs || []).map((p: any) => p.id);
+        setOtherMatchedClients(ids.length);
         if (ids.length === 0) {
           setOtherResults([]);
           return;
@@ -788,7 +791,11 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
                         ) : otherSearching ? (
                           <p className="text-xs text-muted-foreground px-1 py-2">Buscando...</p>
                         ) : otherResults.length === 0 ? (
-                          <p className="text-xs text-muted-foreground px-1 py-2">Nenhum protocolo encontrado.</p>
+                          <p className="text-xs text-muted-foreground px-1 py-2">
+                            {otherMatchedClients > 0
+                              ? `Cliente(s) encontrado(s), mas nenhum possui protocolo estruturado ainda.`
+                              : "Nenhum cliente encontrado."}
+                          </p>
                         ) : (
                           <ul className="space-y-1">
                             {otherResults.map((r) => (
