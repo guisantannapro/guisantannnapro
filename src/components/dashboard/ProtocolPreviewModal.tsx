@@ -753,6 +753,69 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
               </div>
             )}
 
+            {!isEditMode && (
+              <div className="border border-primary/30 bg-primary/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    Usar protocolo de outro cliente como base
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Busque um cliente e reutilize um protocolo dele — todos os campos serão preenchidos e os exercícios entram como novos.
+                  </p>
+                </div>
+                <Popover open={otherPopoverOpen} onOpenChange={setOtherPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button type="button" disabled={loadingOther} className="gap-2 shrink-0">
+                      <Users size={14} />
+                      {loadingOther ? "Carregando..." : "Buscar cliente"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-80 p-3">
+                    <div className="space-y-2">
+                      <div className="relative">
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          autoFocus
+                          value={otherSearch}
+                          onChange={(e) => setOtherSearch(e.target.value)}
+                          placeholder="Digite o nome do cliente..."
+                          className="pl-8"
+                        />
+                      </div>
+                      <div className="max-h-64 overflow-y-auto">
+                        {otherSearch.trim().length < 2 ? (
+                          <p className="text-xs text-muted-foreground px-1 py-2">Digite pelo menos 2 letras.</p>
+                        ) : otherSearching ? (
+                          <p className="text-xs text-muted-foreground px-1 py-2">Buscando...</p>
+                        ) : otherResults.length === 0 ? (
+                          <p className="text-xs text-muted-foreground px-1 py-2">Nenhum protocolo encontrado.</p>
+                        ) : (
+                          <ul className="space-y-1">
+                            {otherResults.map((r) => (
+                              <li key={r.id}>
+                                <button
+                                  type="button"
+                                  onClick={() => loadFromOtherClient(r.id, r.client_name)}
+                                  disabled={loadingOther}
+                                  className="w-full text-left px-2 py-2 rounded-md hover:bg-primary/10 transition-colors"
+                                >
+                                  <p className="text-sm font-semibold text-foreground truncate">{r.client_name}</p>
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {r.nome}
+                                    {r.created_at && ` — ${new Date(r.created_at).toLocaleDateString("pt-BR")}`}
+                                  </p>
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+
             <div>
               <h3 className="text-sm font-semibold uppercase text-foreground mb-3">
                 Selecione o tipo de protocolo <span className="text-destructive">*</span>
