@@ -59,9 +59,6 @@ const MobileDayAccordion = ({
           <span className="text-sm font-bold uppercase text-foreground tracking-wide">
             {dayLabel}
           </span>
-          <span className="text-[10px] text-muted-foreground font-medium">
-            ({exercises.length})
-          </span>
         </div>
         <ChevronDown
           size={16}
