@@ -115,6 +115,14 @@ const Login = () => {
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Entrar
           </Button>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            disabled={resetLoading}
+            className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+          >
+            {resetLoading ? "Enviando..." : "Esqueci minha senha"}
+          </button>
         </form>
       </div>
 
