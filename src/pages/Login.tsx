@@ -12,10 +12,28 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [showPwaModal, setShowPwaModal] = useState(false);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const navigate = useNavigate();
   const { shouldShow, isIos, deferredPrompt, triggerInstall } = usePwaInstall();
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Digite seu email acima para receber o link de redefinição.");
+      return;
+    }
+    setResetLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResetLoading(false);
+    if (error) {
+      toast.error("Não foi possível enviar o email. Verifique o endereço e tente novamente.");
+      return;
+    }
+    toast.success("Enviamos um link de redefinição para seu email.");
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +115,14 @@ const Login = () => {
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
             Entrar
           </Button>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            disabled={resetLoading}
+            className="w-full text-center text-sm text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+          >
+            {resetLoading ? "Enviando..." : "Esqueci minha senha"}
+          </button>
         </form>
       </div>
 

@@ -16,6 +16,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard.tsx"));
 const MinhaArea = lazy(() => import("./pages/MinhaArea.tsx"));
 const Protocolo = lazy(() => import("./pages/Protocolo.tsx"));
 const CheckoutUSD = lazy(() => import("./pages/CheckoutUSD.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 
 // Minimal fallback while lazy chunks load
 const LazyFallback = () => (
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/pagamento-sucesso" element={<PaymentSuccess />} />
             <Route path="/formulario" element={<Formulario />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/area-do-cliente" element={<MinhaArea />} />
             <Route path="/protocolo/:id" element={<Protocolo />} />
             <Route
