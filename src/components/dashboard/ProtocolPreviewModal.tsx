@@ -645,23 +645,11 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
         }
       }
 
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-      if (!session || sessionError) {
-        const { data: { session: refreshed }, error: refreshError } = 
-          await supabase.auth.refreshSession();
-
-        if (refreshError || !refreshed) {
-          toast.error("Sessão expirada. Faça login novamente.");
-          setSaving(false);
-          return;
-        }
-
-        // Força o cliente Supabase a usar o novo token imediatamente
-        await supabase.auth.setSession({
-          access_token: refreshed.access_token,
-          refresh_token: refreshed.refresh_token,
-        });
+      const fresh = await ensureFreshSession();
+      if (!fresh) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        setSaving(false);
+        return;
       }
 
       const rpcName = isEditMode ? "update_structured_protocol" : "create_structured_protocol";
