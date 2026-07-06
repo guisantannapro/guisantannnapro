@@ -13,5 +13,37 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-  }
+    detectSessionInUrl: true,
+  },
 });
+
+/**
+ * Garante que a sessão está válida antes de operações críticas.
+ * Se o access_token estiver expirado ou próximo de expirar (< 60s),
+ * força um refresh e reaplica o novo par de tokens no cliente.
+ * Retorna true se há sessão válida ao final, false caso contrário.
+ */
+export async function ensureFreshSession(): Promise<boolean> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return false;
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    const expiresAt = session.expires_at ?? 0;
+    const needsRefresh = !expiresAt || expiresAt - nowSec < 60;
+
+    if (!needsRefresh) return true;
+
+    const { data: refreshed, error } = await supabase.auth.refreshSession();
+    if (error || !refreshed.session) return false;
+
+    await supabase.auth.setSession({
+      access_token: refreshed.session.access_token,
+      refresh_token: refreshed.session.refresh_token,
+    });
+    return true;
+  } catch (err) {
+    console.error("ensureFreshSession error:", err);
+    return false;
+  }
+}
