@@ -991,3 +991,306 @@ const PhotoThumb = ({ label, path }: { label: string; path: string }) => {
 };
 
 export default Dashboard;
+
+interface EditRegistrationSheetProps {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  client: ClientData;
+  onSaved: () => void;
+}
+
+const EDIT_FIELDS: Array<{ key: keyof ClientFormData; label: string; type?: "textarea" }> = [
+  { key: "fullName", label: "Nome completo" },
+  { key: "whatsapp", label: "WhatsApp" },
+  { key: "age", label: "Idade" },
+  { key: "weight", label: "Peso" },
+  { key: "height", label: "Altura" },
+  { key: "instagram", label: "Instagram" },
+  { key: "trainingFrequency", label: "Frequência de treino" },
+  { key: "trainingDuration", label: "Duração do treino" },
+  { key: "trainingExperience", label: "Experiência de treino" },
+  { key: "availableSchedule", label: "Horário disponível" },
+  { key: "medicationDetails", label: "Detalhes da medicação", type: "textarea" },
+  { key: "hormoneDetails", label: "Detalhes dos hormônios", type: "textarea" },
+  { key: "timeline", label: "Prazo para objetivo" },
+  { key: "commitment", label: "Comprometimento (0-10)" },
+  { key: "observations" as keyof ClientFormData, label: "Observações", type: "textarea" },
+];
+
+const PHOTO_FIELDS: Array<{ key: "photo_front" | "photo_side" | "photo_back" | "photo_assessment"; label: string }> = [
+  { key: "photo_front", label: "Frente" },
+  { key: "photo_side", label: "Lado" },
+  { key: "photo_back", label: "Costas" },
+  { key: "photo_assessment", label: "Avaliação" },
+];
+
+const EditRegistrationSheet = ({ open, onOpenChange, client, onSaved }: EditRegistrationSheetProps) => {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [healthConditions, setHealthConditions] = useState("");
+  const [foodRestrictions, setFoodRestrictions] = useState("");
+  const [photos, setPhotos] = useState<Record<string, string | null>>({});
+  const [pendingPhotos, setPendingPhotos] = useState<Record<string, File | null>>({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const fd = client.form_data || {};
+    const initial: Record<string, string> = {};
+    EDIT_FIELDS.forEach((f) => {
+      const v = (fd as any)[f.key];
+      initial[f.key as string] = v == null ? "" : String(v);
+    });
+    setValues(initial);
+    setHealthConditions(Array.isArray(fd.healthConditions) ? fd.healthConditions.join(", ") : (fd.healthConditions as any) || "");
+    setFoodRestrictions(Array.isArray(fd.foodRestrictions) ? fd.foodRestrictions.join(", ") : (fd.foodRestrictions as any) || "");
+    setPhotos({
+      photo_front: client.photo_front,
+      photo_side: client.photo_side,
+      photo_back: client.photo_back,
+      photo_assessment: client.photo_assessment,
+    });
+    setPendingPhotos({});
+  }, [open, client]);
+
+  const setField = (k: string, v: string) => setValues((prev) => ({ ...prev, [k]: v }));
+
+  const handleSave = async () => {
+    if (!client.user_id) {
+      toast.error("Cliente sem user_id vinculado");
+      return;
+    }
+    setSaving(true);
+    try {
+      // Upload pending photos
+      const uploadedPaths: Record<string, string> = {};
+      for (const [field, file] of Object.entries(pendingPhotos)) {
+        if (!file) continue;
+        const compressed = await compressImage(file, 500, 1800, 1800);
+        const ext = (compressed.name.split(".").pop() || "jpg").toLowerCase();
+        const path = `${client.user_id}/avaliacao-${field}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("client-photos")
+          .upload(path, compressed, { upsert: false, contentType: compressed.type });
+        if (upErr) throw upErr;
+        uploadedPaths[field] = path;
+      }
+
+      // Build updated form_data
+      const newFormData: any = { ...(client.form_data || {}) };
+      EDIT_FIELDS.forEach((f) => {
+        newFormData[f.key] = values[f.key as string] ?? "";
+      });
+      newFormData.healthConditions = healthConditions
+        ? healthConditions.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+      newFormData.foodRestrictions = foodRestrictions
+        ? foodRestrictions.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+
+      const mainGoal = client.form_data?.mainGoal;
+      if (mainGoal !== undefined) newFormData.mainGoal = mainGoal;
+
+      // Check if submission exists
+      const { data: existing, error: fetchErr } = await supabase
+        .from("form_submissions")
+        .select("id")
+        .eq("user_id", client.user_id)
+        .maybeSingle();
+      if (fetchErr) throw fetchErr;
+
+      const photoUpdates: any = {};
+      PHOTO_FIELDS.forEach(({ key }) => {
+        if (uploadedPaths[key]) photoUpdates[key] = uploadedPaths[key];
+      });
+
+      if (existing) {
+        const { error: upErr } = await supabase
+          .from("form_submissions")
+          .update({ form_data: newFormData, ...photoUpdates })
+          .eq("id", existing.id);
+        if (upErr) throw upErr;
+      } else {
+        const { error: insErr } = await supabase
+          .from("form_submissions")
+          .insert({
+            user_id: client.user_id,
+            form_data: newFormData,
+            photo_front: photoUpdates.photo_front ?? null,
+            photo_side: photoUpdates.photo_side ?? null,
+            photo_back: photoUpdates.photo_back ?? null,
+            photo_assessment: photoUpdates.photo_assessment ?? null,
+          });
+        if (insErr) throw insErr;
+      }
+
+      toast.success("Dados atualizados com sucesso");
+      onOpenChange(false);
+      onSaved();
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Editar dados do cadastro</SheetTitle>
+          <SheetDescription>Atualize os dados da avaliação do cliente</SheetDescription>
+        </SheetHeader>
+
+        <div className="space-y-6 py-4">
+          <section className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase text-primary">Dados pessoais</h4>
+            {(["fullName", "whatsapp", "age", "weight", "height", "instagram"] as const).map((k) => {
+              const f = EDIT_FIELDS.find((e) => e.key === k)!;
+              return (
+                <div key={k} className="space-y-1">
+                  <Label>{f.label}</Label>
+                  <Input value={values[k] || ""} onChange={(e) => setField(k, e.target.value)} />
+                </div>
+              );
+            })}
+          </section>
+
+          <section className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase text-primary">Treino</h4>
+            {(["trainingFrequency", "trainingDuration", "trainingExperience", "availableSchedule"] as const).map((k) => {
+              const f = EDIT_FIELDS.find((e) => e.key === k)!;
+              return (
+                <div key={k} className="space-y-1">
+                  <Label>{f.label}</Label>
+                  <Input value={values[k] || ""} onChange={(e) => setField(k, e.target.value)} />
+                </div>
+              );
+            })}
+          </section>
+
+          <section className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase text-primary">Saúde</h4>
+            <div className="space-y-1">
+              <Label>Condições de saúde (separe por vírgula)</Label>
+              <Input value={healthConditions} onChange={(e) => setHealthConditions(e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Detalhes da medicação</Label>
+              <Textarea value={values.medicationDetails || ""} onChange={(e) => setField("medicationDetails", e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Detalhes dos hormônios</Label>
+              <Textarea value={values.hormoneDetails || ""} onChange={(e) => setField("hormoneDetails", e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Restrições alimentares (separe por vírgula)</Label>
+              <Input value={foodRestrictions} onChange={(e) => setFoodRestrictions(e.target.value)} />
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase text-primary">Observações</h4>
+            <div className="space-y-1">
+              <Label>Prazo para objetivo</Label>
+              <Input value={values.timeline || ""} onChange={(e) => setField("timeline", e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Comprometimento (0-10)</Label>
+              <Input value={values.commitment || ""} onChange={(e) => setField("commitment", e.target.value)} />
+            </div>
+            <div className="space-y-1">
+              <Label>Observações</Label>
+              <Textarea value={values.observations || ""} onChange={(e) => setField("observations", e.target.value)} />
+            </div>
+          </section>
+
+          <section className="space-y-3">
+            <h4 className="text-sm font-semibold uppercase text-primary">Fotos</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {PHOTO_FIELDS.map(({ key, label }) => (
+                <PhotoUploadField
+                  key={key}
+                  label={label}
+                  existingPath={photos[key] || null}
+                  pendingFile={pendingPhotos[key] || null}
+                  onFile={(file) => setPendingPhotos((prev) => ({ ...prev, [key]: file }))}
+                />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <SheetFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            Salvar
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+const PhotoUploadField = ({
+  label,
+  existingPath,
+  pendingFile,
+  onFile,
+}: {
+  label: string;
+  existingPath: string | null;
+  pendingFile: File | null;
+  onFile: (f: File | null) => void;
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let revoke: string | null = null;
+    if (pendingFile) {
+      const url = URL.createObjectURL(pendingFile);
+      revoke = url;
+      setPreviewUrl(url);
+    } else if (existingPath) {
+      supabase.storage.from("client-photos").createSignedUrl(existingPath, 3600).then(({ data }) => {
+        if (data?.signedUrl) setPreviewUrl(data.signedUrl);
+      });
+    } else {
+      setPreviewUrl(null);
+    }
+    return () => {
+      if (revoke) URL.revokeObjectURL(revoke);
+    };
+  }, [existingPath, pendingFile]);
+
+  const inputId = `photo-upload-${label}`;
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-xs">{label}</Label>
+      {previewUrl ? (
+        <div className="relative">
+          <img src={previewUrl} alt={label} className="w-full aspect-[3/4] object-cover rounded-md border border-border" />
+          <label htmlFor={inputId} className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 hover:opacity-100 transition-opacity rounded-md cursor-pointer">
+            <span className="text-white text-xs font-medium flex items-center gap-1"><Upload className="h-3 w-3" /> Substituir</span>
+          </label>
+        </div>
+      ) : (
+        <label htmlFor={inputId} className="flex flex-col items-center justify-center w-full aspect-[3/4] rounded-md border border-dashed border-border bg-muted/30 cursor-pointer hover:border-primary/50">
+          <Upload className="h-5 w-5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground mt-1">Enviar</span>
+        </label>
+      )}
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => onFile(e.target.files?.[0] || null)}
+      />
+    </div>
+  );
+};
