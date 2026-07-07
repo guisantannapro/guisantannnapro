@@ -937,6 +937,14 @@ const Dashboard = () => {
           )}
         </DialogContent>
       </Dialog>
+      {selectedClient && (
+        <EditRegistrationSheet
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          client={selectedClient}
+          onSaved={fetchClients}
+        />
+      )}
     </div>
   );
 };
