@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, ensureFreshSession } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,11 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
   const fetchData = useCallback(async (silent = false) => {
     if (!silent) setLoading(true);
     try {
+      const ok = await ensureFreshSession();
+      if (!ok) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        return;
+      }
       const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
