@@ -678,6 +678,12 @@ const Dashboard = () => {
               </TabsList>
 
               <TabsContent value="details" className="space-y-6 mt-4">
+                <div className="flex justify-end">
+                  <Button variant="ghost" size="sm" onClick={() => setEditOpen(true)} className="gap-2">
+                    <Pencil className="h-4 w-4" />
+                    Editar dados do cadastro
+                  </Button>
+                </div>
                 {/* Info Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <InfoItem label="Nome" value={getField(selectedClient, "fullName")} />
