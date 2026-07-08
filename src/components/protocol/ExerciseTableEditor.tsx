@@ -401,9 +401,49 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
         </div>
       ))}
 
-      <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={addDay}>
+      <Button variant="outline" size="sm" className="gap-1 text-xs" onClick={() => setAddDayOpen(true)}>
         <Plus size={12} /> Adicionar dia
       </Button>
+
+      <Dialog open={addDayOpen} onOpenChange={setAddDayOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Escolha o formato do dia</DialogTitle>
+            <DialogDescription>
+              Os dias de semana e o sábado usam métodos diferentes. Selecione o formato que combina com o novo dia.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => addDay("standard")}
+              className="text-left rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition p-4 space-y-2"
+            >
+              <div className="text-sm font-bold uppercase text-primary">Semana</div>
+              <p className="text-xs text-muted-foreground">
+                Formato padrão dos dias de semana. Foco em <strong>Top Set + Back-off</strong>, com métodos como Rest-pause pontual.
+              </p>
+              <p className="text-[11px] text-muted-foreground/80">
+                Ex: SEGUNDA – PUSH, TERÇA – PULL…
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => addDay("complementar")}
+              className="text-left rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition p-4 space-y-2"
+            >
+              <div className="text-sm font-bold uppercase text-primary">Complementar</div>
+              <p className="text-xs text-muted-foreground">
+                Mesmo formato do <strong>sábado</strong>. Trabalho complementar com Controle, Rest-pause e volume acessório.
+              </p>
+              <p className="text-[11px] text-muted-foreground/80">
+                Ex: SÁBADO – COMPLEMENTAR, DOMINGO – COMPLEMENTAR…
+              </p>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
