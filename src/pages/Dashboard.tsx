@@ -617,7 +617,7 @@ const Dashboard = () => {
       </main>
 
       {/* Client Detail Modal */}
-      <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
+      <Dialog open={!!selectedClient} onOpenChange={(open) => { if (!open && !editOpen) setSelectedClient(null); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-2xl text-gradient-gold uppercase">
