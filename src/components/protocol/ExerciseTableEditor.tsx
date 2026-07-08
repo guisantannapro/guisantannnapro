@@ -115,6 +115,8 @@ export { DEFAULT_DAYS };
 const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEditorProps) => {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [activeWeek, setActiveWeek] = useState<number>(1); // 1..4
+  const [addDayOpen, setAddDayOpen] = useState(false);
+
 
   // Garante que sempre temos 4 semanas inicializadas
   const safeWeekly: DayBlock[][] = (() => {
