@@ -168,15 +168,17 @@ const ExerciseTableEditor = ({ weeklyDays, onWeeklyDaysChange }: ExerciseTableEd
     } : d));
   };
 
-  const addDay = () => {
+  const addDay = (tableType: "standard" | "complementar") => {
     const newDay: DayBlock = {
       id: uid(),
       day_label: "",
-      table_type: "standard",
+      table_type: tableType,
       exercises: [],
     };
     updateActiveWeekDays([...days, newDay]);
+    setAddDayOpen(false);
   };
+
 
   const removeDay = (dayId: string) => {
     updateActiveWeekDays(days.filter(d => d.id !== dayId));
