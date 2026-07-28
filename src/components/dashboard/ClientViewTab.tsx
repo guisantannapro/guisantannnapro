@@ -12,6 +12,7 @@ import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
+import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -25,6 +26,8 @@ const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], struct
 interface ClientViewTabProps {
   userId: string;
   clientName: string;
+  clientEmail?: string | null;
+  submissionId?: string | null;
   onPlanUpdated?: () => void | Promise<void>;
   protocolSavedAt?: Date | null;
 }
@@ -51,7 +54,7 @@ const periodLabels: Record<string, string> = {
   semestral: "Semestral",
 };
 
-const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: ClientViewTabProps) => {
+const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUpdated, protocolSavedAt }: ClientViewTabProps) => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -281,15 +284,27 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
             <User className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-bold uppercase text-foreground">Plano</h3>
           </div>
-          <SetPlanDialog
-            userId={userId}
-            currentPlan={resolvedPlan}
-            currentPeriod={resolvedPeriod}
-            onSaved={async () => {
-              await fetchData();
-              await onPlanUpdated?.();
-            }}
-          />
+          {userId ? (
+            <SetPlanDialog
+              userId={userId}
+              currentPlan={resolvedPlan}
+              currentPeriod={resolvedPeriod}
+              onSaved={async () => {
+                await fetchData();
+                await onPlanUpdated?.();
+              }}
+            />
+          ) : (
+            <CreateClientAccessDialog
+              submissionId={submissionId}
+              defaultEmail={clientEmail}
+              defaultName={clientName}
+              onCreated={async () => {
+                await onPlanUpdated?.();
+              }}
+            />
+          )}
+
 
         </div>
         {resolvedPlan ? (

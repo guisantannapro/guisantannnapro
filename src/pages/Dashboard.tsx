@@ -921,15 +921,21 @@ const Dashboard = () => {
                 <ClientViewTab
                   userId={selectedClient.user_id}
                   clientName={getField(selectedClient, "fullName")}
+                  clientEmail={getField(selectedClient, "email")}
+                  submissionId={selectedClient.id}
                   onPlanUpdated={async () => {
                     const updated = await fetchClients();
-                    if (selectedClient?.user_id) {
-                      const refreshed = updated.find((c) => c.user_id === selectedClient.user_id);
-                      if (refreshed) setSelectedClient(refreshed);
-                    }
+                    const email = getField(selectedClient, "email");
+                    const refreshed =
+                      (selectedClient?.user_id &&
+                        updated.find((c) => c.user_id === selectedClient.user_id)) ||
+                      updated.find((c) => c.id === selectedClient.id) ||
+                      (email && updated.find((c) => getField(c, "email") === email));
+                    if (refreshed) setSelectedClient(refreshed);
                   }}
                   protocolSavedAt={protocolSavedAt}
                 />
+
               </TabsContent>
 
             </Tabs>
