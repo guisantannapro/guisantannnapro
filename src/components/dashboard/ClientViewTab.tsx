@@ -12,6 +12,7 @@ import { generateProtocolPdf } from "@/lib/generateProtocolPdf";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
+import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
