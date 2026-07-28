@@ -94,7 +94,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
         newNome = newNome.replace(new RegExp(escapeRegex(oldLabel), "i"), newLabel);
       }
 
-      const updates: Record<string, any> = { tipo_protocolo: tipoDraft };
+      const updates: { tipo_protocolo: string; nome?: string } = { tipo_protocolo: tipoDraft };
       if (newNome && newNome !== protocoloAtual.nome) updates.nome = newNome;
 
       const { error } = await supabase
