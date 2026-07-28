@@ -25,6 +25,8 @@ const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], struct
 interface ClientViewTabProps {
   userId: string;
   clientName: string;
+  clientEmail?: string | null;
+  submissionId?: string | null;
   onPlanUpdated?: () => void | Promise<void>;
   protocolSavedAt?: Date | null;
 }
