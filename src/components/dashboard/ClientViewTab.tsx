@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { supabase, ensureFreshSession } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell, Pencil, Check, X } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -68,6 +69,33 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
+  const [editingTipo, setEditingTipo] = useState(false);
+  const [tipoDraft, setTipoDraft] = useState<string>("");
+  const [savingTipo, setSavingTipo] = useState(false);
+
+  const handleSaveTipo = async () => {
+    if (!protocoloAtual || !tipoDraft || tipoDraft === protocoloAtual.tipo_protocolo) {
+      setEditingTipo(false);
+      return;
+    }
+    setSavingTipo(true);
+    try {
+      await ensureFreshSession();
+      const { error } = await supabase
+        .from("protocolos")
+        .update({ tipo_protocolo: tipoDraft })
+        .eq("id", protocoloAtual.id);
+      if (error) throw error;
+      setProtocoloAtual({ ...protocoloAtual, tipo_protocolo: tipoDraft });
+      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, tipo_protocolo: tipoDraft } : p)));
+      toast.success("Tipo de protocolo atualizado");
+      setEditingTipo(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao atualizar tipo");
+    } finally {
+      setSavingTipo(false);
+    }
+  };
 
   const fetchData = useCallback(async (silent = false) => {
     if (!userId) {
@@ -347,11 +375,43 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             {protocoloAtual ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
-                      {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
-                    </Badge>
-                    <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {editingTipo ? (
+                      <>
+                        <Select value={tipoDraft} onValueChange={setTipoDraft}>
+                          <SelectTrigger className="h-7 w-[180px] text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bulking">Bulking</SelectItem>
+                            <SelectItem value="cutting">Cutting</SelectItem>
+                            <SelectItem value="recomp">Recomposição Corporal</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveTipo} disabled={savingTipo}>
+                          {savingTipo ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingTipo(false)} disabled={savingTipo}>
+                          <X size={12} />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
+                          {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
+                        </Badge>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6"
+                          title="Editar tipo de protocolo"
+                          onClick={() => { setTipoDraft(protocoloAtual.tipo_protocolo); setEditingTipo(true); }}
+                        >
+                          <Pencil size={12} />
+                        </Button>
+                        <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+                      </>
+                    )}
                   </div>
                   <span className="text-xs text-muted-foreground block">
                     Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
