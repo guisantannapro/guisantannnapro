@@ -33,6 +33,10 @@ const SetPlanDialog = ({ userId, currentPlan, currentPeriod, onSaved }: SetPlanD
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
+    if (!userId) {
+      toast.error("Este cadastro não tem conta vinculada. Crie o acesso do cliente antes de definir o plano.");
+      return;
+    }
     if (!plan || !period) {
       toast.error("Selecione plano e período");
       return;
@@ -42,6 +46,7 @@ const SetPlanDialog = ({ userId, currentPlan, currentPeriod, onSaved }: SetPlanD
       toast.error("Período inválido");
       return;
     }
+
 
     setSaving(true);
     try {

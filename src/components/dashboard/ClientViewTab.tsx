@@ -67,6 +67,10 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
 
   const fetchData = useCallback(async (silent = false) => {
+    if (!userId) {
+      if (!silent) setLoading(false);
+      return;
+    }
     if (!silent) setLoading(true);
     try {
       const ok = await ensureFreshSession();
@@ -74,6 +78,7 @@ const ClientViewTab = ({ userId, clientName, onPlanUpdated, protocolSavedAt }: C
         toast.error("Sessão expirada. Faça login novamente.");
         return;
       }
+
       const [profileRes, submissionsRes, protocolsRes, protocoloRes, evolutionsRes, checkinsRes, feedbacksRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).single(),
         supabase.from("form_submissions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
