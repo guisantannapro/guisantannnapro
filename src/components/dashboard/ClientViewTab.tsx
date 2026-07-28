@@ -284,15 +284,27 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             <User className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-bold uppercase text-foreground">Plano</h3>
           </div>
-          <SetPlanDialog
-            userId={userId}
-            currentPlan={resolvedPlan}
-            currentPeriod={resolvedPeriod}
-            onSaved={async () => {
-              await fetchData();
-              await onPlanUpdated?.();
-            }}
-          />
+          {userId ? (
+            <SetPlanDialog
+              userId={userId}
+              currentPlan={resolvedPlan}
+              currentPeriod={resolvedPeriod}
+              onSaved={async () => {
+                await fetchData();
+                await onPlanUpdated?.();
+              }}
+            />
+          ) : (
+            <CreateClientAccessDialog
+              submissionId={submissionId}
+              defaultEmail={clientEmail}
+              defaultName={clientName}
+              onCreated={async () => {
+                await onPlanUpdated?.();
+              }}
+            />
+          )}
+
 
         </div>
         {resolvedPlan ? (
