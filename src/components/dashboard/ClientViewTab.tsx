@@ -375,11 +375,43 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             {protocoloAtual ? (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
-                      {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
-                    </Badge>
-                    <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {editingTipo ? (
+                      <>
+                        <Select value={tipoDraft} onValueChange={setTipoDraft}>
+                          <SelectTrigger className="h-7 w-[180px] text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bulking">Bulking</SelectItem>
+                            <SelectItem value="cutting">Cutting</SelectItem>
+                            <SelectItem value="recomp">Recomposição Corporal</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveTipo} disabled={savingTipo}>
+                          {savingTipo ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingTipo(false)} disabled={savingTipo}>
+                          <X size={12} />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Badge className="bg-primary text-primary-foreground text-xs px-2 py-0.5">
+                          {tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo}
+                        </Badge>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6"
+                          title="Editar tipo de protocolo"
+                          onClick={() => { setTipoDraft(protocoloAtual.tipo_protocolo); setEditingTipo(true); }}
+                        >
+                          <Pencil size={12} />
+                        </Button>
+                        <span className="text-xs font-medium text-foreground">{protocoloAtual.nome}</span>
+                      </>
+                    )}
                   </div>
                   <span className="text-xs text-muted-foreground block">
                     Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
