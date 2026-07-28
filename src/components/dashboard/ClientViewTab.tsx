@@ -81,13 +81,29 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
     setSavingTipo(true);
     try {
       await ensureFreshSession();
+      const oldLabel = tipoProtocoloLabels[protocoloAtual.tipo_protocolo] || protocoloAtual.tipo_protocolo;
+      const newLabel = tipoProtocoloLabels[tipoDraft] || tipoDraft;
+      const allLabels = Object.values(tipoProtocoloLabels);
+      let newNome = protocoloAtual.nome || "";
+      const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      // Replace any known tipo label present in the current nome with the new label
+      const matched = allLabels.find((lbl) => new RegExp(`\\b${escapeRegex(lbl)}\\b`, "i").test(newNome));
+      if (matched) {
+        newNome = newNome.replace(new RegExp(`\\b${escapeRegex(matched)}\\b`, "i"), newLabel);
+      } else if (newNome.toLowerCase().includes(oldLabel.toLowerCase())) {
+        newNome = newNome.replace(new RegExp(escapeRegex(oldLabel), "i"), newLabel);
+      }
+
+      const updates: Record<string, any> = { tipo_protocolo: tipoDraft };
+      if (newNome && newNome !== protocoloAtual.nome) updates.nome = newNome;
+
       const { error } = await supabase
         .from("protocolos")
-        .update({ tipo_protocolo: tipoDraft })
+        .update(updates)
         .eq("id", protocoloAtual.id);
       if (error) throw error;
-      setProtocoloAtual({ ...protocoloAtual, tipo_protocolo: tipoDraft });
-      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, tipo_protocolo: tipoDraft } : p)));
+      setProtocoloAtual({ ...protocoloAtual, ...updates });
+      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, ...updates } : p)));
       toast.success("Tipo de protocolo atualizado");
       setEditingTipo(false);
     } catch (e: any) {
