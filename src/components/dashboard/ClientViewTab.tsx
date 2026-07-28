@@ -69,6 +69,33 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
+  const [editingTipo, setEditingTipo] = useState(false);
+  const [tipoDraft, setTipoDraft] = useState<string>("");
+  const [savingTipo, setSavingTipo] = useState(false);
+
+  const handleSaveTipo = async () => {
+    if (!protocoloAtual || !tipoDraft || tipoDraft === protocoloAtual.tipo_protocolo) {
+      setEditingTipo(false);
+      return;
+    }
+    setSavingTipo(true);
+    try {
+      await ensureFreshSession();
+      const { error } = await supabase
+        .from("protocolos")
+        .update({ tipo_protocolo: tipoDraft })
+        .eq("id", protocoloAtual.id);
+      if (error) throw error;
+      setProtocoloAtual({ ...protocoloAtual, tipo_protocolo: tipoDraft });
+      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, tipo_protocolo: tipoDraft } : p)));
+      toast.success("Tipo de protocolo atualizado");
+      setEditingTipo(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao atualizar tipo");
+    } finally {
+      setSavingTipo(false);
+    }
+  };
 
   const fetchData = useCallback(async (silent = false) => {
     if (!userId) {
