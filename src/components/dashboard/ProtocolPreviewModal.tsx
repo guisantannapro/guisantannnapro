@@ -598,6 +598,18 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
 
   const handleSave = async () => {
     if (!protocolType) return;
+
+    const invalidDays = weeklyDays.flatMap((week, weekIndex) =>
+      week
+        .filter((day) => day.exercises.length > 0 && !day.day_label.trim())
+        .map(() => weekIndex + 1)
+    );
+    if (invalidDays.length > 0) {
+      const affectedWeeks = [...new Set(invalidDays)].join(", ");
+      toast.error(`Informe o nome do dia na(s) semana(s) ${affectedWeeks} antes de salvar.`);
+      return;
+    }
+
     setSaving(true);
     try {
       const nome = `Protocolo ${protocolTypeLabels[protocolType]} — ${getField("fullName")}`;
