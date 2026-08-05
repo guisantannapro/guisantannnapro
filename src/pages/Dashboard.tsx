@@ -165,7 +165,7 @@ const Dashboard = () => {
       }
       if (planFilter !== "all" && client.resolvedPlan !== planFilter) return false;
       if (statusFilter !== "all") {
-        const status = getClientStatus(client.profile);
+        const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
         if (statusFilter === "expired" && status !== "expired") return false;
         if (statusFilter === "expiring" && status !== "expiring") return false;
         if (statusFilter === "active" && status !== "active") return false;
@@ -466,8 +466,8 @@ const Dashboard = () => {
 
             {/* Alert banners — between filters and table */}
             {(() => {
-              const expiring = clients.filter(c => getClientStatus(c.profile) === "expiring").length;
-              const expired = clients.filter(c => getClientStatus(c.profile) === "expired").length;
+              const expiring = clients.filter(c => getClientStatus(c.profile, c.resolvedPlanExpiry) === "expiring").length;
+              const expired = clients.filter(c => getClientStatus(c.profile, c.resolvedPlanExpiry) === "expired").length;
               const renewals = clients.filter(c => hasRenewalPending(c.profile)).length;
               if (expiring === 0 && expired === 0 && renewals === 0) return null;
               return (
@@ -515,7 +515,7 @@ const Dashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {paginatedClients.map((client) => {
-                    const status = getClientStatus(client.profile);
+                    const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
                     const renewalPending = hasRenewalPending(client.profile);
                     const borderClass = status === "expired"
                       ? "border-l-4 border-l-destructive bg-destructive/10"
@@ -575,7 +575,7 @@ const Dashboard = () => {
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
               {paginatedClients.map((client) => {
-                const status = getClientStatus(client.profile);
+                const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
                 const renewalPending = hasRenewalPending(client.profile);
                 const borderClass = status === "expired"
                   ? "border-l-4 border-l-destructive bg-destructive/10"
@@ -673,7 +673,7 @@ const Dashboard = () => {
           {selectedClient && (
             <>
               {(() => {
-                const status = getClientStatus(selectedClient.profile);
+                const status = getClientStatus(selectedClient.profile, selectedClient.resolvedPlanExpiry);
                 const renewalPending = hasRenewalPending(selectedClient.profile);
                 const alerts: JSX.Element[] = [];
 
