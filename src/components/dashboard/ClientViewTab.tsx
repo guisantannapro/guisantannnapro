@@ -14,7 +14,7 @@ import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
 import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
-import { formatProtocolDate } from "@/lib/protocolDate";
+import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -273,22 +273,13 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const resolvedPeriod = profile?.plan_duration || latestSubmissionWithPeriod?.form_data?.billingPeriod || null;
   const referenceSubmissionForExpiry = latestSubmissionWithPeriod || latestSubmissionWithPlan || submissions?.[0] || null;
 
-  const getEstimatedExpiry = () => {
-    if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
-    const baseDate = referenceSubmissionForExpiry?.created_at
-      ? new Date(referenceSubmissionForExpiry.created_at)
-      : null;
-    if (!baseDate || !resolvedPeriod) return null;
-    const period = resolvedPeriod.toLowerCase();
-    const months = period === "monthly" || period === "mensal" ? 1
-      : period === "quarterly" || period === "trimestral" ? 3
-      : period === "semiannual" || period === "semestral" ? 6
-      : null;
-    if (!months) return null;
-    const expiry = new Date(baseDate);
-    expiry.setMonth(expiry.getMonth() + months);
-    return expiry;
-  };
+  const getEstimatedExpiry = () =>
+    resolvePlanExpiry({
+      protocolo: protocoloAtual,
+      period: resolvedPeriod,
+      planExpiresAt: profile?.plan_expires_at,
+      fallbackDate: referenceSubmissionForExpiry?.created_at || null,
+    });
 
   const estimatedExpiry = getEstimatedExpiry();
   const daysRemaining = estimatedExpiry

@@ -18,7 +18,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
-import { formatProtocolDate } from "@/lib/protocolDate";
+import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 
 
@@ -220,23 +220,14 @@ const MinhaArea = () => {
     semestral: "Semestral",
   };
 
-  // Calcula data de vencimento estimada se não houver no profiles
-  const getEstimatedExpiry = () => {
-    if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
-    const baseDate = referenceSubmissionForExpiry?.created_at
-      ? new Date(referenceSubmissionForExpiry.created_at)
-      : null;
-    if (!baseDate || !resolvedPeriod) return null;
-    const period = resolvedPeriod.toLowerCase();
-    const months = period === "monthly" || period === "mensal" ? 1
-      : period === "quarterly" || period === "trimestral" ? 3
-      : period === "semiannual" || period === "semestral" ? 6
-      : null;
-    if (!months) return null;
-    const expiry = new Date(baseDate);
-    expiry.setMonth(expiry.getMonth() + months);
-    return expiry;
-  };
+  // Vencimento: prioriza a data de início do protocolo atual + duração contratada
+  const getEstimatedExpiry = () =>
+    resolvePlanExpiry({
+      protocolo: protocoloAtual,
+      period: resolvedPeriod,
+      planExpiresAt: profile?.plan_expires_at,
+      fallbackDate: referenceSubmissionForExpiry?.created_at || null,
+    });
 
   const estimatedExpiry = getEstimatedExpiry();
 

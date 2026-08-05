@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { compressImage } from "@/lib/compressImage";
+import { resolvePlanExpiry } from "@/lib/protocolDate";
 import { toast } from "sonner";
 import ProtocolUpload from "@/components/dashboard/ProtocolUpload";
 import EvolutionManager from "@/components/dashboard/EvolutionManager";
@@ -104,9 +105,10 @@ interface Profile {
   renewal_starts_at: string | null;
 }
 
-const getClientStatus = (profile?: Profile) => {
-  if (!profile?.plan_expires_at) return null;
-  const expiry = new Date(profile.plan_expires_at);
+const getClientStatus = (profile?: Profile, expiryOverride?: string | null) => {
+  const raw = expiryOverride || profile?.plan_expires_at;
+  if (!raw) return null;
+  const expiry = new Date(raw);
   const now = new Date();
   const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if (daysRemaining <= 0) return "expired" as const;
@@ -125,6 +127,7 @@ interface ClientData extends FormSubmission {
   resolvedPeriod?: string | null;
   resolvedModality?: string | null;
   resolvedProtocolDate?: string | null;
+  resolvedPlanExpiry?: string | null;
 }
 
 const planLabels: Record<string, string> = {
@@ -162,7 +165,7 @@ const Dashboard = () => {
       }
       if (planFilter !== "all" && client.resolvedPlan !== planFilter) return false;
       if (statusFilter !== "all") {
-        const status = getClientStatus(client.profile);
+        const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
         if (statusFilter === "expired" && status !== "expired") return false;
         if (statusFilter === "expiring" && status !== "expiring") return false;
         if (statusFilter === "active" && status !== "active") return false;
@@ -217,6 +220,7 @@ const Dashboard = () => {
 
       // Data do protocolo mais recente por cliente (prioriza data_inicio manual)
       const protocolDateByUser = new Map<string, string>();
+      const protocolStartByUser = new Map<string, string>();
       if (userIds.length > 0) {
         const { data: protos } = await supabase
           .from("protocolos")
@@ -227,6 +231,7 @@ const Dashboard = () => {
           if (!protocolDateByUser.has(p.user_id)) {
             const d = p.data_inicio || p.updated_at || p.created_at;
             if (d) protocolDateByUser.set(p.user_id, d);
+            if (p.data_inicio) protocolStartByUser.set(p.user_id, p.data_inicio);
           }
         });
       }
@@ -258,15 +263,25 @@ const Dashboard = () => {
         }
       });
 
-      const enriched: ClientData[] = (submissions || []).map((s) => ({
-        ...s,
-        form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
-        profile: profileMap.get(s.user_id),
-        resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
-        resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
-        resolvedModality: latestModalityByUser.get(s.user_id) || null,
-        resolvedProtocolDate: protocolDateByUser.get(s.user_id) || null,
-      }));
+      const enriched: ClientData[] = (submissions || []).map((s) => {
+        const period = profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null;
+        const expiry = resolvePlanExpiry({
+          protocolo: { data_inicio: protocolStartByUser.get(s.user_id) || null },
+          period,
+          planExpiresAt: profileMap.get(s.user_id)?.plan_expires_at || null,
+          fallbackDate: null,
+        });
+        return {
+          ...s,
+          form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
+          profile: profileMap.get(s.user_id),
+          resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
+          resolvedPeriod: period,
+          resolvedModality: latestModalityByUser.get(s.user_id) || null,
+          resolvedProtocolDate: protocolDateByUser.get(s.user_id) || null,
+          resolvedPlanExpiry: expiry ? expiry.toISOString() : null,
+        };
+      });
 
       setClients(enriched);
       return enriched;
@@ -451,8 +466,8 @@ const Dashboard = () => {
 
             {/* Alert banners — between filters and table */}
             {(() => {
-              const expiring = clients.filter(c => getClientStatus(c.profile) === "expiring").length;
-              const expired = clients.filter(c => getClientStatus(c.profile) === "expired").length;
+              const expiring = clients.filter(c => getClientStatus(c.profile, c.resolvedPlanExpiry) === "expiring").length;
+              const expired = clients.filter(c => getClientStatus(c.profile, c.resolvedPlanExpiry) === "expired").length;
               const renewals = clients.filter(c => hasRenewalPending(c.profile)).length;
               if (expiring === 0 && expired === 0 && renewals === 0) return null;
               return (
@@ -500,7 +515,7 @@ const Dashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {paginatedClients.map((client) => {
-                    const status = getClientStatus(client.profile);
+                    const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
                     const renewalPending = hasRenewalPending(client.profile);
                     const borderClass = status === "expired"
                       ? "border-l-4 border-l-destructive bg-destructive/10"
@@ -560,7 +575,7 @@ const Dashboard = () => {
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
               {paginatedClients.map((client) => {
-                const status = getClientStatus(client.profile);
+                const status = getClientStatus(client.profile, client.resolvedPlanExpiry);
                 const renewalPending = hasRenewalPending(client.profile);
                 const borderClass = status === "expired"
                   ? "border-l-4 border-l-destructive bg-destructive/10"
@@ -658,7 +673,7 @@ const Dashboard = () => {
           {selectedClient && (
             <>
               {(() => {
-                const status = getClientStatus(selectedClient.profile);
+                const status = getClientStatus(selectedClient.profile, selectedClient.resolvedPlanExpiry);
                 const renewalPending = hasRenewalPending(selectedClient.profile);
                 const alerts: JSX.Element[] = [];
 
@@ -667,18 +682,18 @@ const Dashboard = () => {
                     <div key="expired" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
                       <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                       <span className="text-sm text-destructive font-medium">
-                        Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                        Plano vencido em {new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   );
                 }
                 if (status === "expiring") {
-                  const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  const days = Math.ceil((new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
                   alerts.push(
                     <div key="expiring" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
                       <Clock className="w-4 h-4 text-accent shrink-0" />
                       <span className="text-sm text-accent font-medium">
-                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   );
