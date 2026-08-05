@@ -456,9 +456,41 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                       </>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground block">
-                    Atualizado em: {formatProtocolDate(protocoloAtual)}
-                  </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {editingData ? (
+                      <>
+                        <input
+                          type="date"
+                          value={dataDraft}
+                          onChange={(e) => setDataDraft(e.target.value)}
+                          className="h-7 rounded-md border border-border bg-background px-2 text-xs text-foreground"
+                        />
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveDataInicio} disabled={savingData}>
+                          {savingData ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingData(false)} disabled={savingData}>
+                          <X size={12} />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xs text-muted-foreground">
+                          {protocoloAtual.data_inicio ? "Início em: " : "Atualizado em: "}
+                          {formatProtocolDate(protocoloAtual)}
+                        </span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6"
+                          title="Editar data de início do protocolo"
+                          onClick={() => { setDataDraft(protocoloAtual.data_inicio || ""); setEditingData(true); }}
+                        >
+                          <Pencil size={12} />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
                   <Button
                     variant="outline"
                     size="sm"
