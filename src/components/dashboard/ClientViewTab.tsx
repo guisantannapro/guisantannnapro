@@ -603,7 +603,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                   <div key={protocol.id} className="flex items-center justify-between p-2 border border-border rounded-md">
                     <div>
                       <p className="text-foreground text-xs font-medium">{protocol.file_name}</p>
-                      <p className="text-muted-foreground text-xs">{new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
+                      <p className="text-muted-foreground text-xs">{formatProtocolDate(protocol as any)}</p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => downloadProtocol(protocol)} className="text-primary h-7 text-xs gap-1">
                       <Download size={12} />
