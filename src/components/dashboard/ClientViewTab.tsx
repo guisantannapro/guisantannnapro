@@ -73,6 +73,32 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [editingTipo, setEditingTipo] = useState(false);
   const [tipoDraft, setTipoDraft] = useState<string>("");
   const [savingTipo, setSavingTipo] = useState(false);
+  const [editingData, setEditingData] = useState(false);
+  const [dataDraft, setDataDraft] = useState<string>("");
+  const [savingData, setSavingData] = useState(false);
+
+  const handleSaveDataInicio = async () => {
+    if (!protocoloAtual) return;
+    setSavingData(true);
+    try {
+      await ensureFreshSession();
+      const value = dataDraft ? dataDraft : null;
+      const { error } = await supabase
+        .from("protocolos")
+        .update({ data_inicio: value } as any)
+        .eq("id", protocoloAtual.id);
+      if (error) throw error;
+      setProtocoloAtual({ ...protocoloAtual, data_inicio: value });
+      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, data_inicio: value } : p)));
+      toast.success(value ? "Data do protocolo atualizada" : "Data manual removida");
+      setEditingData(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao atualizar a data");
+    } finally {
+      setSavingData(false);
+    }
+  };
+
 
   const handleSaveTipo = async () => {
     if (!protocoloAtual || !tipoDraft || tipoDraft === protocoloAtual.tipo_protocolo) {
