@@ -14,6 +14,7 @@ import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
 import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
+import { formatProtocolDate } from "@/lib/protocolDate";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -72,6 +73,32 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [editingTipo, setEditingTipo] = useState(false);
   const [tipoDraft, setTipoDraft] = useState<string>("");
   const [savingTipo, setSavingTipo] = useState(false);
+  const [editingData, setEditingData] = useState(false);
+  const [dataDraft, setDataDraft] = useState<string>("");
+  const [savingData, setSavingData] = useState(false);
+
+  const handleSaveDataInicio = async () => {
+    if (!protocoloAtual) return;
+    setSavingData(true);
+    try {
+      await ensureFreshSession();
+      const value = dataDraft ? dataDraft : null;
+      const { error } = await supabase
+        .from("protocolos")
+        .update({ data_inicio: value } as any)
+        .eq("id", protocoloAtual.id);
+      if (error) throw error;
+      setProtocoloAtual({ ...protocoloAtual, data_inicio: value });
+      setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, data_inicio: value } : p)));
+      toast.success(value ? "Data do protocolo atualizada" : "Data manual removida");
+      setEditingData(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao atualizar a data");
+    } finally {
+      setSavingData(false);
+    }
+  };
+
 
   const handleSaveTipo = async () => {
     if (!protocoloAtual || !tipoDraft || tipoDraft === protocoloAtual.tipo_protocolo) {
@@ -429,9 +456,41 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                       </>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground block">
-                    Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
-                  </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {editingData ? (
+                      <>
+                        <input
+                          type="date"
+                          value={dataDraft}
+                          onChange={(e) => setDataDraft(e.target.value)}
+                          className="h-7 rounded-md border border-border bg-background px-2 text-xs text-foreground"
+                        />
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleSaveDataInicio} disabled={savingData}>
+                          {savingData ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditingData(false)} disabled={savingData}>
+                          <X size={12} />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-xs text-muted-foreground">
+                          {protocoloAtual.data_inicio ? "Início em: " : "Atualizado em: "}
+                          {formatProtocolDate(protocoloAtual)}
+                        </span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6"
+                          title="Editar data de início do protocolo"
+                          onClick={() => { setDataDraft(protocoloAtual.data_inicio || ""); setEditingData(true); }}
+                        >
+                          <Pencil size={12} />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
                   <Button
                     variant="outline"
                     size="sm"
@@ -514,7 +573,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs px-1.5 py-0">{tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}</Badge>
                       <span className="font-medium text-foreground">{proto.nome}</span>
-                      <span className="text-muted-foreground">{new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}</span>
+                      <span className="text-muted-foreground">{formatProtocolDate(proto)}</span>
                     </div>
                   </div>
                 ))}
@@ -705,7 +764,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             wrapperId="protocolo-content-client-view"
             protocolo={pdfProtocol}
             clientName={clientName}
-            formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+            formattedDate={formatProtocolDate(pdfProtocol)}
             clientInfo={{
               idade: (submissions?.[0]?.form_data as any)?.age || undefined,
               peso: (submissions?.[0]?.form_data as any)?.weight || undefined,

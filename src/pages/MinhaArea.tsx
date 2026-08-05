@@ -18,6 +18,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
+import { formatProtocolDate } from "@/lib/protocolDate";
 
 
 
@@ -356,7 +357,7 @@ const MinhaArea = () => {
                       <span className="text-sm font-medium text-foreground">{protocoloAtual.nome}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
+                      Atualizado em: {formatProtocolDate(protocoloAtual)}
                     </span>
                   </div>
 
@@ -409,7 +410,7 @@ const MinhaArea = () => {
                         </Badge>
                         <span className="text-sm font-medium text-foreground">{proto.nome}</span>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}
+                          {formatProtocolDate(proto)}
                         </span>
                       </div>
                       <Button
@@ -501,7 +502,7 @@ const MinhaArea = () => {
             wrapperId="protocolo-content-inline"
             protocolo={pdfProtocol}
             clientName={profile?.full_name || session?.user?.email || "Cliente"}
-            formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+            formattedDate={formatProtocolDate(pdfProtocol)}
             clientInfo={{
               idade: (submissions?.[0]?.form_data as any)?.age || undefined,
               peso: (submissions?.[0]?.form_data as any)?.weight || undefined,

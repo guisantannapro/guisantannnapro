@@ -1,0 +1,1 @@
+ALTER TABLE public.protocolos ADD COLUMN IF NOT EXISTS data_inicio date;

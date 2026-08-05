@@ -296,6 +296,7 @@ export type Database = {
           cardio: string
           column_labels: Json
           created_at: string
+          data_inicio: string | null
           id: string
           nome: string
           observacoes: string | null
@@ -310,6 +311,7 @@ export type Database = {
           cardio?: string
           column_labels?: Json
           created_at?: string
+          data_inicio?: string | null
           id?: string
           nome: string
           observacoes?: string | null
@@ -324,6 +326,7 @@ export type Database = {
           cardio?: string
           column_labels?: Json
           created_at?: string
+          data_inicio?: string | null
           id?: string
           nome?: string
           observacoes?: string | null

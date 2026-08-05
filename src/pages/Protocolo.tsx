@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
+import { formatProtocolDate } from "@/lib/protocolDate";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
@@ -122,7 +123,7 @@ const Protocolo = () => {
     return <ProtocoloSkeleton />;
   }
 
-  const formattedDate = new Date(protocolo.updated_at || protocolo.created_at).toLocaleDateString("pt-BR");
+  const formattedDate = formatProtocolDate(protocolo);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
