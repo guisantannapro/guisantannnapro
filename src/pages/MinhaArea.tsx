@@ -18,7 +18,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
-import { formatProtocolDate } from "@/lib/protocolDate";
+import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 
 
