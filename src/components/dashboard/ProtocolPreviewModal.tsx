@@ -436,6 +436,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
     nome: string;
     tipo_protocolo: string;
     created_at: string;
+    data_inicio?: string | null;
     client_name: string;
   }>>([]);
   const [otherMatchedClients, setOtherMatchedClients] = useState(0);
