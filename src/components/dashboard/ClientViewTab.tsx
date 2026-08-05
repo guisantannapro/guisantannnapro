@@ -14,6 +14,7 @@ import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
 import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
+import { formatProtocolDate } from "@/lib/protocolDate";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -430,7 +431,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                     )}
                   </div>
                   <span className="text-xs text-muted-foreground block">
-                    Atualizado em: {new Date(protocoloAtual.updated_at || protocoloAtual.created_at).toLocaleDateString("pt-BR")}
+                    Atualizado em: {formatProtocolDate(protocoloAtual)}
                   </span>
                   <Button
                     variant="outline"
@@ -514,7 +515,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs px-1.5 py-0">{tipoProtocoloLabels[proto.tipo_protocolo] || proto.tipo_protocolo}</Badge>
                       <span className="font-medium text-foreground">{proto.nome}</span>
-                      <span className="text-muted-foreground">{new Date(proto.updated_at || proto.created_at).toLocaleDateString("pt-BR")}</span>
+                      <span className="text-muted-foreground">{formatProtocolDate(proto)}</span>
                     </div>
                   </div>
                 ))}
@@ -705,7 +706,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             wrapperId="protocolo-content-client-view"
             protocolo={pdfProtocol}
             clientName={clientName}
-            formattedDate={new Date(pdfProtocol.updated_at || pdfProtocol.created_at).toLocaleDateString("pt-BR")}
+            formattedDate={formatProtocolDate(pdfProtocol)}
             clientInfo={{
               idade: (submissions?.[0]?.form_data as any)?.age || undefined,
               peso: (submissions?.[0]?.form_data as any)?.weight || undefined,
