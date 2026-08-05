@@ -682,18 +682,18 @@ const Dashboard = () => {
                     <div key="expired" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-destructive/30 bg-destructive/10 mt-2">
                       <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                       <span className="text-sm text-destructive font-medium">
-                        Plano vencido em {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                        Plano vencido em {new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   );
                 }
                 if (status === "expiring") {
-                  const days = Math.ceil((new Date(selectedClient.profile!.plan_expires_at!).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  const days = Math.ceil((new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
                   alerts.push(
                     <div key="expiring" className="flex items-center gap-2 px-4 py-3 rounded-lg border border-accent/30 bg-accent/10 mt-2">
                       <Clock className="w-4 h-4 text-accent shrink-0" />
                       <span className="text-sm text-accent font-medium">
-                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date(selectedClient.profile!.plan_expires_at!).toLocaleDateString("pt-BR")}
+                        Plano vence em {days} dia{days > 1 ? "s" : ""} — {new Date((selectedClient.resolvedPlanExpiry || selectedClient.profile!.plan_expires_at!)).toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                   );
