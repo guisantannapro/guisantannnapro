@@ -470,7 +470,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
         );
         const { data: protos } = await supabase
           .from("protocolos")
-          .select("id, nome, tipo_protocolo, created_at, user_id")
+          .select("id, nome, tipo_protocolo, created_at, data_inicio, user_id")
           .in("user_id", ids)
           .order("created_at", { ascending: false })
           .limit(8);
@@ -480,6 +480,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
             nome: p.nome,
             tipo_protocolo: p.tipo_protocolo,
             created_at: p.created_at,
+            data_inicio: p.data_inicio,
             client_name: nameById.get(p.user_id) || "",
           }))
         );
@@ -761,7 +762,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     Preenche todos os campos com o conteúdo de <strong>{previousProtocol.nome}</strong>
-                    {previousProtocol.created_at && ` (de ${new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")})`}.
+                    {(previousProtocol.created_at || (previousProtocol as any).data_inicio) && ` (de ${formatProtocolDate(previousProtocol as any)})`}.
                     Os exercícios entram como novos — o histórico do cliente no protocolo antigo continua intacto.
                   </p>
                 </div>
@@ -830,7 +831,7 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
                                   <p className="text-sm font-semibold text-foreground truncate">{r.client_name}</p>
                                   <p className="text-xs text-muted-foreground truncate">
                                     {r.nome}
-                                    {r.created_at && ` — ${new Date(r.created_at).toLocaleDateString("pt-BR")}`}
+                                    {(r.created_at || r.data_inicio) && ` — ${formatProtocolDate(r as any)}`}
                                   </p>
                                 </button>
                               </li>
