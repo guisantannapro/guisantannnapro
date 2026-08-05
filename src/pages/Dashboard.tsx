@@ -124,6 +124,7 @@ interface ClientData extends FormSubmission {
   resolvedPlan?: string | null;
   resolvedPeriod?: string | null;
   resolvedModality?: string | null;
+  resolvedProtocolDate?: string | null;
 }
 
 const planLabels: Record<string, string> = {
@@ -214,6 +215,22 @@ const Dashboard = () => {
         }
       }
 
+      // Data do protocolo mais recente por cliente (prioriza data_inicio manual)
+      const protocolDateByUser = new Map<string, string>();
+      if (userIds.length > 0) {
+        const { data: protos } = await supabase
+          .from("protocolos")
+          .select("user_id, data_inicio, updated_at, created_at")
+          .in("user_id", userIds)
+          .order("created_at", { ascending: false });
+        (protos || []).forEach((p: any) => {
+          if (!protocolDateByUser.has(p.user_id)) {
+            const d = p.data_inicio || p.updated_at || p.created_at;
+            if (d) protocolDateByUser.set(p.user_id, d);
+          }
+        });
+      }
+
       const latestPlanByUser = new Map<string, string>();
       const latestPeriodByUser = new Map<string, string>();
       const latestModalityByUser = new Map<string, string>();
@@ -248,6 +265,7 @@ const Dashboard = () => {
         resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
         resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
         resolvedModality: latestModalityByUser.get(s.user_id) || null,
+        resolvedProtocolDate: protocolDateByUser.get(s.user_id) || null,
       }));
 
       setClients(enriched);
@@ -511,7 +529,7 @@ const Dashboard = () => {
                           {getGoals(client)}
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {formatDate(client.created_at)}
+                          {formatDate(client.resolvedProtocolDate || client.created_at)}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
@@ -569,7 +587,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{getGoals(client)}</span>
-                      <span className="text-muted-foreground/60 text-xs">{formatDate(client.created_at)}</span>
+                      <span className="text-muted-foreground/60 text-xs">{formatDate(client.resolvedProtocolDate || client.created_at)}</span>
                     </div>
                     <Button
                       variant="outline"
