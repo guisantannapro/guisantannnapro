@@ -332,6 +332,14 @@ const Dashboard = () => {
     return goals || "—";
   };
 
+  const formatListDate = (dateStr: string) => {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [y, m, d] = dateStr.split("-");
+      return `${d}/${m}/${y}`;
+    }
+    return formatDate(dateStr);
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -529,7 +537,7 @@ const Dashboard = () => {
                           {getGoals(client)}
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm">
-                          {formatDate(client.resolvedProtocolDate || client.created_at)}
+                          {formatListDate(client.resolvedProtocolDate || client.created_at)}
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
@@ -587,7 +595,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{getGoals(client)}</span>
-                      <span className="text-muted-foreground/60 text-xs">{formatDate(client.resolvedProtocolDate || client.created_at)}</span>
+                      <span className="text-muted-foreground/60 text-xs">{formatListDate(client.resolvedProtocolDate || client.created_at)}</span>
                     </div>
                     <Button
                       variant="outline"
