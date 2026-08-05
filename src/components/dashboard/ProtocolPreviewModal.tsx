@@ -413,8 +413,8 @@ const ProtocolPreviewModal = ({ open, onOpenChange, client, existingProtocol, pr
         setWeeklyDays(built);
       }
 
-      const dateLabel = previousProtocol.created_at
-        ? new Date(previousProtocol.created_at).toLocaleDateString("pt-BR")
+      const dateLabel = previousProtocol.created_at || (previousProtocol as any).data_inicio
+        ? formatProtocolDate(previousProtocol as any)
         : "anterior";
       toast.success(`Campos preenchidos com base no protocolo de ${dateLabel} — ajuste o que mudou antes de salvar.`, {
         duration: 6000,
