@@ -273,22 +273,13 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const resolvedPeriod = profile?.plan_duration || latestSubmissionWithPeriod?.form_data?.billingPeriod || null;
   const referenceSubmissionForExpiry = latestSubmissionWithPeriod || latestSubmissionWithPlan || submissions?.[0] || null;
 
-  const getEstimatedExpiry = () => {
-    if (profile?.plan_expires_at) return new Date(profile.plan_expires_at);
-    const baseDate = referenceSubmissionForExpiry?.created_at
-      ? new Date(referenceSubmissionForExpiry.created_at)
-      : null;
-    if (!baseDate || !resolvedPeriod) return null;
-    const period = resolvedPeriod.toLowerCase();
-    const months = period === "monthly" || period === "mensal" ? 1
-      : period === "quarterly" || period === "trimestral" ? 3
-      : period === "semiannual" || period === "semestral" ? 6
-      : null;
-    if (!months) return null;
-    const expiry = new Date(baseDate);
-    expiry.setMonth(expiry.getMonth() + months);
-    return expiry;
-  };
+  const getEstimatedExpiry = () =>
+    resolvePlanExpiry({
+      protocolo: protocoloAtual,
+      period: resolvedPeriod,
+      planExpiresAt: profile?.plan_expires_at,
+      fallbackDate: referenceSubmissionForExpiry?.created_at || null,
+    });
 
   const estimatedExpiry = getEstimatedExpiry();
   const daysRemaining = estimatedExpiry
