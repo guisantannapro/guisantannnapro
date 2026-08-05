@@ -10,6 +10,7 @@ import { ClipboardList, Save, Copy, Users, Search } from "lucide-react";
 import { supabase, ensureFreshSession } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ExerciseTableEditor, { DayBlock, DEFAULT_DAYS } from "@/components/protocol/ExerciseTableEditor";
+import { formatProtocolDate } from "@/lib/protocolDate";
 
 interface ClientData {
   form_data: any;
