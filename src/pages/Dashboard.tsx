@@ -217,6 +217,7 @@ const Dashboard = () => {
 
       // Data do protocolo mais recente por cliente (prioriza data_inicio manual)
       const protocolDateByUser = new Map<string, string>();
+      const protocolStartByUser = new Map<string, string>();
       if (userIds.length > 0) {
         const { data: protos } = await supabase
           .from("protocolos")
@@ -227,6 +228,7 @@ const Dashboard = () => {
           if (!protocolDateByUser.has(p.user_id)) {
             const d = p.data_inicio || p.updated_at || p.created_at;
             if (d) protocolDateByUser.set(p.user_id, d);
+            if (p.data_inicio) protocolStartByUser.set(p.user_id, p.data_inicio);
           }
         });
       }
