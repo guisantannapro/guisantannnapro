@@ -94,7 +94,35 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
       if (error) throw error;
       setProtocoloAtual({ ...protocoloAtual, data_inicio: value });
       setProtocols((prev) => prev.map((p) => (p.id === protocoloAtual.id ? { ...p, data_inicio: value } : p)));
-      toast.success(value ? "Data do protocolo atualizada" : "Data manual removida");
+
+      // Recalcula o vencimento do plano a partir da nova data de início
+      let planMsg = "";
+      const periodKey = (resolvedPeriod || "").toLowerCase();
+      const months = periodKey === "monthly" || periodKey === "mensal" ? 1
+        : periodKey === "quarterly" || periodKey === "trimestral" ? 3
+        : periodKey === "semiannual" || periodKey === "semestral" ? 6
+        : null;
+      if (value && months && userId) {
+        const [y, m, d] = value.split("-").map(Number);
+        const start = new Date(y, m - 1, d, 12, 0, 0);
+        const expires = new Date(start);
+        expires.setMonth(expires.getMonth() + months);
+        const { error: planError } = await supabase
+          .from("profiles")
+          .update({
+            plan_activated_at: start.toISOString(),
+            plan_expires_at: expires.toISOString(),
+          })
+          .eq("id", userId);
+        if (planError) {
+          planMsg = " (não foi possível recalcular o vencimento do plano)";
+        } else {
+          setProfile((prev: any) => prev ? { ...prev, plan_activated_at: start.toISOString(), plan_expires_at: expires.toISOString() } : prev);
+          planMsg = ` — vencimento do plano ajustado para ${expires.toLocaleDateString("pt-BR")}`;
+        }
+      }
+
+      toast.success(value ? `Data do protocolo atualizada${planMsg}` : "Data manual removida");
       setEditingData(false);
     } catch (e: any) {
       toast.error(e.message || "Erro ao atualizar a data");
