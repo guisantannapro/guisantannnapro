@@ -79,6 +79,10 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
 
   const handleSaveDataInicio = async () => {
     if (!protocoloAtual) return;
+    if (!dataDraft && !(protocoloAtual as any).data_inicio) {
+      setEditingData(false);
+      return;
+    }
     setSavingData(true);
     try {
       await ensureFreshSession();
