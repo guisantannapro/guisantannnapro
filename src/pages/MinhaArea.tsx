@@ -451,7 +451,7 @@ const MinhaArea = () => {
                     >
                       <div>
                         <p className="text-foreground text-sm font-medium">{protocol.file_name}</p>
-                        <p className="text-muted-foreground text-xs">Enviado em {new Date(protocol.created_at).toLocaleDateString("pt-BR")}</p>
+                        <p className="text-muted-foreground text-xs">{(protocol as any).data_inicio ? "Início em " : "Enviado em "}{formatProtocolDate(protocol as any)}</p>
                       </div>
                       <Button
                         variant="outline"
