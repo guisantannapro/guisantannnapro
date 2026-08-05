@@ -260,15 +260,25 @@ const Dashboard = () => {
         }
       });
 
-      const enriched: ClientData[] = (submissions || []).map((s) => ({
-        ...s,
-        form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
-        profile: profileMap.get(s.user_id),
-        resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
-        resolvedPeriod: profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null,
-        resolvedModality: latestModalityByUser.get(s.user_id) || null,
-        resolvedProtocolDate: protocolDateByUser.get(s.user_id) || null,
-      }));
+      const enriched: ClientData[] = (submissions || []).map((s) => {
+        const period = profileMap.get(s.user_id)?.plan_duration || latestPeriodByUser.get(s.user_id) || null;
+        const expiry = resolvePlanExpiry({
+          protocolo: { data_inicio: protocolStartByUser.get(s.user_id) || null },
+          period,
+          planExpiresAt: profileMap.get(s.user_id)?.plan_expires_at || null,
+          fallbackDate: null,
+        });
+        return {
+          ...s,
+          form_data: (s.form_data && typeof s.form_data === "object" && !Array.isArray(s.form_data) ? s.form_data : {}) as ClientFormData,
+          profile: profileMap.get(s.user_id),
+          resolvedPlan: profileMap.get(s.user_id)?.plan || latestPlanByUser.get(s.user_id) || s.plan || null,
+          resolvedPeriod: period,
+          resolvedModality: latestModalityByUser.get(s.user_id) || null,
+          resolvedProtocolDate: protocolDateByUser.get(s.user_id) || null,
+          resolvedPlanExpiry: expiry ? expiry.toISOString() : null,
+        };
+      });
 
       setClients(enriched);
       return enriched;
