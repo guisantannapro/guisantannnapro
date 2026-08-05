@@ -104,9 +104,10 @@ interface Profile {
   renewal_starts_at: string | null;
 }
 
-const getClientStatus = (profile?: Profile) => {
-  if (!profile?.plan_expires_at) return null;
-  const expiry = new Date(profile.plan_expires_at);
+const getClientStatus = (profile?: Profile, expiryOverride?: string | null) => {
+  const raw = expiryOverride || profile?.plan_expires_at;
+  if (!raw) return null;
+  const expiry = new Date(raw);
   const now = new Date();
   const daysRemaining = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if (daysRemaining <= 0) return "expired" as const;
@@ -125,6 +126,7 @@ interface ClientData extends FormSubmission {
   resolvedPeriod?: string | null;
   resolvedModality?: string | null;
   resolvedProtocolDate?: string | null;
+  resolvedPlanExpiry?: string | null;
 }
 
 const planLabels: Record<string, string> = {
