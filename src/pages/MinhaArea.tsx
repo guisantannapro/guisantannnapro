@@ -494,6 +494,11 @@ const MinhaArea = () => {
             protocolo={pdfProtocol}
             clientName={profile?.full_name || session?.user?.email || "Cliente"}
             formattedDate={formatProtocolDate(pdfProtocol)}
+            dateLabel={(pdfProtocol as any)?.data_inicio ? "INÍCIO" : "DATA"}
+            validUntil={(() => {
+              const e = resolvePlanExpiry({ protocolo: pdfProtocol as any, period: resolvedPeriod, planExpiresAt: null, fallbackDate: null });
+              return e ? e.toLocaleDateString("pt-BR") : null;
+            })()}
             clientInfo={{
               idade: (submissions?.[0]?.form_data as any)?.age || undefined,
               peso: (submissions?.[0]?.form_data as any)?.weight || undefined,

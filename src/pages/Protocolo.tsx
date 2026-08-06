@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
-import { formatProtocolDate } from "@/lib/protocolDate";
+import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
@@ -124,6 +124,14 @@ const Protocolo = () => {
   }
 
   const formattedDate = formatProtocolDate(protocolo);
+  const dateLabel = protocolo?.data_inicio ? "INÍCIO" : "DATA";
+  const expiry = resolvePlanExpiry({
+    protocolo,
+    period: planInfo.duration,
+    planExpiresAt: null,
+    fallbackDate: null,
+  });
+  const validUntil = expiry ? expiry.toLocaleDateString("pt-BR") : null;
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -148,7 +156,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
+      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} dateLabel={dateLabel} validUntil={validUntil} clientInfo={clientInfo} planInfo={planInfo} />
 
       {/* Interactive Training Table */}
       <div className="w-full max-w-[700px] mx-auto px-4 pb-8">
