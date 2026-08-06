@@ -26,6 +26,8 @@ type ProtocolPdfContentProps = {
   protocolo: ProtocolPdfData;
   clientName: string;
   formattedDate: string;
+  dateLabel?: string;
+  validUntil?: string | null;
   clientInfo?: ClientInfo;
   planInfo?: PlanInfo;
   wrapperId?: string;
