@@ -115,8 +115,12 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
                 <span className="pdf-cover-value">{clientInfo?.altura || '--'}</span>
               </div>
               <div className="pdf-cover-meta" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span className="pdf-cover-label">DATA</span>
+                <span className="pdf-cover-label">{dateLabel}</span>
                 <span className="pdf-cover-value">{formattedDate}</span>
+              </div>
+              <div className="pdf-cover-meta" style={{ display: validUntil ? 'flex' : 'none', flexDirection: 'column', gap: '2px' }}>
+                <span className="pdf-cover-label">VÁLIDO ATÉ</span>
+                <span className="pdf-cover-value">{validUntil || '--'}</span>
               </div>
             </div>
           </div>
