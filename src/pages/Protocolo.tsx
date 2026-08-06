@@ -156,7 +156,7 @@ const Protocolo = () => {
         </div>
       </header>
 
-      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} clientInfo={clientInfo} planInfo={planInfo} />
+      <ProtocolPdfContent protocolo={protocolo} clientName={clientName} formattedDate={formattedDate} dateLabel={dateLabel} validUntil={validUntil} clientInfo={clientInfo} planInfo={planInfo} />
 
       {/* Interactive Training Table */}
       <div className="w-full max-w-[700px] mx-auto px-4 pb-8">
