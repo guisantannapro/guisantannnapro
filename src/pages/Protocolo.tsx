@@ -124,6 +124,14 @@ const Protocolo = () => {
   }
 
   const formattedDate = formatProtocolDate(protocolo);
+  const dateLabel = protocolo?.data_inicio ? "INÍCIO" : "DATA";
+  const expiry = resolvePlanExpiry({
+    protocolo,
+    period: planInfo.duration,
+    planExpiresAt: null,
+    fallbackDate: null,
+  });
+  const validUntil = expiry ? expiry.toLocaleDateString("pt-BR") : null;
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
