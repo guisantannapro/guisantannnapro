@@ -68,6 +68,8 @@ export const ProtocolPdfContent = forwardRef<HTMLDivElement, ProtocolPdfContentP
   protocolo,
   clientName,
   formattedDate,
+  dateLabel = "DATA",
+  validUntil,
   clientInfo,
   planInfo,
   wrapperId = "protocolo-content",
