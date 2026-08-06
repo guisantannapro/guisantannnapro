@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
-import { formatProtocolDate } from "@/lib/protocolDate";
+import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
