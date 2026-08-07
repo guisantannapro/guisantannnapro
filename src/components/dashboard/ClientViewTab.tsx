@@ -14,7 +14,7 @@ import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
 import SetPlanDialog from "@/components/dashboard/SetPlanDialog";
 import CreateClientAccessDialog from "@/components/dashboard/CreateClientAccessDialog";
-import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
+import { formatProtocolDate, formatProtocolStartDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 const resolveCurrentProtocol = <T extends { id: string }>(protocols: T[], structuredProtocolIds: Set<string>) => {
   const current = protocols.find((protocol) => structuredProtocolIds.has(protocol.id)) ?? protocols[0] ?? null;
@@ -787,10 +787,10 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             wrapperId="protocolo-content-client-view"
             protocolo={pdfProtocol}
             clientName={clientName}
-            formattedDate={formatProtocolDate(pdfProtocol)}
-            dateLabel={(pdfProtocol as any)?.data_inicio ? "INÍCIO" : "DATA"}
+            formattedDate={formatProtocolStartDate({ protocolo: pdfProtocol, planActivatedAt: profile?.plan_activated_at })}
+            dateLabel={(pdfProtocol as any)?.data_inicio || profile?.plan_activated_at ? "INÍCIO" : "DATA"}
             validUntil={(() => {
-              const e = resolvePlanExpiry({ protocolo: pdfProtocol as any, period: resolvedPeriod, planExpiresAt: null, fallbackDate: null });
+              const e = resolvePlanExpiry({ protocolo: pdfProtocol as any, period: resolvedPeriod, planExpiresAt: profile?.plan_expires_at, fallbackDate: null });
               return e ? e.toLocaleDateString("pt-BR") : null;
             })()}
             clientInfo={{

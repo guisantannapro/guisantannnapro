@@ -18,7 +18,7 @@ import CheckinForm from "@/components/minha-area/CheckinForm";
 import CheckinHistory from "@/components/minha-area/CheckinHistory";
 import MinhaAreaSkeleton from "@/components/skeletons/MinhaAreaSkeleton";
 import PwaInstallBanner from "@/components/PwaInstallBanner";
-import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
+import { formatProtocolDate, formatProtocolStartDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 
 
@@ -493,10 +493,10 @@ const MinhaArea = () => {
             wrapperId="protocolo-content-inline"
             protocolo={pdfProtocol}
             clientName={profile?.full_name || session?.user?.email || "Cliente"}
-            formattedDate={formatProtocolDate(pdfProtocol)}
-            dateLabel={(pdfProtocol as any)?.data_inicio ? "INÍCIO" : "DATA"}
+            formattedDate={formatProtocolStartDate({ protocolo: pdfProtocol, planActivatedAt: profile?.plan_activated_at })}
+            dateLabel={(pdfProtocol as any)?.data_inicio || profile?.plan_activated_at ? "INÍCIO" : "DATA"}
             validUntil={(() => {
-              const e = resolvePlanExpiry({ protocolo: pdfProtocol as any, period: resolvedPeriod, planExpiresAt: null, fallbackDate: null });
+              const e = resolvePlanExpiry({ protocolo: pdfProtocol as any, period: resolvedPeriod, planExpiresAt: profile?.plan_expires_at, fallbackDate: null });
               return e ? e.toLocaleDateString("pt-BR") : null;
             })()}
             clientInfo={{

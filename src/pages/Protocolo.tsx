@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ProtocolPdfContent } from "@/components/protocol/ProtocolPdfContent";
 import ProtocoloSkeleton from "@/components/skeletons/ProtocoloSkeleton";
 import InteractiveTrainingTable from "@/components/protocol/InteractiveTrainingTable";
-import { formatProtocolDate, resolvePlanExpiry } from "@/lib/protocolDate";
+import { formatProtocolStartDate, resolvePlanExpiry } from "@/lib/protocolDate";
 
 const Protocolo = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +19,7 @@ const Protocolo = () => {
   const [clientName, setClientName] = useState("Cliente");
   const [clientInfo, setClientInfo] = useState<{ idade?: string; peso?: string; altura?: string }>({});
   const [planInfo, setPlanInfo] = useState<{ plan?: string; duration?: string }>({});
+  const [planDates, setPlanDates] = useState<{ activatedAt?: string | null; expiresAt?: string | null }>({});
   const [autoDownloaded, setAutoDownloaded] = useState(false);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const Protocolo = () => {
       const protocolUserId = data.user_id;
 
       const [{ data: profile }, { data: formSubs }] = await Promise.all([
-        supabase.from("profiles").select("full_name, plan, plan_duration").eq("id", protocolUserId).single(),
+        supabase.from("profiles").select("full_name, plan, plan_duration, plan_activated_at, plan_expires_at").eq("id", protocolUserId).single(),
         supabase
           .from("form_submissions")
           .select("form_data, plan")
@@ -71,6 +72,7 @@ const Protocolo = () => {
 
       setClientName(profile?.full_name || session.user.email || "Cliente");
       setPlanInfo({ plan: resolvedPlan, duration: resolvedDuration });
+      setPlanDates({ activatedAt: profile?.plan_activated_at, expiresAt: profile?.plan_expires_at });
 
       const latestSubmissionWithBodyInfo = (formSubs || []).find((sub) => {
         const data = sub?.form_data as any;
@@ -123,12 +125,15 @@ const Protocolo = () => {
     return <ProtocoloSkeleton />;
   }
 
-  const formattedDate = formatProtocolDate(protocolo);
-  const dateLabel = protocolo?.data_inicio ? "INÍCIO" : "DATA";
+  const formattedDate = formatProtocolStartDate({
+    protocolo,
+    planActivatedAt: planDates.activatedAt,
+  });
+  const dateLabel = protocolo?.data_inicio || planDates.activatedAt ? "INÍCIO" : "DATA";
   const expiry = resolvePlanExpiry({
     protocolo,
     period: planInfo.duration,
-    planExpiresAt: null,
+    planExpiresAt: planDates.expiresAt,
     fallbackDate: null,
   });
   const validUntil = expiry ? expiry.toLocaleDateString("pt-BR") : null;

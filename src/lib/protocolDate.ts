@@ -27,6 +27,33 @@ export const formatProtocolDate = (protocolo: ProtocolLike | null | undefined): 
   return date ? date.toLocaleDateString("pt-BR") : "--";
 };
 
+/**
+ * Data efetiva de início exibida no cabeçalho.
+ * Prioriza a data manual do protocolo e, quando ela não existe, usa a
+ * ativação atual do plano antes das datas antigas de criação/edição.
+ */
+export const resolveProtocolStartDate = (args: {
+  protocolo?: ProtocolLike | null;
+  planActivatedAt?: string | null;
+}): Date | null => {
+  if (args.protocolo?.data_inicio) return getProtocolDate(args.protocolo);
+
+  if (args.planActivatedAt) {
+    const activatedAt = new Date(args.planActivatedAt);
+    if (!isNaN(activatedAt.getTime())) return activatedAt;
+  }
+
+  return getProtocolDate(args.protocolo);
+};
+
+export const formatProtocolStartDate = (args: {
+  protocolo?: ProtocolLike | null;
+  planActivatedAt?: string | null;
+}): string => {
+  const date = resolveProtocolStartDate(args);
+  return date ? date.toLocaleDateString("pt-BR") : "--";
+};
+
 /** Meses de duração a partir do rótulo do período contratado. */
 export const getPlanMonths = (period?: string | null): number | null => {
   const p = (period || "").toLowerCase();
