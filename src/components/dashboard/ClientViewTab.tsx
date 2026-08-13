@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { supabase, ensureFreshSession } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell, Pencil, Check, X } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell, Pencil, Check, X, Upload } from "lucide-react";
+import { compressImage } from "@/lib/compressImage";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +70,8 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [uploadingPhotoField, setUploadingPhotoField] = useState<string | null>(null);
+
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const [editingTipo, setEditingTipo] = useState(false);
@@ -299,6 +303,45 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const totalPhotos = submissionsWithPhotos.reduce(
     (acc, sub) => acc + photoFields.filter((f) => sub[f]).length, 0
   );
+
+  const targetSubmissionId = submissionId || submissions?.[0]?.id || null;
+
+  const handleManualPhotoUpload = async (field: string, file: File) => {
+    if (!targetSubmissionId) return;
+    setUploadingPhotoField(field);
+    try {
+      await ensureFreshSession();
+      const compressed = await compressImage(file);
+      const ext = compressed.name.split(".").pop() || "jpg";
+      const folder = userId || targetSubmissionId;
+      const path = `${folder}/manual-${field}-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("client-photos")
+        .upload(path, compressed, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await supabase
+        .from("form_submissions")
+        .update({ [field]: path } as any)
+        .eq("id", targetSubmissionId);
+      if (updateError) throw updateError;
+
+      setSubmissions((prev) =>
+        prev.map((sub) => (sub.id === targetSubmissionId ? { ...sub, [field]: path } : sub))
+      );
+      const url = await getPhotoSignedUrl(path);
+      if (url) setPhotoUrls((prev) => ({ ...prev, [`${targetSubmissionId}-${field}`]: url }));
+      setShowPhotos(true);
+      toast.success(`Foto (${photoLabels[field]}) enviada com sucesso!`);
+    } catch (err) {
+      console.error("Manual photo upload error:", err);
+      toast.error("Erro ao enviar a foto.");
+    } finally {
+      setUploadingPhotoField(null);
+    }
+  };
+
 
   const handleDownloadPdf = async (proto: any) => {
     if (isDownloadingPdf) return;
@@ -646,6 +689,45 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             </div>
           </AccordionTrigger>
           <AccordionContent className="pt-1 pb-4">
+            {/* Upload manual (fotos recebidas por WhatsApp) */}
+            <div className="mb-3 rounded-md border border-dashed border-border p-3">
+              <p className="text-xs text-muted-foreground mb-2">
+                Adicionar foto manualmente (ex.: recebida por WhatsApp)
+              </p>
+              {targetSubmissionId ? (
+                <div className="flex flex-wrap gap-2">
+                  {photoFields.map((field) => (
+                    <label key={field} className="cursor-pointer">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-md border border-border px-2.5 h-7 text-xs text-foreground hover:bg-muted transition-colors ${uploadingPhotoField === field ? "opacity-60 pointer-events-none" : ""}`}
+                      >
+                        {uploadingPhotoField === field ? (
+                          <Loader2 size={12} className="animate-spin" />
+                        ) : (
+                          <Upload size={12} />
+                        )}
+                        {photoLabels[field]}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          if (file) handleManualPhotoUpload(field, file);
+                        }}
+                      />
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum cadastro encontrado para vincular a foto.
+                </p>
+              )}
+            </div>
+
             {totalPhotos > 0 ? (
               <>
                 <Button
@@ -684,6 +766,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             ) : (
               <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
             )}
+
           </AccordionContent>
         </AccordionItem>
 
