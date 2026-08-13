@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { supabase, ensureFreshSession } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell, Pencil, Check, X } from "lucide-react";
+import { Loader2, Calendar, User, FileText, ClipboardList, Eye, EyeOff, History, AlertTriangle, Download, TrendingUp, Scale, MessageSquare, Star, Dumbbell, Pencil, Check, X, Upload } from "lucide-react";
+import { compressImage } from "@/lib/compressImage";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +70,8 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [showPhotos, setShowPhotos] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [uploadingPhotoField, setUploadingPhotoField] = useState<string | null>(null);
+
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [pdfProtocol, setPdfProtocol] = useState<any>(null);
   const [editingTipo, setEditingTipo] = useState(false);
