@@ -646,6 +646,45 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             </div>
           </AccordionTrigger>
           <AccordionContent className="pt-1 pb-4">
+            {/* Upload manual (fotos recebidas por WhatsApp) */}
+            <div className="mb-3 rounded-md border border-dashed border-border p-3">
+              <p className="text-xs text-muted-foreground mb-2">
+                Adicionar foto manualmente (ex.: recebida por WhatsApp)
+              </p>
+              {targetSubmissionId ? (
+                <div className="flex flex-wrap gap-2">
+                  {photoFields.map((field) => (
+                    <label key={field} className="cursor-pointer">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-md border border-border px-2.5 h-7 text-xs text-foreground hover:bg-muted transition-colors ${uploadingPhotoField === field ? "opacity-60 pointer-events-none" : ""}`}
+                      >
+                        {uploadingPhotoField === field ? (
+                          <Loader2 size={12} className="animate-spin" />
+                        ) : (
+                          <Upload size={12} />
+                        )}
+                        {photoLabels[field]}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          if (file) handleManualPhotoUpload(field, file);
+                        }}
+                      />
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum cadastro encontrado para vincular a foto.
+                </p>
+              )}
+            </div>
+
             {totalPhotos > 0 ? (
               <>
                 <Button
@@ -684,6 +723,7 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
             ) : (
               <p className="text-muted-foreground text-xs">Nenhuma foto enviada.</p>
             )}
+
           </AccordionContent>
         </AccordionItem>
 
