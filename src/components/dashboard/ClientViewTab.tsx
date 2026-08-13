@@ -300,6 +300,45 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
     (acc, sub) => acc + photoFields.filter((f) => sub[f]).length, 0
   );
 
+  const targetSubmissionId = submissionId || submissions?.[0]?.id || null;
+
+  const handleManualPhotoUpload = async (field: string, file: File) => {
+    if (!targetSubmissionId) return;
+    setUploadingPhotoField(field);
+    try {
+      await ensureFreshSession();
+      const compressed = await compressImage(file);
+      const ext = compressed.name.split(".").pop() || "jpg";
+      const folder = userId || targetSubmissionId;
+      const path = `${folder}/manual-${field}-${Date.now()}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("client-photos")
+        .upload(path, compressed, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { error: updateError } = await supabase
+        .from("form_submissions")
+        .update({ [field]: path } as any)
+        .eq("id", targetSubmissionId);
+      if (updateError) throw updateError;
+
+      setSubmissions((prev) =>
+        prev.map((sub) => (sub.id === targetSubmissionId ? { ...sub, [field]: path } : sub))
+      );
+      const url = await getPhotoSignedUrl(path);
+      if (url) setPhotoUrls((prev) => ({ ...prev, [`${targetSubmissionId}-${field}`]: url }));
+      setShowPhotos(true);
+      toast.success(`Foto (${photoLabels[field]}) enviada com sucesso!`);
+    } catch (err) {
+      console.error("Manual photo upload error:", err);
+      toast.error("Erro ao enviar a foto.");
+    } finally {
+      setUploadingPhotoField(null);
+    }
+  };
+
+
   const handleDownloadPdf = async (proto: any) => {
     if (isDownloadingPdf) return;
     try {
