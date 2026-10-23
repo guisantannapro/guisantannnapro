@@ -72,8 +72,12 @@ serve(async (req) => {
         );
         if (found) {
           newUserId = found.id;
-          // Update password
-          await admin.auth.admin.updateUserById(found.id, { password });
+          const { error: updErr } = await admin.auth.admin.updateUserById(found.id, {
+            password,
+            email_confirm: true,
+            ban_duration: "none",
+          });
+          if (updErr) return json({ error: "Falha ao redefinir senha: " + updErr.message }, 400);
         }
         if (list.users.length < 200) break;
         page++;
