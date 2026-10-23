@@ -416,12 +416,13 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
     <div className="space-y-5">
       {/* Plano */}
       <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-bold uppercase text-foreground">Plano</h3>
           </div>
-          {userId ? (
+          <div className="flex flex-wrap items-center gap-2">
+          {userId && (
             <SetPlanDialog
               userId={userId}
               currentPlan={resolvedPlan}
@@ -431,16 +432,18 @@ const ClientViewTab = ({ userId, clientName, clientEmail, submissionId, onPlanUp
                 await onPlanUpdated?.();
               }}
             />
-          ) : (
+          )}
             <CreateClientAccessDialog
-              submissionId={submissionId}
-              defaultEmail={clientEmail}
+              submissionId={targetSubmissionId}
+              defaultEmail={clientEmail || profile?.email}
               defaultName={clientName}
+              hasExistingAccess={Boolean(userId)}
               onCreated={async () => {
                 await onPlanUpdated?.();
+                await fetchData(true);
               }}
             />
-          )}
+          </div>
 
 
         </div>
