@@ -13,12 +13,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2, UserPlus } from "lucide-react";
+import { KeyRound, Loader2, UserPlus } from "lucide-react";
 
 interface Props {
   submissionId?: string | null;
   defaultEmail?: string | null;
   defaultName?: string | null;
+  hasExistingAccess?: boolean;
   onCreated?: (userId: string) => void | Promise<void>;
 }
 
@@ -31,6 +32,7 @@ const CreateClientAccessDialog = ({
   submissionId,
   defaultEmail,
   defaultName,
+  hasExistingAccess = false,
   onCreated,
 }: Props) => {
   const [open, setOpen] = useState(false);
@@ -60,12 +62,12 @@ const CreateClientAccessDialog = ({
       const userId = (data as any)?.user_id;
       if (!userId) throw new Error("Resposta inválida do servidor");
 
-      toast.success("Acesso criado e vinculado ao cadastro");
+      toast.success(hasExistingAccess ? "Senha do cliente redefinida" : "Acesso criado e vinculado ao cadastro");
       setOpen(false);
       await onCreated?.(userId);
     } catch (err: any) {
       console.error("create access error:", err);
-      toast.error(err?.message || "Erro ao criar acesso");
+      toast.error(err?.message || "Erro ao salvar acesso do cliente");
     } finally {
       setSaving(false);
     }
@@ -84,22 +86,24 @@ const CreateClientAccessDialog = ({
     >
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="h-7 text-xs">
-          <UserPlus className="w-3 h-3 mr-1" />
-          Criar acesso do cliente
+          {hasExistingAccess ? <KeyRound className="w-3 h-3 mr-1" /> : <UserPlus className="w-3 h-3 mr-1" />}
+          Acesso do cliente / redefinir senha
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Criar acesso do cliente</DialogTitle>
+          <DialogTitle>{hasExistingAccess ? "Redefinir senha do cliente" : "Criar acesso do cliente"}</DialogTitle>
           <DialogDescription>
-            Cria a conta no sistema com e-mail e senha, e vincula automaticamente este
-            cadastro ao novo usuário. Depois disso você poderá definir o plano.
+            {hasExistingAccess
+              ? "Defina uma nova senha para a conta do cliente."
+              : "Cria a conta com e-mail e senha e vincula ao cadastro; se a conta já existir, redefine a senha."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>E-mail</Label>
+            <Label htmlFor="client-access-email">E-mail</Label>
             <Input
+              id="client-access-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -107,9 +111,10 @@ const CreateClientAccessDialog = ({
             />
           </div>
           <div className="space-y-2">
-            <Label>Senha inicial</Label>
+            <Label htmlFor="client-access-password">{hasExistingAccess ? "Nova senha" : "Senha inicial"}</Label>
             <div className="flex gap-2">
               <Input
+                id="client-access-password"
                 type="text"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -123,8 +128,7 @@ const CreateClientAccessDialog = ({
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Envie essa senha ao cliente para o primeiro acesso. Ele poderá alterar em
-              "Esqueci minha senha".
+              Envie a nova senha ao cliente.
             </p>
           </div>
         </div>
@@ -134,7 +138,7 @@ const CreateClientAccessDialog = ({
           </Button>
           <Button onClick={handleSave} disabled={saving}>
             {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
-            Criar acesso
+            {hasExistingAccess ? "Redefinir senha" : "Criar acesso"}
           </Button>
         </DialogFooter>
       </DialogContent>
