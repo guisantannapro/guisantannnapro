@@ -74,6 +74,126 @@ export type Database = {
         }
         Relationships: []
       }
+      bkp_exercises_camilla_20261016: {
+        Row: {
+          admin_obs: string | null
+          client_back_off: string | null
+          client_carga_rep: string | null
+          client_obs: string | null
+          client_resultado: string | null
+          client_top_set: string | null
+          created_at: string | null
+          day_label: string | null
+          exercise_name: string | null
+          id: string | null
+          metodo: string | null
+          protocolo_id: string | null
+          sort_order: number | null
+          table_type: string | null
+          updated_at: string | null
+          user_id: string | null
+          week_number: number | null
+        }
+        Insert: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_carga_rep?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string | null
+          day_label?: string | null
+          exercise_name?: string | null
+          id?: string | null
+          metodo?: string | null
+          protocolo_id?: string | null
+          sort_order?: number | null
+          table_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_number?: number | null
+        }
+        Update: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_carga_rep?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string | null
+          day_label?: string | null
+          exercise_name?: string | null
+          id?: string | null
+          metodo?: string | null
+          protocolo_id?: string | null
+          sort_order?: number | null
+          table_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_number?: number | null
+        }
+        Relationships: []
+      }
+      bkp_exercises_peterson_20261022: {
+        Row: {
+          admin_obs: string | null
+          client_back_off: string | null
+          client_carga_rep: string | null
+          client_obs: string | null
+          client_resultado: string | null
+          client_top_set: string | null
+          created_at: string | null
+          day_label: string | null
+          exercise_name: string | null
+          id: string | null
+          metodo: string | null
+          protocolo_id: string | null
+          sort_order: number | null
+          table_type: string | null
+          updated_at: string | null
+          user_id: string | null
+          week_number: number | null
+        }
+        Insert: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_carga_rep?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string | null
+          day_label?: string | null
+          exercise_name?: string | null
+          id?: string | null
+          metodo?: string | null
+          protocolo_id?: string | null
+          sort_order?: number | null
+          table_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_number?: number | null
+        }
+        Update: {
+          admin_obs?: string | null
+          client_back_off?: string | null
+          client_carga_rep?: string | null
+          client_obs?: string | null
+          client_resultado?: string | null
+          client_top_set?: string | null
+          created_at?: string | null
+          day_label?: string | null
+          exercise_name?: string | null
+          id?: string | null
+          metodo?: string | null
+          protocolo_id?: string | null
+          sort_order?: number | null
+          table_type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_number?: number | null
+        }
+        Relationships: []
+      }
       bkp_plano_camilla_20261015: {
         Row: {
           id: string | null
@@ -89,6 +209,54 @@ export type Database = {
           id?: string | null
           plano_alimentar?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      bkp_protocolo_peterson_20261022: {
+        Row: {
+          cardio: string | null
+          column_labels: Json | null
+          created_at: string | null
+          data_inicio: string | null
+          id: string | null
+          nome: string | null
+          observacoes: string | null
+          plano_alimentar: string | null
+          suplementacao: string | null
+          tipo_protocolo: string | null
+          treino: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cardio?: string | null
+          column_labels?: Json | null
+          created_at?: string | null
+          data_inicio?: string | null
+          id?: string | null
+          nome?: string | null
+          observacoes?: string | null
+          plano_alimentar?: string | null
+          suplementacao?: string | null
+          tipo_protocolo?: string | null
+          treino?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cardio?: string | null
+          column_labels?: Json | null
+          created_at?: string | null
+          data_inicio?: string | null
+          id?: string | null
+          nome?: string | null
+          observacoes?: string | null
+          plano_alimentar?: string | null
+          suplementacao?: string | null
+          tipo_protocolo?: string | null
+          treino?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
